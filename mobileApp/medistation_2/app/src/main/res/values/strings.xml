@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">medistation_2</string>
+    <string name="title_home">Home</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="log_out">Log out</string>
+    <string name="add_symptom">Add symptom/side effect</string>
+    <string name="add_medication">Add medication</string>
+</resources>
