@@ -16,4 +16,20 @@
         android:name="com.example.medistation_2.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/navigation_medication"
+        android:name="com.example.medistation_2.ui.medication.MedicationFragment"
+        android:label="@string/title_medication"
+        tools:layout="@layout/fragment_medication" />
+    <fragment
+        android:id="@+id/navigation_devices"
+        android:name="com.example.medistation_2.ui.devices.DevicesFragment"
+        android:label="@string/title_devices"
+        tools:layout="@layout/fragment_devices" />
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.example.medistation_2.ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>
