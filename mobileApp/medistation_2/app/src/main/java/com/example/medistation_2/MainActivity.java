@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.medistation_2.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
-
+//Testing Comment
 public class MainActivity extends AppCompatActivity{
 
     private ActivityMainBinding binding;
