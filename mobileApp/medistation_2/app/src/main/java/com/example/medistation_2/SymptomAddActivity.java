@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 public class SymptomAddActivity extends AppCompatActivity {
 
@@ -22,7 +23,8 @@ public class SymptomAddActivity extends AppCompatActivity {
             @Override
             public void onClick(View view)
             {
-                Log.d("Test", "Button Working");
+                EditText symptom = (EditText)findViewById(R.id.SymptomInput);
+                Log.d("Test", symptom.getText().toString());
             }
         });
     }
