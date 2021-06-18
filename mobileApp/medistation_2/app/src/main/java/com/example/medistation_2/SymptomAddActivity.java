@@ -1,5 +1,6 @@
 package com.example.medistation_2;
 
+import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,49 +20,53 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SymptomAddActivity extends AppCompatActivity {
     private static final String TAG = SymptomAddActivity.class.getSimpleName();
-    private Button SymptomAddButton;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference myRef = database.getReference("message");
-
+    public Object symptomsList = new Object();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_symptom_add);
-
-        SymptomAddButton = findViewById(R.id.SymptomAddButton);
-        SymptomAddButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view)
-            {
-
-                EditText symptom = (EditText)findViewById(R.id.SymptomInput);
-                myRef.setValue(symptom.getText().toString());
-                Log.d("Success",symptom.getText().toString());
-
-                myRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // This method is called once with the initial value and again
-                        // whenever data at this location is updated.
-                        String value = dataSnapshot.getValue(String.class);
-                        Log.d(TAG, "Value is: " + value);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError error) {
-                        // Failed to read value
-                        Log.w(TAG, "Failed to read value.", error.toException());
-                    }
-                });
-            }
-        });
+        main();
 
     }
+    public void main() {
+        Button SymptomAddButton = (Button) findViewById(R.id.SymptomAddButton);
+        SymptomAddButton.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String symptom = ((EditText) findViewById(R.id.SymptomInput)).getText().toString();
+                Log.d(TAG, "onClick: ");
+                Map<String,Object> symptoms = new HashMap<>();
+                Date date = new Date();
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                symptoms.put(symptom,formatter.format(date));
+                CreateNewUser ("jon","snow",symptoms,symptom);
+
+            }
+        });
+    }
+    public void CreateNewUser (String firstName, String lastName,Map<String,Object> symptoms,String symptom) {
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+
+        //String key = myRef.child("Patient").child("symptoms").getKey();
+        Patient user = new Patient(firstName,lastName,symptoms);
+        Map<String,Object> userProfile = user.toMap();
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("Patient", userProfile);
+
+        myRef.child("Patient").updateChildren(childUpdates);
+    }
+
+
+
 }
