@@ -18,6 +18,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.time.format.DateTimeFormatter;
@@ -26,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class SymptomAddActivity extends AppCompatActivity {
@@ -48,25 +50,57 @@ public class SymptomAddActivity extends AppCompatActivity {
                 Map<String,Object> symptoms = new HashMap<>();
                 Date date = new Date();
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                symptoms.put(symptom,formatter.format(date));
-                CreateNewUser ("jon","snow",symptoms,symptom);
+                //CreateNewUser ("jon","snow",symptoms);
+                //AddNewSymptoms(symptom,formatter.format(date));
+                //returnSymptomTimes(symptom);
 
             }
         });
     }
-    public void CreateNewUser (String firstName, String lastName,Map<String,Object> symptoms,String symptom) {
-        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+    public void CreateNewUser (String firstName, String lastName,Map<String,Object> symptoms) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
 
-        //String key = myRef.child("Patient").child("symptoms").getKey();
         Patient user = new Patient(firstName,lastName,symptoms);
         Map<String,Object> userProfile = user.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("Patient", userProfile);
 
-        myRef.child("Patient").updateChildren(childUpdates);
+        myRef.updateChildren(childUpdates);
     }
+    public void AddNewSymptoms (String symptom, String time) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = database.getReference("/Patient/symptoms/"+symptom);
 
+        DatabaseReference newChildRef = dbRef.push();
+        String key = newChildRef.getKey();
+        dbRef.child(key+"/time").setValue(time);
+    }
+    public void returnSymptomTimes (String symptom) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
 
+        ValueEventListener queryValueListener = new ValueEventListener() {
 
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                Iterable<DataSnapshot> snapshotIterator = dataSnapshot.child("Patient/symptoms/"+symptom).getChildren();
+                Iterator<DataSnapshot> iterator = snapshotIterator.iterator();
+
+                while (iterator.hasNext()) {
+                    DataSnapshot next = (DataSnapshot) iterator.next();
+                    Log.d(TAG, "Value = " + next.child("time").getValue());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        Query query = myRef.orderByKey();
+        query.addListenerForSingleValueEvent(queryValueListener);
+    }
 }
