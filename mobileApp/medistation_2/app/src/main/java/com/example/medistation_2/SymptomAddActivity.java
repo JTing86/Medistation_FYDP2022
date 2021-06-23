@@ -46,13 +46,14 @@ public class SymptomAddActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String symptom = ((EditText) findViewById(R.id.SymptomInput)).getText().toString();
+                symptom =  symptom.toLowerCase();
                 Log.d(TAG, "onClick: ");
                 Map<String,Object> symptoms = new HashMap<>();
                 Date date = new Date();
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                 //CreateNewUser ("jon","snow",symptoms);
-                //AddNewSymptoms(symptom,formatter.format(date));
-                //returnSymptomTimes(symptom);
+                AddNewSymptoms(symptom,formatter.format(date));
+                returnSymptomTimes(symptom);
 
             }
         });
@@ -73,6 +74,16 @@ public class SymptomAddActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference dbRef = database.getReference("/Patient/symptoms/"+symptom);
 
+        DatabaseReference newChildRef = dbRef.push();
+        String key = newChildRef.getKey();
+        dbRef.child(key+"/time").setValue(time);
+    }
+    public void AddNewSymptoms (String symptom) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = database.getReference("/Patient/symptoms/"+symptom);
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String time = formatter.format(date);
         DatabaseReference newChildRef = dbRef.push();
         String key = newChildRef.getKey();
         dbRef.child(key+"/time").setValue(time);
