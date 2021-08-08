@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.medistation_2.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
-
+//Testing Comment
 public class MainActivity extends AppCompatActivity{
 
     private ActivityMainBinding binding;
@@ -63,10 +63,12 @@ public class MainActivity extends AppCompatActivity{
         switch (item.getItemId()) {
             case R.id.add_medication:
                 // move to the medication search activity
-                Intent intent = new Intent(this, MedSearchActivity.class);
-                startActivity(intent);
+                Intent add_medication_intent = new Intent(this, MedSearchActivity.class);
+                startActivity(add_medication_intent);
                 return true;
             case R.id.add_symptom:
+                Intent add_symptom_intent = new Intent(this, SymptomAddActivity.class);
+                startActivity(add_symptom_intent);
                 return true;
             case R.id.log_out:
                 return true;
