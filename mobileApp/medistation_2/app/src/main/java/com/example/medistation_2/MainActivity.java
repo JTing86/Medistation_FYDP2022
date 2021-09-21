@@ -13,13 +13,9 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.medistation_2.databinding.ActivityMainBinding;
 
-import java.util.ArrayList;
 //Testing Comment
 public class MainActivity extends AppCompatActivity{
 
@@ -67,7 +63,7 @@ public class MainActivity extends AppCompatActivity{
                 startActivity(add_medication_intent);
                 return true;
             case R.id.add_symptom:
-                Intent add_symptom_intent = new Intent(this, SymptomAddActivity.class);
+                Intent add_symptom_intent = new Intent(this, AddNewSymptom.class);
                 startActivity(add_symptom_intent);
                 return true;
             case R.id.log_out:
