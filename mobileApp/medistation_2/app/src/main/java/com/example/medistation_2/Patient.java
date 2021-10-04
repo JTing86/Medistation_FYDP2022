@@ -15,16 +15,23 @@ public class Patient {
     //private HashMap <String, ArrayList<String>> symptoms = new HashMap<>();
     private String firstName;
     private String lastName;
+    private String gender;
+    private String birth;
+    private String phone;
+    private String email;
     public Map<String, Object> symptoms = new HashMap<>();
     private static final String TAG = Patient.class.getSimpleName();
 
     private Patient () {
 
     }
-    public Patient(String first, String last,Map symptoms) {
-        this.symptoms = symptoms;
+    public Patient(String first, String last,String userGender,String userBirth, String userPhone, String userEmail) {
         this.firstName = first;
         this.lastName = last;
+        this.gender = userGender;
+        this.birth = userBirth;
+        this.phone = userPhone;
+        this.email = userEmail;
     }
 
     public String getFirstName () {
@@ -42,9 +49,12 @@ public class Patient {
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-       result.put("firstName",firstName);
+        result.put("firstName",firstName);
         result.put("lastName",lastName);
-        result.put("symptoms",symptoms);
+        result.put("birthday",birth);
+        result.put("gender",gender);
+        result.put("phone",phone);
+        result.put("email",email);
         return result;
     }
     /*public void add (String symptom, String time) {
