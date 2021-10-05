@@ -17,7 +17,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.medistation_2.databinding.ActivityMainBinding;
 
 //Testing Comment
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 //    private ArrayList<String> meds;
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity{
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_notifications,R.id.navigation_medication,R.id.navigation_devices,R.id.navigation_profile)
+                R.id.navigation_home, R.id.navigation_notifications, R.id.navigation_medication, R.id.navigation_devices, R.id.navigation_profile)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity{
                 startActivity(add_medication_intent);
                 return true;
             case R.id.add_symptom:
-                Intent add_symptom_intent = new Intent(this, AddNewSymptom.class);
+                Intent add_symptom_intent = new Intent(this, SymptomAddActivity.class);
                 startActivity(add_symptom_intent);
                 return true;
             case R.id.log_out:
@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity{
                 return super.onOptionsItemSelected(item);
         }
     }
+}
 
 //    private void setAdapter() {
 //        MedSearchAdapter adapter = new MedSearchAdapter(meds);
