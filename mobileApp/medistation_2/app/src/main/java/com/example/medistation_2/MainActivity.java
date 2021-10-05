@@ -16,6 +16,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.medistation_2.databinding.ActivityMainBinding;
 
+import com.example.medistation_2.activityBacked.profileActivity;
+
 //Testing Comment
 public class MainActivity extends AppCompatActivity {
 
@@ -26,12 +28,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        recyclerView = findViewById(R.id.recycler_view);
-//        meds = new ArrayList<>();
-//
-//        populateMeds();
-//        setAdapter();
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -45,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
+        profileActivity.returnUserName();
+
     }
 
     @Override
