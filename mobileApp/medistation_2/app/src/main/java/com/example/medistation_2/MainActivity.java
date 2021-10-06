@@ -2,10 +2,13 @@ package com.example.medistation_2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.EditText;
 
+import com.example.medistation_2.ui.profile.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,14 +19,13 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.medistation_2.databinding.ActivityMainBinding;
 
-import com.example.medistation_2.activityBacked.profileActivity;
+import com.example.medistation_2.helperFunctions.dbHelper;
 
 //Testing Comment
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-//    private ArrayList<String> meds;
-//    private RecyclerView recyclerView;
+    private static final String TAG = MainActivity.class.toString();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +43,6 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
-
-        profileActivity.returnUserName();
-
     }
 
     @Override
