@@ -36,11 +36,17 @@ public class dbHelper extends AppCompatActivity {
                 else {
                     String simpleDataValue = String.valueOf(task.getResult().getValue());
                     Log.d(TAG, String.valueOf(simpleDataValue));
-                    EditText nameOfUser =(EditText)findViewById(R.id.nameInput);
+                    EditText nameOfUser =(EditText)findViewById(R.id.profileNameInput);
                     nameOfUser.setText(simpleDataValue);
 
                 }
             }
         });
+    }
+
+    public void AddSimpleData (String path, String data) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = database.getReference(path);
+        dbRef.setValue(data);
     }
 }

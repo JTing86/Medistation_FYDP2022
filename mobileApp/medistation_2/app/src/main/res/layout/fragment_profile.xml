@@ -4,20 +4,101 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.devices.DevicesFragment">
+    tools:context=".ui.devices.DevicesFragment"
+    tools:layout_editor_absoluteY="81dp">
 
+
+    <TextView
+        android:id="@+id/profilePastMedication"
+        android:layout_width="190dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="64dp"
+        android:text="Past Medications"
+        android:textSize="22sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileEmergencyNameInput" />
+
+    <TextView
+        android:id="@+id/profileEmergencyNumberLabel"
+        android:layout_width="69dp"
+        android:layout_height="13dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="40dp"
+        android:text="phone number"
+        android:textSize="10sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.58"
+        app:layout_constraintStart_toEndOf="@+id/profileEmergencyNameLabel"
+        app:layout_constraintTop_toTopOf="@+id/profileEmergencyNumberInput" />
+
+    <TextView
+        android:id="@+id/profileEmergencyNameLabel"
+        android:layout_width="32dp"
+        android:layout_height="14dp"
+        android:layout_marginStart="37dp"
+        android:layout_marginLeft="37dp"
+        android:layout_marginTop="40dp"
+        android:text="name"
+        android:textSize="10sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/profileEmergencyNameInput" />
 
     <EditText
-        android:id="@+id/nameInput"
-        android:layout_width="198dp"
-        android:layout_height="43dp"
+        android:id="@+id/profileEmergencyNumberInput"
+        android:layout_width="161dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:inputType="textAutoCorrect|phone"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/profileEmergencyNameInput"
+        app:layout_constraintTop_toBottomOf="@+id/profileEmailInput"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <EditText
+        android:id="@+id/profileEmergencyNameInput"
+        android:layout_width="161dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="62dp"
+        android:inputType="textUri|textShortMessage|textAutoCorrect|textMultiLine|text"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@+id/emergencyContact"
+        app:layout_constraintTop_toBottomOf="@+id/email"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <EditText
+        android:id="@+id/profileEmailInput"
+        android:layout_width="229dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginLeft="48dp"
+        android:layout_marginTop="60dp"
+        android:inputType="textUri|textShortMessage|textAutoCorrect|textMultiLine|text|textEmailAddress"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/email"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/profileNameInput"
+        android:layout_width="228dp"
+        android:layout_height="48dp"
         android:layout_marginStart="48dp"
         android:layout_marginLeft="48dp"
         android:layout_marginTop="4dp"
         android:inputType="textUri|textShortMessage|textAutoCorrect|textMultiLine|text"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/name"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <TextView
         android:id="@+id/emergencyContact"
@@ -57,5 +138,77 @@
         android:textStyle="bold|italic"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/profileSaveButton"
+        android:layout_width="70dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="212dp"
+        android:text="Save"
+        android:textSize="8sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TableLayout
+        android:layout_width="340dp"
+        android:layout_height="193dp"
+        android:layout_marginBottom="176dp"
+        android:stretchColumns="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.592"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="315dp">
+
+        <TableRow>
+
+            <EditText
+                android:layout_width="150dp"
+                android:layout_column="1"
+                android:padding="3dip"
+                android:background="@drawable/profile_table_border"
+                android:text=""
+                android:hint="Med Name"/>
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#808080"
+                android:gravity="center"
+                android:paddingStart="3dp"
+                android:paddingTop="0dp"
+                android:paddingEnd="3dp"
+                android:paddingBottom="0dp"
+                android:text="Name"
+                android:textColor="@android:color/black" />
+
+            <EditText
+                android:layout_width="120dp"
+                android:layout_column="1"
+                android:padding="3dip"
+                android:background="@android:color/transparent"
+                android:text="Save As..." />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </TableLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
