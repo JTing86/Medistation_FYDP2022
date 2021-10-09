@@ -2,10 +2,13 @@ package com.example.medistation_2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.EditText;
 
+import com.example.medistation_2.ui.profile.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,22 +19,17 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.medistation_2.databinding.ActivityMainBinding;
 
+import com.example.medistation_2.helperFunctions.dbHelper;
+
 //Testing Comment
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-//    private ArrayList<String> meds;
-//    private RecyclerView recyclerView;
+    private static final String TAG = MainActivity.class.toString();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        recyclerView = findViewById(R.id.recycler_view);
-//        meds = new ArrayList<>();
-//
-//        populateMeds();
-//        setAdapter();
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -40,7 +38,7 @@ public class MainActivity extends AppCompatActivity{
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_notifications,R.id.navigation_medication,R.id.navigation_devices,R.id.navigation_profile)
+                R.id.navigation_home, R.id.navigation_notifications, R.id.navigation_medication, R.id.navigation_devices, R.id.navigation_profile)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -63,7 +61,7 @@ public class MainActivity extends AppCompatActivity{
                 startActivity(add_medication_intent);
                 return true;
             case R.id.add_symptom:
-                Intent add_symptom_intent = new Intent(this, AddNewSymptom.class);
+                Intent add_symptom_intent = new Intent(this, SymptomAddActivity.class);
                 startActivity(add_symptom_intent);
                 return true;
             case R.id.log_out:
@@ -72,6 +70,7 @@ public class MainActivity extends AppCompatActivity{
                 return super.onOptionsItemSelected(item);
         }
     }
+}
 
 //    private void setAdapter() {
 //        MedSearchAdapter adapter = new MedSearchAdapter(meds);
@@ -87,5 +86,3 @@ public class MainActivity extends AppCompatActivity{
 //        meds.add("Adderall");
 //        meds.add("Penicillin");
 //    }
-
-}
