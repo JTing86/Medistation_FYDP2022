@@ -8,6 +8,16 @@
     <string name="log_out">Log out</string>
     <string name="add_symptom">Add symptom/side effect</string>
     <string name="add_medication">Add medication</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="medication_name">Medication Name</string>
+    <string name="profile_dosage">Dosage</string>
+    <string name="phone_number"> phone number</string>
+    <string name="past_medications">Past Medications</string>
+    <string name="profile_name">name</string>
+    <string name="save">save</string>
+    <string name="profile_duration">yy/mm/dd - yy/mm/dd</string>
+    <string name="profile_duration_title">Duration</string>
+    <string name="profile_med_name"> Med Name</string>
+    <string name="profile_emergency_contact"> Emergency Contact</string>
+    <string name="profile_symptoms">Symptoms</string>
+    <string name="profile_severity">Severity</string>
 </resources>
