@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(add_medication_intent);
                 return true;
             case R.id.add_symptom:
-                Intent add_symptom_intent = new Intent(this, SymptomAddActivity.class);
+                Intent add_symptom_intent = new Intent(this, AddNewSymptom.class);
                 startActivity(add_symptom_intent);
                 return true;
             case R.id.log_out:
