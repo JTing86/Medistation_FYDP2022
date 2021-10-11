@@ -224,10 +224,10 @@ public class ProfileFragment extends Fragment {
             row9Duration.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
         });
 
-        //Buttons
-        Button profileSaveButton = (Button) view.findViewById(R.id.profileSaveButton);
-        profileSaveButton.setOnClickListener(v -> {
-            Log.d(TAG,"Save button pressed");
+        //Button section
+        Button profileUserInfoSaveButton = (Button) view.findViewById(R.id.profileSaveButton);
+        profileUserInfoSaveButton.setOnClickListener(v -> {
+            Log.d(TAG,"User Info save button pressed");
             dbHelper dbHelperCall = new dbHelper();
 
             dbHelperCall.AddSimpleData("/Patient/name",((EditText) view.findViewById(R.id.profileNameInput)).getText().toString());
@@ -276,46 +276,96 @@ public class ProfileFragment extends Fragment {
 
         });
 
+        //save symptom to database
+        Button profileSymptomSaveButton = (Button) view.findViewById(R.id.profileSymptomsButton);
+        profileSymptomSaveButton.setOnClickListener(v -> {
+        Log.d(TAG,"Symptom save button pressed");
+        dbHelper dbHelperCall = new dbHelper();
+        String text = ((Spinner) requireActivity().findViewById(R.id.profileSeverityDropDownList)).getSelectedItem().toString();
+        Log.d(TAG,text);
+    });
+        setupDropDownMenu();
+    }
 
-
-        Spinner spinnerArrayAdapter = (Spinner) requireActivity().findViewById(R.id.profileSeverityDropDownList);
-
-        // Initializing a String Array
-        String[] plants = new String[]{
+    public void setupDropDownMenu () {
+        //set up drop down list
+        Spinner severityDropDownList = (Spinner) requireActivity().findViewById(R.id.profileSeverityDropDownList);
+        Spinner hourDropDownList = (Spinner) requireActivity().findViewById(R.id.profileHourDropList);
+        Spinner minuteDropDownList = (Spinner) requireActivity().findViewById(R.id.profileMinuteDropList);
+        String[] severity = new String[]{
                 "Severity",
-                "1","2","3","4","5"
-        };
-
-        final List<String> plantsList = new ArrayList<>(Arrays.asList(plants));
-
-        // Initializing an ArrayAdapter
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
-                (getActivity().getBaseContext(),
-                        android.R.layout.simple_spinner_dropdown_item,
-                        plantsList) {
+                "1","2","3","4","5"};
+        String[] hour = new String[]{
+                "Hour",
+                "00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23"};
+        String[] minute = new String[]{
+                "Min",
+                "00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23",
+                "24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","45","46","47","48",
+                "49","50","51","52","53","54","55","56","57","58","59"};
+        List<String> severityList = new ArrayList<>(Arrays.asList(severity));
+        List<String> hourList = new ArrayList<>(Arrays.asList(hour));
+        List<String> minuteList = new ArrayList<>(Arrays.asList(minute));
+        //Create severity drop down menu
+        ArrayAdapter<String> severityMenuArrayAdapter = new ArrayAdapter<String> (getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, severityList) {
             @Override
             public boolean isEnabled(int position){
                 // Disable the first item from Spinner
                 // First item will be use for hint
-                return position != 0;
-            }
+                return position != 0; }
             @Override
-            public View getDropDownView(int position, View convertView,
-                                        @NonNull ViewGroup parent) {
+            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
                 TextView tv = (TextView) view;
-                if(position == 0){
-                    // Set the hint text color gray
+                if(position == 0)
                     tv.setTextColor(Color.GRAY);
-                }
-                else {
+                else
                     tv.setTextColor(Color.BLACK);
-                }
                 return view;
             }
         };
-        arrayAdapter.setDropDownViewResource(R.layout.profile_spinner);
-        spinnerArrayAdapter.setAdapter(arrayAdapter);
+        //Create hour drop down menu
+        ArrayAdapter<String> hourMenuArrayAdapter = new ArrayAdapter<String> (getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, hourList) {
+            @Override
+            public boolean isEnabled(int position){
+                // Disable the first item from Spinner
+                // First item will be use for hint
+                return position != 0; }
+            @Override
+            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if(position == 0)
+                    tv.setTextColor(Color.GRAY);
+                else
+                    tv.setTextColor(Color.BLACK);
+                return view;
+            }
+        };
+        ArrayAdapter<String> minuteMenuArrayAdapter = new ArrayAdapter<String> (getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, minuteList) {
+            @Override
+            public boolean isEnabled(int position){
+                // Disable the first item from Spinner
+                // First item will be use for hint
+                return position != 0; }
+            @Override
+            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if(position == 0)
+                    tv.setTextColor(Color.GRAY);
+                else
+                    tv.setTextColor(Color.BLACK);
+                return view;
+            }
+        };
 
+        severityMenuArrayAdapter.setDropDownViewResource(R.layout.profile_spinner);
+        severityDropDownList.setAdapter(severityMenuArrayAdapter);
+        hourMenuArrayAdapter.setDropDownViewResource(R.layout.profile_spinner);
+        hourDropDownList.setAdapter(hourMenuArrayAdapter);
+        minuteMenuArrayAdapter.setDropDownViewResource(R.layout.profile_spinner);
+        minuteDropDownList.setAdapter(minuteMenuArrayAdapter);
     }
+
 }

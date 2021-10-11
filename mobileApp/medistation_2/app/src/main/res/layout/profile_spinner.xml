@@ -4,6 +4,5 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textSize="11sp"
-    android:textStyle="italic"
-    android:fontFamily="sans-serif-medium"
-    />
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true" />
