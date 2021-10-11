@@ -20,4 +20,10 @@
     <string name="profile_emergency_contact"> Emergency Contact</string>
     <string name="profile_symptoms">Symptoms</string>
     <string name="profile_severity">Severity</string>
+    <string-array name="profileSeverity">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
 </resources>
