@@ -49,4 +49,12 @@ public class dbHelper extends AppCompatActivity {
         DatabaseReference dbRef = database.getReference(path);
         dbRef.setValue(data);
     }
+    public void AddNewSymptoms (String path, String data) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = database.getReference(path);
+
+        DatabaseReference newChildRef = dbRef.push();
+        String key = newChildRef.getKey();
+        dbRef.child(key).setValue(data);
+    }
 }
