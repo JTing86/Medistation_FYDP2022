@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.medistation_2.MainActivity;
 import com.example.medistation_2.R;
 import com.example.medistation_2.helperFunctions.dbHelper;
 import com.google.firebase.database.DatabaseReference;
@@ -35,6 +36,7 @@ import java.util.Objects;
 public class ProfileFragment extends Fragment {
     private static final String TAG = ProfileFragment.class.getSimpleName();
 
+
     public static ProfileFragment newInstance() {
         return new ProfileFragment();
     }
@@ -42,7 +44,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        onActivityCreated(savedInstanceState);
+
         return inflater.inflate(R.layout.fragment_profile, container, false);
 
     }
@@ -129,11 +131,11 @@ public class ProfileFragment extends Fragment {
         setupDropDownMenu(view);
     }
 
-    public void setupDropDownMenu (@NonNull View view) {
+    public void setupDropDownMenu (View view) {
         //set up drop down list
-        Spinner severityDropDownList = requireActivity().findViewById(R.id.profileSeverityDropDownList);
-        Spinner hourDropDownList = requireActivity().findViewById(R.id.profileHourDropList);
-        Spinner minuteDropDownList = requireActivity().findViewById(R.id.profileMinuteDropList);
+        Spinner severityDropDownList = view.findViewById(R.id.profileSeverityDropDownList);
+        Spinner hourDropDownList = view.findViewById(R.id.profileHourDropList);
+        Spinner minuteDropDownList = view.findViewById(R.id.profileMinuteDropList);
         String[] severity = new String[]{
                 "Severity",
                 "Mild","Moderate","Severe","Severe"};
@@ -156,9 +158,9 @@ public class ProfileFragment extends Fragment {
                 // First item will be use for hint
                 return position != 0; }
             @Override
-            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) convertView;
+            public View getDropDownView(int position,View dropDownView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, dropDownView, parent);
+                TextView tv = (TextView) view;
                 if(position == 0)
                     tv.setTextColor(Color.GRAY);
                 else
@@ -174,8 +176,8 @@ public class ProfileFragment extends Fragment {
                 // First item will be use for hint
                 return position != 0; }
             @Override
-            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
+            public View getDropDownView(int position, View dropDownView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, dropDownView, parent);
                 TextView tv = (TextView) view;
                 if(position == 0)
                     tv.setTextColor(Color.GRAY);
@@ -191,8 +193,8 @@ public class ProfileFragment extends Fragment {
                 // First item will be use for hint
                 return position != 0; }
             @Override
-            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
+            public View getDropDownView(int position, View dropDownView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, dropDownView, parent);
                 TextView tv = (TextView) view;
                 if(position == 0)
                     tv.setTextColor(Color.GRAY);
