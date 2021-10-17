@@ -7,22 +7,34 @@
     tools:context=".ui.devices.wristbandSettingFragment" >
 
     <Spinner
+        android:id="@+id/wristbandSymptomButton3DropDownMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:dropDownWidth="wrap_content"
+        android:spinnerMode="dropdown"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.877"
+        app:layout_constraintStart_toEndOf="@+id/wristbandAssociatedButton3"
+        app:layout_constraintTop_toBottomOf="@+id/wristbandAssociatedButton2" />
+
+    <Spinner
         android:id="@+id/wristbandSymptomButton2DropDownMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="48dp"
         android:dropDownWidth="wrap_content"
         android:spinnerMode="dropdown"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.877"
         app:layout_constraintStart_toEndOf="@+id/wristbandAssociatedButton2"
-        app:layout_constraintTop_toBottomOf="@+id/wristbandSymptomButton1DropDownMenu" />
+        app:layout_constraintTop_toBottomOf="@+id/wristbandAssociatedButton1" />
 
     <Spinner
         android:id="@+id/wristbandSymptomButton1DropDownMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="12dp"
         android:dropDownWidth="wrap_content"
         android:spinnerMode="dropdown"
         app:layout_constraintEnd_toEndOf="parent"
@@ -146,7 +158,7 @@
         app:layout_constraintTop_toBottomOf="@+id/wristbandFragmentTitle" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/wristbandSymptomSaveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="44dp"
