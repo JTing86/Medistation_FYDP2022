@@ -45,16 +45,21 @@ public class DevicesFragment extends Fragment {
     }
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        Button profileUserInfoSaveButton = (Button) view.findViewById(R.id.deviceWristbandButton);
-        profileUserInfoSaveButton.setOnClickListener(v -> {
-            Log.d(TAG,"User Info save button pressed");
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        Button wristbandNavButton =  view.findViewById(R.id.deviceWristbandButton);
+        wristbandNavButton.setOnClickListener(v -> {
+            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
             transaction.setReorderingAllowed(true);
             transaction.addToBackStack(null);
-// Replace whatever is in the fragment_container view with this fragment
-            transaction.replace(((ViewGroup)getView().getParent()).getId(), new ProfileFragment(), null);
+            transaction.replace(((ViewGroup)getView().getParent()).getId(), new wristbandSettingFragment(), null);
+            transaction.commit();
 
-// Commit the transaction
+        });
+        Button dispenserNavButton =  view.findViewById(R.id.deviceDispenserButton);
+        dispenserNavButton.setOnClickListener(v -> {
+            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+            transaction.setReorderingAllowed(true);
+            transaction.addToBackStack(null);
+            transaction.replace(((ViewGroup)getView().getParent()).getId(), new dispenserSettingFragment(), null);
             transaction.commit();
 
         });

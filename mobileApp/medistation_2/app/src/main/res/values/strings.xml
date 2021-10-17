@@ -20,5 +20,7 @@
     <string name="profile_emergency_contact"> Emergency Contact</string>
     <string name="profile_symptoms">Symptoms</string>
     <string name="profile_severity">Severity</string>
-
+    <string name="wristband_settings_title"> Wristband Settings</string>
+    <string name="wristband_battery_notification_level"> Battery Notification Level</string>
+    <string name="wristband_associated_symptoms"> Associated Symptoms</string>
 </resources>

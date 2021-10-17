@@ -16,9 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager.widget.ViewPager;
 
-import com.example.medistation_2.MainActivity;
 import com.example.medistation_2.R;
 import com.example.medistation_2.helperFunctions.dbHelper;
 import com.google.firebase.database.DatabaseReference;
@@ -204,11 +202,11 @@ public class ProfileFragment extends Fragment {
             }
         };
 
-        severityMenuArrayAdapter.setDropDownViewResource(R.layout.profile_spinner);
+        severityMenuArrayAdapter.setDropDownViewResource(R.layout.drop_down_menu_spinner);
         severityDropDownList.setAdapter(severityMenuArrayAdapter);
-        hourMenuArrayAdapter.setDropDownViewResource(R.layout.profile_spinner);
+        hourMenuArrayAdapter.setDropDownViewResource(R.layout.drop_down_menu_spinner);
         hourDropDownList.setAdapter(hourMenuArrayAdapter);
-        minuteMenuArrayAdapter.setDropDownViewResource(R.layout.profile_spinner);
+        minuteMenuArrayAdapter.setDropDownViewResource(R.layout.drop_down_menu_spinner);
         minuteDropDownList.setAdapter(minuteMenuArrayAdapter);
     }
 
