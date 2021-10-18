@@ -23,4 +23,7 @@
     <string name="wristband_settings_title"> Wristband Settings</string>
     <string name="wristband_battery_notification_level"> Battery Notification Level</string>
     <string name="wristband_associated_symptoms"> Associated Symptoms</string>
+    <string name="dispenser_setting_title">Dispenser Setting</string>
+    <string name="dispenser_refill_title"> Refill Notification</string>
+    <string name="dispenser_calibration_title"> Calibration</string>
 </resources>
