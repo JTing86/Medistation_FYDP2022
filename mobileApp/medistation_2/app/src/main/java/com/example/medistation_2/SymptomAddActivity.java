@@ -1,12 +1,12 @@
 package com.example.medistation_2;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -15,15 +15,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
-public class AddNewSymptom extends AppCompatActivity {
-    private static final String TAG = AddNewSymptom.class.getSimpleName();
+public class SymptomAddActivity extends AppCompatActivity {
+    private static final String TAG = SymptomAddActivity.class.getSimpleName();
     public Object symptomsList = new Object();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,26 +32,28 @@ public class AddNewSymptom extends AppCompatActivity {
 
     }
     public void main() {
-        Button SymptomAddButton = (Button) findViewById(R.id.SymptomAddButton);
-        SymptomAddButton.setOnClickListener(v -> {
-            String symptom = ((EditText) findViewById(R.id.SymptomInput)).getText().toString();
-            symptom =  symptom.toLowerCase();
-            Log.d(TAG, "onClick: ");
-            Map<String,Object> symptoms = new HashMap<>();
-            Date date = new Date();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            //CreateNewUser ("firstName", "lastName", "Gender", "birthday", "phone","email" );
-            //AddNewSymptoms(symptom,formatter.format(date));
-            //returnSymptomTimes(symptom);
-            returnUserInfo(symptom);
+        Button SymptomAddButton = findViewById(R.id.SymptomAddButton);
+        SymptomAddButton.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String symptom = ((EditText) findViewById(R.id.SymptomInput)).getText().toString();
+                symptom =  symptom.toLowerCase();
+                Log.d(TAG, "onClick: ");
+                Map<String,Object> symptoms = new HashMap<>();
+                Date date = new Date();
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                //CreateNewUser ("jon","snow",symptoms);
+                AddNewSymptoms(symptom,formatter.format(date));
+                returnSymptomTimes(symptom);
+
+            }
         });
     }
-    public void CreateNewUser (String firstName, String lastName, String gender, String birth, String phone, String email) {
+    public void CreateNewUser (String firstName, String lastName,Map<String,Object> symptoms) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
 
-        Patient user = new Patient(firstName,lastName,gender, birth, phone, email);
-
+        Patient user = new Patient(firstName,lastName,symptoms);
         Map<String,Object> userProfile = user.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
@@ -78,11 +79,10 @@ public class AddNewSymptom extends AppCompatActivity {
         String key = newChildRef.getKey();
         dbRef.child(key+"/time").setValue(time);
     }
-    public ArrayList returnSymptomTimes (String symptom) {
+    public void returnSymptomTimes (String symptom) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
 
-        ArrayList symptomTimes = new ArrayList();
         ValueEventListener queryValueListener = new ValueEventListener() {
 
             @Override
@@ -92,25 +92,15 @@ public class AddNewSymptom extends AppCompatActivity {
 
                 for (DataSnapshot next : snapshotIterator) {
                     Log.d(TAG, "Value = " + next.child("time").getValue());
-                    symptomTimes.add(next.child("time").getValue());
                 }
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         };
         Query query = myRef.orderByKey();
         query.addListenerForSingleValueEvent(queryValueListener);
-
-        return symptomTimes;
-    }
-    public String returnUserInfo (String userProperty) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference();
-
-        Log.d (TAG, myRef.child("Patient/"+userProperty).getKey());
-
-        return myRef.child("Patient/"+userProperty).getKey();
-
     }
 }
