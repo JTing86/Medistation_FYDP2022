@@ -22,13 +22,18 @@ import com.example.medistation_2.helperFunctions.dbHelper;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class ProfileFragment extends Fragment {
     private static final String TAG = ProfileFragment.class.getSimpleName();
+
 
     public static ProfileFragment newInstance() {
         return new ProfileFragment();
@@ -39,6 +44,7 @@ public class ProfileFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         return inflater.inflate(R.layout.fragment_profile, container, false);
+
     }
 
     @Override
@@ -47,20 +53,164 @@ public class ProfileFragment extends Fragment {
         ProfileViewModel mViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 
     }
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
 
-    @Override
-    public void onResume(){
-        super.onResume();
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
+        //Button section
+        Button profileUserInfoSaveButton = (Button) view.findViewById(R.id.profileSaveButton);
+        profileUserInfoSaveButton.setOnClickListener(v -> {
+            Log.d(TAG,"User Info save button pressed");
+            dbHelper dbHelperCall = new dbHelper();
+
+            dbHelperCall.AddSimpleData("/Patient/name",((EditText) view.findViewById(R.id.profileNameInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/email/",((EditText) view.findViewById(R.id.profileEmailInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/emergencyName", ((EditText) view.findViewById(R.id.profileEmergencyNameInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/emergencyNumber",((EditText) view.findViewById(R.id.profileEmergencyNumberInput)).getText().toString());
+
+        });
+        //Save past medication record to database
+        Button profilePastMedicationSaveButton = (Button) view.findViewById(R.id.profilePastMedicationButton);
+        profilePastMedicationSaveButton.setOnClickListener(v -> {
+            Log.d(TAG,"Save button pressed");
+            dbHelper dbHelperCall = new dbHelper();
+            //Row 2
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row2/medName",((EditText) view.findViewById(R.id.profileRowTwoMedInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row2/medDosage",((EditText) view.findViewById(R.id.profileRowTwoDosageInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row2/medDuration",((EditText) view.findViewById(R.id.profileRowTwoDurationInput)).getText().toString());
+            //Row 3
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row3/medName",((EditText) view.findViewById(R.id.profileRowThreeMedInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row3/medDosage",((EditText) view.findViewById(R.id.profileRowThreeDosageInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row3/medDuration",((EditText) view.findViewById(R.id.profileRowThreeDurationInput)).getText().toString());
+            //Row 4
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row4/medName",((EditText) view.findViewById(R.id.profileRowFourMedInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row4/medDosage",((EditText) view.findViewById(R.id.profileRowFourDosageInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row4/medDuration",((EditText) view.findViewById(R.id.profileRowFourDurationInput)).getText().toString());
+            //Row 5
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row5/medName",((EditText) view.findViewById(R.id.profileRowFiveMedInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row5/medDosage",((EditText) view.findViewById(R.id.profileRowFiveDosageInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row5/medDuration",((EditText) view.findViewById(R.id.profileRowFiveDurationInput)).getText().toString());
+            //Row 6
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row6/medName",((EditText) view.findViewById(R.id.profileRowSixMedInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row6/medDosage",((EditText) view.findViewById(R.id.profileRowSixDosageInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row6/medDuration",((EditText) view.findViewById(R.id.profileRowSixDurationInput)).getText().toString());
+            //Row 7
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row7/medName",((EditText) view.findViewById(R.id.profileRowSevenMedInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row7/medDosage",((EditText) view.findViewById(R.id.profileRowSevenDosageInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row7/medDuration",((EditText) view.findViewById(R.id.profileRowSevenDurationInput)).getText().toString());
+            //Row 8
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row8/medName",((EditText) view.findViewById(R.id.profileRowEightMedInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row8/medDosage",((EditText) view.findViewById(R.id.profileRowEightDosageInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row8/medDuration",((EditText) view.findViewById(R.id.profileRowEightDurationInput)).getText().toString());
+            // Row 9
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row9/medName",((EditText) view.findViewById(R.id.profileRowNineMedInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row9/medDosage",((EditText) view.findViewById(R.id.profileRowNineDosageInput)).getText().toString());
+            dbHelperCall.AddSimpleData("/Patient/pastMedications/row9/medDuration",((EditText) view.findViewById(R.id.profileRowNineDurationInput)).getText().toString());
+
+        });
+
+        //save symptom to database
+        Button profileSymptomSaveButton = (Button) view.findViewById(R.id.profileSymptomsButton);
+        profileSymptomSaveButton.setOnClickListener(v -> {
+            dbHelper dbHelperCall = new dbHelper();
+            String symptomName = ((EditText) view.findViewById(R.id.profileSymptomsNameInput)).getText().toString().toLowerCase();
+            String symptomHour = ((Spinner) requireActivity().findViewById(R.id.profileHourDropList)).getSelectedItem().toString().toLowerCase();
+            String symptomMinute = ((Spinner) requireActivity().findViewById(R.id.profileMinuteDropList)).getSelectedItem().toString().toLowerCase();
+            String symptomSeverity =((Spinner) requireActivity().findViewById(R.id.profileSeverityDropDownList)).getSelectedItem().toString().toLowerCase();
+            Date currentTime = Calendar.getInstance().getTime();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy,MM,dd", Locale.getDefault());
+            String formattedDate = df.format(currentTime);
+
+           dbHelperCall.AddSimpleData("/Patient/symptom/"+symptomName+"/"+formattedDate+","+symptomHour+","+symptomMinute,symptomSeverity);
+        });
+
+        popualateUserData(view);
+        setupDropDownMenu(view);
+    }
+
+    public void setupDropDownMenu (View view) {
+        //set up drop down list
+        Spinner severityDropDownList = view.findViewById(R.id.profileSeverityDropDownList);
+        Spinner hourDropDownList = view.findViewById(R.id.profileHourDropList);
+        Spinner minuteDropDownList = view.findViewById(R.id.profileMinuteDropList);
+        String[] severity = new String[]{
+                "Severity",
+                "Mild","Moderate","Severe","Severe"};
+        String[] hour = new String[]{
+                "Hour",
+                "00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23"};
+        String[] minute = new String[]{
+                "Min",
+                "00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23",
+                "24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","45","46","47","48",
+                "49","50","51","52","53","54","55","56","57","58","59"};
+        List<String> severityList = new ArrayList<>(Arrays.asList(severity));
+        List<String> hourList = new ArrayList<>(Arrays.asList(hour));
+        List<String> minuteList = new ArrayList<>(Arrays.asList(minute));
+        //Create severity drop down menu
+        ArrayAdapter<String> severityMenuArrayAdapter = new ArrayAdapter<String> (getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, severityList) {
+            @Override
+            public boolean isEnabled(int position){
+                // Disable the first item from Spinner
+                // First item will be use for hint
+                return position != 0; }
+            @Override
+            public View getDropDownView(int position,View dropDownView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, dropDownView, parent);
+                TextView tv = (TextView) view;
+                if(position == 0)
+                    tv.setTextColor(Color.GRAY);
+                else
+                    tv.setTextColor(Color.BLACK);
+                return view;
+            }
+        };
+        //Create hour drop down menu
+        ArrayAdapter<String> hourMenuArrayAdapter = new ArrayAdapter<String> (getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, hourList) {
+            @Override
+            public boolean isEnabled(int position){
+                // Disable the first item from Spinner
+                // First item will be use for hint
+                return position != 0; }
+            @Override
+            public View getDropDownView(int position, View dropDownView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, dropDownView, parent);
+                TextView tv = (TextView) view;
+                if(position == 0)
+                    tv.setTextColor(Color.GRAY);
+                else
+                    tv.setTextColor(Color.BLACK);
+                return view;
+            }
+        };
+        ArrayAdapter<String> minuteMenuArrayAdapter = new ArrayAdapter<String> (getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, minuteList) {
+            @Override
+            public boolean isEnabled(int position){
+                // Disable the first item from Spinner
+                // First item will be use for hint
+                return position != 0; }
+            @Override
+            public View getDropDownView(int position, View dropDownView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, dropDownView, parent);
+                TextView tv = (TextView) view;
+                if(position == 0)
+                    tv.setTextColor(Color.GRAY);
+                else
+                    tv.setTextColor(Color.BLACK);
+                return view;
+            }
+        };
+
+        severityMenuArrayAdapter.setDropDownViewResource(R.layout.drop_down_menu_spinner);
+        severityDropDownList.setAdapter(severityMenuArrayAdapter);
+        hourMenuArrayAdapter.setDropDownViewResource(R.layout.drop_down_menu_spinner);
+        hourDropDownList.setAdapter(hourMenuArrayAdapter);
+        minuteMenuArrayAdapter.setDropDownViewResource(R.layout.drop_down_menu_spinner);
+        minuteDropDownList.setAdapter(minuteMenuArrayAdapter);
+    }
+
+    public void popualateUserData (@NonNull View view) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference rootDbRef = database.getReference();
 
@@ -171,9 +321,9 @@ public class ProfileFragment extends Fragment {
         //row6
         rootDbRef.child("Patient/pastMedications/row6/medName").get().addOnCompleteListener(
                 task -> {
-            EditText row6MedicationName = (EditText) view.findViewById(R.id.profileRowSixMedInput);
-            row6MedicationName.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
-        });
+                    EditText row6MedicationName = (EditText) view.findViewById(R.id.profileRowSixMedInput);
+                    row6MedicationName.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
+                });
         rootDbRef.child("Patient/pastMedications/row6/medDosage").get().addOnCompleteListener(task -> {
             EditText row6Dosage = (EditText) view.findViewById(R.id.profileRowSixDosageInput);
             row6Dosage.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
@@ -224,148 +374,7 @@ public class ProfileFragment extends Fragment {
             row9Duration.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
         });
 
-        //Button section
-        Button profileUserInfoSaveButton = (Button) view.findViewById(R.id.profileSaveButton);
-        profileUserInfoSaveButton.setOnClickListener(v -> {
-            Log.d(TAG,"User Info save button pressed");
-            dbHelper dbHelperCall = new dbHelper();
 
-            dbHelperCall.AddSimpleData("/Patient/name",((EditText) view.findViewById(R.id.profileNameInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/email/",((EditText) view.findViewById(R.id.profileEmailInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/emergencyName", ((EditText) view.findViewById(R.id.profileEmergencyNameInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/emergencyNumber",((EditText) view.findViewById(R.id.profileEmergencyNumberInput)).getText().toString());
-
-        });
-        //Save past medication record to database
-        Button profilePastMedicationSaveButton = (Button) view.findViewById(R.id.profilePastMedicationButton);
-        profilePastMedicationSaveButton.setOnClickListener(v -> {
-            Log.d(TAG,"Save button pressed");
-            dbHelper dbHelperCall = new dbHelper();
-            //Row 2
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row2/medName",((EditText) view.findViewById(R.id.profileRowTwoMedInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row2/medDosage",((EditText) view.findViewById(R.id.profileRowTwoDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row2/medDuration",((EditText) view.findViewById(R.id.profileRowTwoDurationInput)).getText().toString());
-            //Row 3
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row3/medName",((EditText) view.findViewById(R.id.profileRowThreeMedInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row3/medDosage",((EditText) view.findViewById(R.id.profileRowThreeDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row3/medDuration",((EditText) view.findViewById(R.id.profileRowThreeDurationInput)).getText().toString());
-            //Row 4
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row4/medName",((EditText) view.findViewById(R.id.profileRowFourMedInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row4/medDosage",((EditText) view.findViewById(R.id.profileRowFourDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row4/medDuration",((EditText) view.findViewById(R.id.profileRowFourDurationInput)).getText().toString());
-            //Row 5
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row5/medName",((EditText) view.findViewById(R.id.profileRowFiveMedInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row5/medDosage",((EditText) view.findViewById(R.id.profileRowFiveDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row5/medDuration",((EditText) view.findViewById(R.id.profileRowFiveDurationInput)).getText().toString());
-            //Row 6
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row6/medName",((EditText) view.findViewById(R.id.profileRowSixMedInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row6/medDosage",((EditText) view.findViewById(R.id.profileRowSixDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row6/medDuration",((EditText) view.findViewById(R.id.profileRowSixDurationInput)).getText().toString());
-            //Row 7
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row7/medName",((EditText) view.findViewById(R.id.profileRowSevenMedInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row7/medDosage",((EditText) view.findViewById(R.id.profileRowSevenDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row7/medDuration",((EditText) view.findViewById(R.id.profileRowSevenDurationInput)).getText().toString());
-            //Row 8
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row8/medName",((EditText) view.findViewById(R.id.profileRowEightMedInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row8/medDosage",((EditText) view.findViewById(R.id.profileRowEightDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row8/medDuration",((EditText) view.findViewById(R.id.profileRowEightDurationInput)).getText().toString());
-            // Row 9
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row9/medName",((EditText) view.findViewById(R.id.profileRowNineMedInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row9/medDosage",((EditText) view.findViewById(R.id.profileRowNineDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row9/medDuration",((EditText) view.findViewById(R.id.profileRowNineDurationInput)).getText().toString());
-
-        });
-
-        //save symptom to database
-        Button profileSymptomSaveButton = (Button) view.findViewById(R.id.profileSymptomsButton);
-        profileSymptomSaveButton.setOnClickListener(v -> {
-        Log.d(TAG,"Symptom save button pressed");
-        dbHelper dbHelperCall = new dbHelper();
-        String text = ((Spinner) requireActivity().findViewById(R.id.profileSeverityDropDownList)).getSelectedItem().toString();
-        Log.d(TAG,text);
-    });
-        setupDropDownMenu();
-    }
-
-    public void setupDropDownMenu () {
-        //set up drop down list
-        Spinner severityDropDownList = (Spinner) requireActivity().findViewById(R.id.profileSeverityDropDownList);
-        Spinner hourDropDownList = (Spinner) requireActivity().findViewById(R.id.profileHourDropList);
-        Spinner minuteDropDownList = (Spinner) requireActivity().findViewById(R.id.profileMinuteDropList);
-        String[] severity = new String[]{
-                "Severity",
-                "1","2","3","4","5"};
-        String[] hour = new String[]{
-                "Hour",
-                "00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23"};
-        String[] minute = new String[]{
-                "Min",
-                "00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23",
-                "24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","45","46","47","48",
-                "49","50","51","52","53","54","55","56","57","58","59"};
-        List<String> severityList = new ArrayList<>(Arrays.asList(severity));
-        List<String> hourList = new ArrayList<>(Arrays.asList(hour));
-        List<String> minuteList = new ArrayList<>(Arrays.asList(minute));
-        //Create severity drop down menu
-        ArrayAdapter<String> severityMenuArrayAdapter = new ArrayAdapter<String> (getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, severityList) {
-            @Override
-            public boolean isEnabled(int position){
-                // Disable the first item from Spinner
-                // First item will be use for hint
-                return position != 0; }
-            @Override
-            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view;
-                if(position == 0)
-                    tv.setTextColor(Color.GRAY);
-                else
-                    tv.setTextColor(Color.BLACK);
-                return view;
-            }
-        };
-        //Create hour drop down menu
-        ArrayAdapter<String> hourMenuArrayAdapter = new ArrayAdapter<String> (getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, hourList) {
-            @Override
-            public boolean isEnabled(int position){
-                // Disable the first item from Spinner
-                // First item will be use for hint
-                return position != 0; }
-            @Override
-            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view;
-                if(position == 0)
-                    tv.setTextColor(Color.GRAY);
-                else
-                    tv.setTextColor(Color.BLACK);
-                return view;
-            }
-        };
-        ArrayAdapter<String> minuteMenuArrayAdapter = new ArrayAdapter<String> (getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, minuteList) {
-            @Override
-            public boolean isEnabled(int position){
-                // Disable the first item from Spinner
-                // First item will be use for hint
-                return position != 0; }
-            @Override
-            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view;
-                if(position == 0)
-                    tv.setTextColor(Color.GRAY);
-                else
-                    tv.setTextColor(Color.BLACK);
-                return view;
-            }
-        };
-
-        severityMenuArrayAdapter.setDropDownViewResource(R.layout.profile_spinner);
-        severityDropDownList.setAdapter(severityMenuArrayAdapter);
-        hourMenuArrayAdapter.setDropDownViewResource(R.layout.profile_spinner);
-        hourDropDownList.setAdapter(hourMenuArrayAdapter);
-        minuteMenuArrayAdapter.setDropDownViewResource(R.layout.profile_spinner);
-        minuteDropDownList.setAdapter(minuteMenuArrayAdapter);
     }
 
 }

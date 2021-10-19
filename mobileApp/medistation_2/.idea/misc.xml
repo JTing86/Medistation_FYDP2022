@@ -5,15 +5,33 @@
       <map>
         <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.4036458333333333" />
         <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/drawable/ic_home_black_24dp.xml" value="0.4036458333333333" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/drawable/ic_launcher_background.xml" value="0.24270833333333333" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.24270833333333333" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/drawable/ic_search.xml" value="0.24270833333333333" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/drawable/nameborder.xml" value="0.3355855855855856" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/drawable/profile_table_border.xml" value="0.33" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/drawable/profiletableborder.xml" value="0.3355855855855856" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout-land/fragment_devices.xml" value="0.43072916666666666" />
         <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/activity_main.xml" value="0.35733695652173914" />
         <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/activity_symptom_add.xml" value="0.35733695652173914" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/dispenser_setting_fragment.xml" value="0.33" />
         <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/fragment_dashboard.xml" value="0.35733695652173914" />
-        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/fragment_devices.xml" value="0.35733695652173914" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/fragment_devices.xml" value="0.375" />
         <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/fragment_home.xml" value="0.35733695652173914" />
-        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/fragment_medication.xml" value="0.35733695652173914" />
-        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/fragment_notifications.xml" value="0.35733695652173914" />
-        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/fragment_profile.xml" value="0.2" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/fragment_medication.xml" value="0.25" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/fragment_notifications.xml" value="0.375" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/fragment_profile.xml" value="0.4166666666666667" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/fragment_profile2.xml" value="0.21396396396396397" />
         <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/med_list_items.xml" value="0.35733695652173914" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/med_search.xml" value="0.5" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/profileSpinner.xml" value="0.3216216216216216" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/profile_spinner.xml" value="0.1864864864864865" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/spinner_item.xml" value="0.1864864864864865" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/layout/wristband_setting_fragment.xml" value="0.45" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/menu/bottom_nav_menu.xml" value="0.2265625" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/menu/search_menu.xml" value="0.2265625" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/menu/side_options_menu.xml" value="0.2265625" />
+        <entry key="..\:/Code/FYDP/mobileApp/medistation_2/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.19414414414414413" />
       </map>
     </option>
   </component>
@@ -22,12 +40,5 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
-  </component>
-  <component name="VisualizationToolProject">
-    <option name="state">
-      <ProjectState>
-        <option name="scale" value="0.2" />
-      </ProjectState>
-    </option>
   </component>
 </project>

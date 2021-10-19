@@ -21,9 +21,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 //Testing Comment
 public class MainActivity extends AppCompatActivity {
 
+    public static int setUpMenuCounter;
     private ActivityMainBinding binding;
     private static final String TAG = MainActivity.class.toString();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(add_medication_intent);
                 return true;
             case R.id.add_symptom:
-                Intent add_symptom_intent = new Intent(this, AddNewSymptom.class);
+                Intent add_symptom_intent = new Intent(this, SymptomAddActivity.class);
                 startActivity(add_symptom_intent);
                 return true;
             case R.id.log_out:
