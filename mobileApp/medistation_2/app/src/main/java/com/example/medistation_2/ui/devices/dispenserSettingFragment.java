@@ -124,22 +124,61 @@ public class dispenserSettingFragment extends Fragment {
 
         });
         */
+
         Button calibrateSaveButton = view.findViewById(R.id.calibrationSaveButton);
         calibrateSaveButton.setOnClickListener(v -> {
             dbHelper dbHelperCall = new dbHelper();
 
             AtomicInteger currentNumberOfPillsContainer1 = new AtomicInteger();
+            AtomicInteger currentNumberOfPillsContainer2 = new AtomicInteger();
+            AtomicInteger currentNumberOfPillsContainer3 = new AtomicInteger();
+            AtomicInteger currentNumberOfPillsContainer4 = new AtomicInteger();
+            AtomicInteger currentNumberOfPillsContainer5 = new AtomicInteger();
             AtomicInteger pillsAddedContainer1 = new AtomicInteger();
-            rootDbRef.child("Patient/dispenser/currentAmountContainer1").get().addOnCompleteListener(task -> {
-                currentNumberOfPillsContainer1.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
-                Log.d(TAG,String.valueOf(currentNumberOfPillsContainer1.get()));
-                Log.d(TAG,Objects.requireNonNull(task.getResult()).getValue().toString());
-                if (!(((EditText) view.findViewById(R.id.calibrationContainer1Input)).getText().toString()).equals(""))
+            AtomicInteger pillsAddedContainer2 = new AtomicInteger();
+            AtomicInteger pillsAddedContainer3 = new AtomicInteger();
+            AtomicInteger pillsAddedContainer4 = new AtomicInteger();
+            AtomicInteger pillsAddedContainer5 = new AtomicInteger();
+            if (!(((EditText) view.findViewById(R.id.calibrationContainer1Input)).getText().toString()).equals("")) {
+                rootDbRef.child("Patient/dispenser/currentAmountContainer1").get().addOnCompleteListener(task -> {
+                    currentNumberOfPillsContainer1.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
                     pillsAddedContainer1.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer1Input)).getText().toString()));
-                currentNumberOfPillsContainer1.getAndAdd(Integer.valueOf(String.valueOf(pillsAddedContainer1)));
-                dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer1",String.valueOf(currentNumberOfPillsContainer1.get()));
-            });
-            Log.d(TAG, "Button Pressed");
+                    currentNumberOfPillsContainer1.getAndAdd(Integer.valueOf(String.valueOf(pillsAddedContainer1)));
+                    dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer1",String.valueOf(currentNumberOfPillsContainer1.get()));
+                });
+            }
+            if (!(((EditText) view.findViewById(R.id.calibrationContainer2Input)).getText().toString()).equals("")) {
+                rootDbRef.child("Patient/dispenser/currentAmountContainer2").get().addOnCompleteListener(task -> {
+                    currentNumberOfPillsContainer2.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
+                    pillsAddedContainer2.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer2Input)).getText().toString()));
+                    currentNumberOfPillsContainer2.getAndAdd(Integer.valueOf(String.valueOf(pillsAddedContainer2)));
+                    dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer2",String.valueOf(currentNumberOfPillsContainer2.get()));
+                });
+            }
+            if (!(((EditText) view.findViewById(R.id.calibrationContainer3Input)).getText().toString()).equals("")) {
+                rootDbRef.child("Patient/dispenser/currentAmountContainer3").get().addOnCompleteListener(task -> {
+                    currentNumberOfPillsContainer3.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
+                    pillsAddedContainer3.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer3Input)).getText().toString()));
+                    currentNumberOfPillsContainer3.getAndAdd(Integer.valueOf(String.valueOf(pillsAddedContainer3)));
+                    dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer3",String.valueOf(currentNumberOfPillsContainer3.get()));
+                });
+            }
+            if (!(((EditText) view.findViewById(R.id.calibrationContainer4Input)).getText().toString()).equals("")) {
+                rootDbRef.child("Patient/dispenser/currentAmountContainer4").get().addOnCompleteListener(task -> {
+                    currentNumberOfPillsContainer4.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
+                    pillsAddedContainer4.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer4Input)).getText().toString()));
+                    currentNumberOfPillsContainer4.getAndAdd(Integer.valueOf(String.valueOf(pillsAddedContainer4)));
+                    dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer4",String.valueOf(currentNumberOfPillsContainer4.get()));
+                });
+            }
+            if (!(((EditText) view.findViewById(R.id.calibrationContainer5Input)).getText().toString()).equals("")) {
+                rootDbRef.child("Patient/dispenser/currentAmountContainer5").get().addOnCompleteListener(task -> {
+                    currentNumberOfPillsContainer5.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
+                    pillsAddedContainer5.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer5Input)).getText().toString()));
+                    currentNumberOfPillsContainer5.getAndAdd(Integer.valueOf(String.valueOf(pillsAddedContainer5)));
+                    dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer5",String.valueOf(currentNumberOfPillsContainer5.get()));
+                });
+            }
 
         });
 
