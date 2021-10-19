@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -28,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class dispenserSettingFragment extends Fragment {
 
@@ -65,35 +67,61 @@ public class dispenserSettingFragment extends Fragment {
 
         Button calibrationSaveButton = view.findViewById(R.id.calibrationSaveButton);
         calibrationSaveButton.setOnClickListener(v -> {
-            Log.d(TAG,getString(Integer.parseInt(getActivity().findViewById(R.id.calibrationContainer1Input).toString())));
-            AtomicInteger pillsAddedContainer1 = new AtomicInteger(Integer.parseInt(getActivity().findViewById(R.id.calibrationContainer1Input).toString()));
-            AtomicInteger pillsAddedContainer2 = new AtomicInteger(Integer.parseInt(getActivity().findViewById(R.id.calibrationContainer2Input).toString()));
-            AtomicInteger pillsAddedContainer3 = new AtomicInteger(Integer.parseInt(getActivity().findViewById(R.id.calibrationContainer3Input).toString()));
-            AtomicInteger pillsAddedContainer4 = new AtomicInteger(Integer.parseInt(getActivity().findViewById(R.id.calibrationContainer4Input).toString()));
-            AtomicInteger pillsAddedContainer5 = new AtomicInteger(Integer.parseInt(getActivity().findViewById(R.id.calibrationContainer5Input).toString()));
+            AtomicLong pillsAddedContainer1 = null;
+            AtomicLong pillsAddedContainer2 = null;
+            AtomicLong pillsAddedContainer3 = null;
+            AtomicLong pillsAddedContainer4 = null;
+            AtomicLong pillsAddedContainer5 = null;
+            if ((((EditText) view.findViewById(R.id.calibrationContainer1Input)).getText().toString()) != "")
+                pillsAddedContainer1 = new AtomicLong(Long.parseLong(((EditText) view.findViewById(R.id.calibrationContainer1Input)).getText().toString()));
+            if((((EditText) view.findViewById(R.id.calibrationContainer2Input)).getText().toString()) != "")
+                pillsAddedContainer2 = new AtomicLong(Long.parseLong(((EditText) view.findViewById(R.id.calibrationContainer2Input)).getText().toString()));
+            if ((((EditText) view.findViewById(R.id.calibrationContainer3Input)).getText().toString()) != "")
+                pillsAddedContainer3 = new AtomicLong(Long.parseLong(((EditText) view.findViewById(R.id.calibrationContainer3Input)).getText().toString()));
+            if ((((EditText) view.findViewById(R.id.calibrationContainer4Input)).getText().toString()) != "")
+                pillsAddedContainer4 = new AtomicLong(Long.parseLong(((EditText) view.findViewById(R.id.calibrationContainer4Input)).getText().toString()));
+            if ((((EditText) view.findViewById(R.id.calibrationContainer5Input)).getText().toString()) != "")
+                pillsAddedContainer5 = new AtomicLong(Long.parseLong(((EditText) view.findViewById(R.id.calibrationContainer5Input)).getText().toString()));
 
             dbHelper dbHelperCall = new dbHelper();
+            AtomicLong finalPillsAddedContainer1 = pillsAddedContainer1;
             rootDbRef.child("Patient/dispenser/currentAmountContainer1").get().addOnCompleteListener(task -> {
-                pillsAddedContainer1.set(pillsAddedContainer1.get() + (Integer) Objects.requireNonNull(task.getResult()).getValue());
+                finalPillsAddedContainer1.set(finalPillsAddedContainer1.get() + Long.parseLong((String) Objects.requireNonNull(task.getResult()).getValue()));
+                Log.d(TAG,String.valueOf(finalPillsAddedContainer1.get()));
+                Log.d(TAG,Objects.requireNonNull(task.getResult()).getValue().toString());
+                dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer1",String.valueOf(finalPillsAddedContainer1.get()));
             });
-            rootDbRef.child("Patient/dispenser/currentAmountContainer1").get().addOnCompleteListener(task -> {
-                pillsAddedContainer2.set(pillsAddedContainer2.get() + (Integer) Objects.requireNonNull(task.getResult()).getValue());
+            AtomicLong finalPillsAddedContainer2 = pillsAddedContainer2;
+            rootDbRef.child("Patient/dispenser/currentAmountContainer2").get().addOnCompleteListener(task -> {
+                finalPillsAddedContainer2.set(finalPillsAddedContainer2.get() + (Long) Objects.requireNonNull(task.getResult()).getValue());
+                Log.d(TAG,String.valueOf(finalPillsAddedContainer2.get()));
+                Log.d(TAG,Objects.requireNonNull(task.getResult()).getValue().toString());
+                dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer2",String.valueOf(finalPillsAddedContainer2.get()));
             });
-            rootDbRef.child("Patient/dispenser/currentAmountContainer1").get().addOnCompleteListener(task -> {
-                pillsAddedContainer3.set(pillsAddedContainer3.get() + (Integer) Objects.requireNonNull(task.getResult()).getValue());
+            AtomicLong finalPillsAddedContainer3 = pillsAddedContainer3;
+            rootDbRef.child("Patient/dispenser/currentAmountContainer3").get().addOnCompleteListener(task -> {
+                finalPillsAddedContainer3.set(finalPillsAddedContainer3.get() + (Long) Objects.requireNonNull(task.getResult()).getValue());
+                Log.d(TAG,String.valueOf(finalPillsAddedContainer3.get()));
+                Log.d(TAG,Objects.requireNonNull(task.getResult()).getValue().toString());
+                dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer3",String.valueOf(finalPillsAddedContainer3.get()));
             });
-            rootDbRef.child("Patient/dispenser/currentAmountContainer1").get().addOnCompleteListener(task -> {
-                pillsAddedContainer3.set(pillsAddedContainer3.get() + (Integer) Objects.requireNonNull(task.getResult()).getValue());
+            AtomicLong finalPillsAddedContainer4 = pillsAddedContainer4;
+            rootDbRef.child("Patient/dispenser/currentAmountContainer4").get().addOnCompleteListener(task -> {
+                finalPillsAddedContainer4.set(finalPillsAddedContainer4.get() + (Long) Objects.requireNonNull(task.getResult()).getValue());
+                Log.d(TAG,String.valueOf(finalPillsAddedContainer4.get()));
+                Log.d(TAG,Objects.requireNonNull(task.getResult()).getValue().toString());
+                dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer4",String.valueOf(finalPillsAddedContainer4.get()));
             });
-            rootDbRef.child("Patient/dispenser/currentAmountContainer1").get().addOnCompleteListener(task -> {
-                pillsAddedContainer3.set(pillsAddedContainer3.get() + (Integer) Objects.requireNonNull(task.getResult()).getValue());
+            AtomicLong finalPillsAddedContainer5 = pillsAddedContainer5;
+            rootDbRef.child("Patient/dispenser/currentAmountContainer5").get().addOnCompleteListener(task -> {
+                finalPillsAddedContainer5.set(finalPillsAddedContainer5.get() + (Long) Objects.requireNonNull(task.getResult()).getValue());
+                Log.d(TAG,String.valueOf(finalPillsAddedContainer5.get()));
+                Log.d(TAG,Objects.requireNonNull(task.getResult()).getValue().toString());
+                dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer5",String.valueOf(finalPillsAddedContainer5.get()));
             });
 
-            dbHelperCall.AddSimpleData("/Patient/dispenser/refillContainer1",getString(pillsAddedContainer1.get()));
-            dbHelperCall.AddSimpleData("/Patient/dispenser/refillContainer2",getString(pillsAddedContainer2.get()));
-            dbHelperCall.AddSimpleData("/Patient/dispenser/refillContainer3",getString(pillsAddedContainer3.get()));
-            dbHelperCall.AddSimpleData("/Patient/dispenser/refillContainer4",getString(pillsAddedContainer4.get()));
-            dbHelperCall.AddSimpleData("/Patient/dispenser/refillContainer5",getString(pillsAddedContainer5.get()));
+
+
         });
         setupDropDownMenu(view);
     }
