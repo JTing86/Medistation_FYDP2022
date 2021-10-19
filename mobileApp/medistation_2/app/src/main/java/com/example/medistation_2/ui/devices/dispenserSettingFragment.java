@@ -64,8 +64,8 @@ public class dispenserSettingFragment extends Fragment {
             dbHelperCall.AddSimpleData("/Patient/dispenser/refillContainer4",((Spinner) requireActivity().findViewById(R.id.dispenserContainer4DropDownMenu)).getSelectedItem().toString());
             dbHelperCall.AddSimpleData("/Patient/dispenser/refillContainer5",((Spinner) requireActivity().findViewById(R.id.dispenserContainer5DropDownMenu)).getSelectedItem().toString());
         });
-
-        Button calibrationSaveButton = view.findViewById(R.id.calibrationSaveButton);
+        /*
+        Button calibrationSaveButton = view.findViewById(R.id.wristbandSymptomSaveButton);
         calibrationSaveButton.setOnClickListener(v -> {
             AtomicLong pillsAddedContainer1 = null;
             AtomicLong pillsAddedContainer2 = null;
@@ -123,6 +123,26 @@ public class dispenserSettingFragment extends Fragment {
 
 
         });
+        */
+        Button calibrateSaveButton = view.findViewById(R.id.calibrationSaveButton);
+        calibrateSaveButton.setOnClickListener(v -> {
+            dbHelper dbHelperCall = new dbHelper();
+
+            AtomicInteger currentNumberOfPillsContainer1 = new AtomicInteger();
+            AtomicInteger pillsAddedContainer1 = new AtomicInteger();
+            rootDbRef.child("Patient/dispenser/currentAmountContainer1").get().addOnCompleteListener(task -> {
+                currentNumberOfPillsContainer1.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
+                Log.d(TAG,String.valueOf(currentNumberOfPillsContainer1.get()));
+                Log.d(TAG,Objects.requireNonNull(task.getResult()).getValue().toString());
+                if (!(((EditText) view.findViewById(R.id.calibrationContainer1Input)).getText().toString()).equals(""))
+                    pillsAddedContainer1.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer1Input)).getText().toString()));
+                currentNumberOfPillsContainer1.getAndAdd(Integer.valueOf(String.valueOf(pillsAddedContainer1)));
+                dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer1",String.valueOf(currentNumberOfPillsContainer1.get()));
+            });
+            Log.d(TAG, "Button Pressed");
+
+        });
+
         setupDropDownMenu(view);
     }
     public void setupDropDownMenu (View view) {
