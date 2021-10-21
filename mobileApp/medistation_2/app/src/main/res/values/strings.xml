@@ -26,4 +26,13 @@
     <string name="dispenser_setting_title">Dispenser Setting</string>
     <string name="dispenser_refill_title"> Refill Notification</string>
     <string name="dispenser_calibration_title"> Calibration</string>
+    <string name="medication_schedule"> Medication Schedule</string>
+    <string name="medications_schedule_monday"> Mon </string>
+    <string name="medications_schedule_tuesday"> Tues </string>
+    <string name="medications_schedule_wednesday"> Wed </string>
+    <string name="medications_schedule_thursday"> Thurs </string>
+    <string name="medications_schedule_friday"> Fri </string>
+    <string name="medications_schedule_saturday"> Set </string>
+    <string name="medications_schedule_sunday"> Sun </string>
+
 </resources>
