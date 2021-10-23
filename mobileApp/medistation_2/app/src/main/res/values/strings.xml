@@ -32,7 +32,8 @@
     <string name="medications_schedule_wednesday"> Wed </string>
     <string name="medications_schedule_thursday"> Thurs </string>
     <string name="medications_schedule_friday"> Fri </string>
-    <string name="medications_schedule_saturday"> Set </string>
+    <string name="medications_schedule_saturday"> Sat </string>
     <string name="medications_schedule_sunday"> Sun </string>
+    <string name="medication_schedule_dosage_per_day"> Number of dosages per day:</string>
 
 </resources>

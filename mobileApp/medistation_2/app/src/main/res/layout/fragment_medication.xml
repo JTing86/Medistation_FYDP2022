@@ -11,7 +11,161 @@ android:layout_height="match_parent">
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/pill2Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Pill xx"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.049"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pill1DosageTable" />
+
+        <TextView
+            android:id="@+id/pill2IntakeTimes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/medication_schedule_dosage_per_day"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.162"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pill2DayOfTheWeek" />
+
+        <Button
+            android:id="@+id/pill2SaveButton"
+            android:layout_width="57dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="8dp"
+            android:text="Save"
+            android:textSize="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.382"
+            app:layout_constraintStart_toEndOf="@+id/pill2DosageInput"
+            app:layout_constraintTop_toBottomOf="@+id/pill2DayOfTheWeek" />
+
+        <EditText
+            android:id="@+id/pill2DosageInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/white"
+            android:hint="# of dosage"
+            android:inputType="number"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.108"
+            app:layout_constraintStart_toEndOf="@+id/pill2IntakeTimes"
+            app:layout_constraintTop_toBottomOf="@+id/pill2DayOfTheWeek" />
+
+
+        <TableRow
+            android:id="@+id/pill2DayOfTheWeek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.619"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pill2Name">
+
+            <ToggleButton
+                android:id="@+id/pill2MonToggle"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/togglebutton_selector"
+                android:textOff="@string/medications_schedule_monday"
+                android:textOn="@string/medications_schedule_monday"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.083"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+            <ToggleButton
+                android:id="@+id/pill2TuesToggle"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/togglebutton_selector"
+                android:textOff="@string/medications_schedule_tuesday"
+                android:textOn="@string/medications_schedule_tuesday"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/pill1MonToggle"
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+            <ToggleButton
+                android:id="@+id/pill2WedToggle"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/togglebutton_selector"
+                android:textOff="@string/medications_schedule_wednesday"
+                android:textOn="@string/medications_schedule_wednesday"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/pill1MTuesToggle"
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+            <ToggleButton
+                android:id="@+id/pill2ThursToggle"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/togglebutton_selector"
+                android:textOff="@string/medications_schedule_thursday"
+                android:textOn="@string/medications_schedule_thursday"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/pill1WedToggle"
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+            <ToggleButton
+                android:id="@+id/pill2FriToggle"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/togglebutton_selector"
+                android:textOff="@string/medications_schedule_friday"
+                android:textOn="@string/medications_schedule_friday"
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@+id/pill1ThursToggle"
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+            <ToggleButton
+                android:id="@+id/pill2SatToggle"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/togglebutton_selector"
+                android:textOff="@string/medications_schedule_saturday"
+                android:textOn="@string/medications_schedule_saturday"
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@+id/pill1FriToggle"
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+            <ToggleButton
+                android:id="@+id/pill2SunToggle"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/togglebutton_selector"
+                android:textOff="@string/medications_schedule_sunday"
+                android:textOn="@string/medications_schedule_sunday"
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@+id/pill1FriToggle"
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+        </TableRow>
+
+        <TextView
+            android:id="@+id/pill1Name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -21,10 +175,10 @@ android:layout_height="match_parent">
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.05"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:layout_constraintTop_toBottomOf="@+id/medicationScheduleTitle" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/medicationScheduleTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -36,40 +190,32 @@ android:layout_height="match_parent">
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="368dp"
-            android:text="Button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.767"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
-
         <ToggleButton
-            android:id="@+id/toggleButton"
+            android:id="@+id/te"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="572dp"
             android:background="@drawable/togglebutton_selector"
             android:textOff="Wed"
             android:textOn="Wed"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintHorizontal_bias="0.567"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button" />
+            app:layout_constraintTop_toBottomOf="@+id/pill1DosageTable" />
 
         <TableRow
+            android:id="@+id/pill1DayOfTheWeek"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2">
+            app:layout_constraintTop_toBottomOf="@+id/pill1Name">
+
             <ToggleButton
                 android:id="@+id/pill1MonToggle"
-                android:layout_width="46dp"
-                android:layout_height="24dp"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/togglebutton_selector"
                 android:textOff="@string/medications_schedule_monday"
@@ -79,12 +225,11 @@ android:layout_height="match_parent">
                 app:layout_constraintHorizontal_bias="0.083"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
             <ToggleButton
                 android:id="@+id/pill1MTuesToggle"
-                android:layout_width="46dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginLeft="15dp"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/togglebutton_selector"
                 android:textOff="@string/medications_schedule_tuesday"
@@ -97,10 +242,8 @@ android:layout_height="match_parent">
 
             <ToggleButton
                 android:id="@+id/pill1WedToggle"
-                android:layout_width="46dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginLeft="15dp"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/togglebutton_selector"
                 android:textOff="@string/medications_schedule_wednesday"
@@ -113,10 +256,8 @@ android:layout_height="match_parent">
 
             <ToggleButton
                 android:id="@+id/pill1ThursToggle"
-                android:layout_width="46dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginLeft="15dp"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/togglebutton_selector"
                 android:textOff="@string/medications_schedule_thursday"
@@ -126,7 +267,107 @@ android:layout_height="match_parent">
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/pill1WedToggle"
                 app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+            <ToggleButton
+                android:id="@+id/pill1FriToggle"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/togglebutton_selector"
+                android:textOff="@string/medications_schedule_friday"
+                android:textOn="@string/medications_schedule_friday"
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@+id/pill1ThursToggle"
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+            <ToggleButton
+                android:id="@+id/pill1SatToggle"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/togglebutton_selector"
+                android:textOff="@string/medications_schedule_saturday"
+                android:textOn="@string/medications_schedule_saturday"
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@+id/pill1FriToggle"
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+            <ToggleButton
+                android:id="@+id/pill1SunToggle"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/togglebutton_selector"
+                android:textOff="@string/medications_schedule_sunday"
+                android:textOn="@string/medications_schedule_sunday"
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@+id/pill1FriToggle"
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
         </TableRow>
+
+        <TextView
+            android:id="@+id/pill1IntakeTimes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/medication_schedule_dosage_per_day"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.162"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pill1DayOfTheWeek" />
+
+        <EditText
+            android:id="@+id/pill1DosageInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/white"
+            android:hint="# of dosage"
+            android:inputType="number"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.108"
+            app:layout_constraintStart_toEndOf="@+id/pill1IntakeTimes"
+            app:layout_constraintTop_toBottomOf="@+id/pill1DayOfTheWeek" />
+
+        <Button
+            android:id="@+id/pill1SaveButton"
+            android:layout_width="57dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="8dp"
+            android:text="Save"
+            android:textSize="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.382"
+            app:layout_constraintStart_toEndOf="@+id/pill1DosageInput"
+            app:layout_constraintTop_toBottomOf="@+id/pill1DayOfTheWeek" />
+
+        <TableLayout
+            android:id="@+id/pill1DosageTable"
+            android:layout_width="349dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:stretchColumns="*"
+            app:layout_constraintEnd_toEndOf="@+id/pill1DayOfTheWeek"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/pill1DayOfTheWeek"
+            app:layout_constraintTop_toBottomOf="@+id/pill1DayOfTheWeek">
+
+        </TableLayout>
+
+        <TableLayout
+            android:id="@+id/pill2DosageTable"
+            android:layout_width="349dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:stretchColumns="*"
+            app:layout_constraintEnd_toEndOf="@+id/pill2DayOfTheWeek"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/pill2DayOfTheWeek"
+            app:layout_constraintTop_toBottomOf="@+id/pill2DayOfTheWeek">
+
+        </TableLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

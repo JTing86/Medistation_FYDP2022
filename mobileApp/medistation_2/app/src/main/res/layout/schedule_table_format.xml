@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditText
-        android:id="@+id/attrib_name"
+    <TextView
+        android:id="@+id/dosageCount"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="16dp"
         android:textStyle="bold"/>
     <Spinner
-        android:id="@+id/attrib_value"
-        android:gravity="right"
+        android:id="@+id/numberOfPills"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:gravity="start"
+        android:textStyle="normal"/>
+    <Spinner
+        android:id="@+id/pillHourDropDownList"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:gravity="start"
+        android:textStyle="normal"/>
+    <Spinner
+        android:id="@+id/pillMinDropDownList"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:gravity="start"
         android:textStyle="normal"/>
 </TableRow>
