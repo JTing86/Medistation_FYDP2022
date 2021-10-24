@@ -4,6 +4,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +33,7 @@ import com.example.medistation_2.ui.profile.ProfileFragment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class MedicationFragment extends Fragment {
 
@@ -58,36 +61,101 @@ public class MedicationFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
         Button pill1SaveButton = view.findViewById(R.id.pill1SaveButton);
+        /*
         Button pill2SaveButton = view.findViewById(R.id.pill2SaveButton);
+        Button pill3SaveButton = view.findViewById(R.id.pill3SaveButton);
+        Button pill4SaveButton = view.findViewById(R.id.pill4SaveButton);
+        Button pill5SaveButton = view.findViewById(R.id.pill5SaveButton);
 
+         */
         pill1SaveButton.setOnClickListener(v -> {
-            int pill1Dosage = Integer.parseInt(((EditText) view.findViewById(R.id.pill1DosageInput)).getText().toString());
-            TableLayout pill1Table = (TableLayout)view.findViewById(R.id.pill1DosageTable);
-            for(int i=1;i<=pill1Dosage;++i) {
-                    TableRow row = (TableRow)LayoutInflater.from(requireActivity()).inflate(R.layout.schedule_table_format, null);
-                    ((TextView)row.findViewById(R.id.dosageCount)).setText("Dose " + i);
-                    initializeDropDownList(row);
-                    pill1Table.addView(row);
+            Log.d(TAG,"Button Pressed");
+            TableLayout tableLayout = view.findViewById(R.id.pill1DosageTable);
+            int dosagePerDay = Integer.parseInt(((EditText) view.findViewById(R.id.pill1DosageInput)).getText().toString());
+            for (int i =1; i <= dosagePerDay; i++)
+            {
+                TableRow tableRow = new TableRow(getContext());
+                Spinner numberOfPillsDropDownList =  new Spinner(getContext());
+                Spinner hourDropDownList =  new Spinner(getContext());
+                Spinner minuteDropDownList = new Spinner(getContext());
+
+                TextView rowTitle = new TextView(getContext());
+                rowTitle.setText("Dose" + i);
+                //first number represent pill
+                //second number represent row
+                //third number represent which block of the row
+                rowTitle.setId(Integer.decode("1"+i+"1"));
+                rowTitle.setTextSize(18);
+                rowTitle.setTypeface(null,Typeface.BOLD);
+
+                numberOfPillsDropDownList.setId(Integer.decode("1"+i+"2"));
+                hourDropDownList.setId(Integer.decode("1"+i+"3"));
+                minuteDropDownList.setId(Integer.decode("1"+i+"4"));
+                Log.d(TAG,"Reached here");
+                initializeDropDownList(numberOfPillsDropDownList,hourDropDownList,minuteDropDownList);
+                tableRow.addView(rowTitle);
+                tableRow.addView(numberOfPillsDropDownList);
+                tableRow.addView(hourDropDownList);
+                tableRow.addView(minuteDropDownList);
+                tableLayout.addView(tableRow);
             }
         });
+        /*
         pill2SaveButton.setOnClickListener(v-> {
-            int pill2Dosage = Integer.parseInt(((EditText) view.findViewById(R.id.pill2DosageInput)).getText().toString());
-            TableLayout pill2Table = (TableLayout)view.findViewById(R.id.pill2DosageTable);
-            for(int i=1;i<=pill2Dosage;++i) {
+            int dosagePerDay = Integer.parseInt(((EditText) view.findViewById(R.id.pill2DosageInput)).getText().toString());
+            TableLayout scheduleTable = (TableLayout)view.findViewById(R.id.pill2DosageTable);
+            for(int i=1;i<=dosagePerDay;++i) {
                 TableRow row = (TableRow)LayoutInflater.from(requireActivity()).inflate(R.layout.schedule_table_format, null);
                 ((TextView)row.findViewById(R.id.dosageCount)).setText("Dose " + i);
                 initializeDropDownList(row);
-                pill2Table.addView(row);
+                scheduleTable.addView(row);
             }
         });
+        pill3SaveButton.setOnClickListener(v-> {
+            int dosagePerDay = Integer.parseInt(((EditText) view.findViewById(R.id.pill3DosageInput)).getText().toString());
+            TableLayout scheduleTable = (TableLayout)view.findViewById(R.id.pill3DosageTable);
+            for(int i=1;i<=dosagePerDay;++i) {
+                TableRow row = (TableRow)LayoutInflater.from(requireActivity()).inflate(R.layout.schedule_table_format, null);
+                ((TextView)row.findViewById(R.id.dosageCount)).setText("Dose " + i);
+                initializeDropDownList(row);
+                scheduleTable.addView(row);
+            }
+        });
+        pill4SaveButton.setOnClickListener(v-> {
+            int dosagePerDay = Integer.parseInt(((EditText) view.findViewById(R.id.pill4DosageInput)).getText().toString());
+            TableLayout scheduleTable = (TableLayout)view.findViewById(R.id.pill4DosageTable);
+            for(int i=1;i<=dosagePerDay;++i) {
+                TableRow row = (TableRow)LayoutInflater.from(requireActivity()).inflate(R.layout.schedule_table_format, null);
+                ((TextView)row.findViewById(R.id.dosageCount)).setText("Dose " + i);
+                initializeDropDownList(row);
+                scheduleTable.addView(row);
+            }
+        });
+        pill5SaveButton.setOnClickListener(v-> {
+            int dosagePerDay = Integer.parseInt(((EditText) view.findViewById(R.id.pill5DosageInput)).getText().toString());
+            TableLayout scheduleTable = (TableLayout)view.findViewById(R.id.pill5DosageTable);
+            for(int i=1;i<=dosagePerDay;++i) {
+                TableRow row = (TableRow)LayoutInflater.from(requireActivity()).inflate(R.layout.schedule_table_format, null);
+                ((TextView)row.findViewById(R.id.dosageCount)).setText("Dose " + i);
+                initializeDropDownList(row);
+                scheduleTable.addView(row);
+            }
+        });
+         */
+        Button scheduleSaveButton = view.findViewById(R.id.scheduleSaveButton);
+        scheduleSaveButton.setOnClickListener(v-> {
+           saveButtonPress(view);
+        });
     }
-    public void initializeDropDownList(TableRow row){
-        Spinner numberOfPillsDropDownList = row.findViewById(R.id.numberOfPills);
-        Spinner hourDropDownList = row.findViewById(R.id.pillHourDropDownList);
-        Spinner minuteDropDownList = row.findViewById(R.id.pillMinDropDownList);
+    public void initializeDropDownList(Spinner numberOfPillsDropDownList, Spinner hourDropDownList, Spinner minuteDropDownList ){
+
+        numberOfPillsDropDownList.setGravity(Gravity.CENTER);
+        hourDropDownList.setGravity(Gravity.CENTER);
+        minuteDropDownList.setGravity(Gravity.CENTER);
+
         String[] dosage = new String[] {
                 "Dosage",
-                "01","02","03","04","05","06","07","08","09","10"};
+                "1","2","3","4","5","6","7","8","9","10"};
         String[] hour = new String[]{
                 "Hour",
                 "00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23"};
@@ -100,7 +168,7 @@ public class MedicationFragment extends Fragment {
         List<String> hourList = new ArrayList<>(Arrays.asList(hour));
         List<String> minuteList = new ArrayList<>(Arrays.asList(minute));
         //Create dosage dropdown menu
-        ArrayAdapter<String> dosageMenuArrayAdapter = new ArrayAdapter<String> (getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, dosageList) {
+        ArrayAdapter<String> dosageMenuArrayAdapter = new ArrayAdapter<String> (requireActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, dosageList) {
             @Override
             public boolean isEnabled(int position){
                 // Disable the first item from Spinner
@@ -159,5 +227,10 @@ public class MedicationFragment extends Fragment {
         hourDropDownList.setAdapter(hourMenuArrayAdapter);
         minuteMenuArrayAdapter.setDropDownViewResource(R.layout.drop_down_menu_spinner);
         minuteDropDownList.setAdapter(minuteMenuArrayAdapter);
+    }
+    public void saveButtonPress (View view){
+        Log.d(TAG,"Save Button Pressed");
+        Log.d(TAG,((Spinner) view.findViewById(Integer.decode("112"))).getSelectedItem().toString());
+        Log.d(TAG,((Spinner) view.findViewById(Integer.decode("113"))).getSelectedItem().toString());
     }
 }
