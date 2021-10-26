@@ -21,14 +21,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 //Testing Comment
 public class MainActivity extends AppCompatActivity {
 
-    public static int setUpMenuCounter;
-    private ActivityMainBinding binding;
     private static final String TAG = MainActivity.class.toString();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        com.example.medistation_2.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         BottomNavigationView navView = findViewById(R.id.nav_view);

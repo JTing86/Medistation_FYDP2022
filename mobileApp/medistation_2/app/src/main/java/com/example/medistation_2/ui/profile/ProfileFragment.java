@@ -64,10 +64,10 @@ public class ProfileFragment extends Fragment {
             Log.d(TAG,"User Info save button pressed");
             dbHelper dbHelperCall = new dbHelper();
 
-            dbHelperCall.AddSimpleData("/Patient/name",((EditText) view.findViewById(R.id.profileNameInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/email/",((EditText) view.findViewById(R.id.profileEmailInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/emergencyName", ((EditText) view.findViewById(R.id.profileEmergencyNameInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/emergencyNumber",((EditText) view.findViewById(R.id.profileEmergencyNumberInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/name",((EditText) view.findViewById(R.id.profileNameInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/email/",((EditText) view.findViewById(R.id.profileEmailInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/emergencyName", ((EditText) view.findViewById(R.id.profileEmergencyNameInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/emergencyNumber",((EditText) view.findViewById(R.id.profileEmergencyNumberInput)).getText().toString());
 
         });
         //Save past medication record to database
@@ -76,37 +76,37 @@ public class ProfileFragment extends Fragment {
             Log.d(TAG,"Save button pressed");
             dbHelper dbHelperCall = new dbHelper();
             //Row 2
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row2/medName",((EditText) view.findViewById(R.id.profileRowTwoMedInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row2/medDosage",((EditText) view.findViewById(R.id.profileRowTwoDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row2/medDuration",((EditText) view.findViewById(R.id.profileRowTwoDurationInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row2/medName",((EditText) view.findViewById(R.id.profileRowTwoMedInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row2/medDosage",((EditText) view.findViewById(R.id.profileRowTwoDosageInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row2/medDuration",((EditText) view.findViewById(R.id.profileRowTwoDurationInput)).getText().toString());
             //Row 3
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row3/medName",((EditText) view.findViewById(R.id.profileRowThreeMedInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row3/medDosage",((EditText) view.findViewById(R.id.profileRowThreeDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row3/medDuration",((EditText) view.findViewById(R.id.profileRowThreeDurationInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row3/medName",((EditText) view.findViewById(R.id.profileRowThreeMedInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row3/medDosage",((EditText) view.findViewById(R.id.profileRowThreeDosageInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row3/medDuration",((EditText) view.findViewById(R.id.profileRowThreeDurationInput)).getText().toString());
             //Row 4
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row4/medName",((EditText) view.findViewById(R.id.profileRowFourMedInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row4/medDosage",((EditText) view.findViewById(R.id.profileRowFourDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row4/medDuration",((EditText) view.findViewById(R.id.profileRowFourDurationInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row4/medName",((EditText) view.findViewById(R.id.profileRowFourMedInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row4/medDosage",((EditText) view.findViewById(R.id.profileRowFourDosageInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row4/medDuration",((EditText) view.findViewById(R.id.profileRowFourDurationInput)).getText().toString());
             //Row 5
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row5/medName",((EditText) view.findViewById(R.id.profileRowFiveMedInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row5/medDosage",((EditText) view.findViewById(R.id.profileRowFiveDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row5/medDuration",((EditText) view.findViewById(R.id.profileRowFiveDurationInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row5/medName",((EditText) view.findViewById(R.id.profileRowFiveMedInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row5/medDosage",((EditText) view.findViewById(R.id.profileRowFiveDosageInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row5/medDuration",((EditText) view.findViewById(R.id.profileRowFiveDurationInput)).getText().toString());
             //Row 6
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row6/medName",((EditText) view.findViewById(R.id.profileRowSixMedInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row6/medDosage",((EditText) view.findViewById(R.id.profileRowSixDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row6/medDuration",((EditText) view.findViewById(R.id.profileRowSixDurationInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row6/medName",((EditText) view.findViewById(R.id.profileRowSixMedInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row6/medDosage",((EditText) view.findViewById(R.id.profileRowSixDosageInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row6/medDuration",((EditText) view.findViewById(R.id.profileRowSixDurationInput)).getText().toString());
             //Row 7
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row7/medName",((EditText) view.findViewById(R.id.profileRowSevenMedInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row7/medDosage",((EditText) view.findViewById(R.id.profileRowSevenDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row7/medDuration",((EditText) view.findViewById(R.id.profileRowSevenDurationInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row7/medName",((EditText) view.findViewById(R.id.profileRowSevenMedInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row7/medDosage",((EditText) view.findViewById(R.id.profileRowSevenDosageInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row7/medDuration",((EditText) view.findViewById(R.id.profileRowSevenDurationInput)).getText().toString());
             //Row 8
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row8/medName",((EditText) view.findViewById(R.id.profileRowEightMedInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row8/medDosage",((EditText) view.findViewById(R.id.profileRowEightDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row8/medDuration",((EditText) view.findViewById(R.id.profileRowEightDurationInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row8/medName",((EditText) view.findViewById(R.id.profileRowEightMedInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row8/medDosage",((EditText) view.findViewById(R.id.profileRowEightDosageInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row8/medDuration",((EditText) view.findViewById(R.id.profileRowEightDurationInput)).getText().toString());
             // Row 9
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row9/medName",((EditText) view.findViewById(R.id.profileRowNineMedInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row9/medDosage",((EditText) view.findViewById(R.id.profileRowNineDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleData("/Patient/pastMedications/row9/medDuration",((EditText) view.findViewById(R.id.profileRowNineDurationInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row9/medName",((EditText) view.findViewById(R.id.profileRowNineMedInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row9/medDosage",((EditText) view.findViewById(R.id.profileRowNineDosageInput)).getText().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row9/medDuration",((EditText) view.findViewById(R.id.profileRowNineDurationInput)).getText().toString());
 
         });
 
@@ -122,7 +122,7 @@ public class ProfileFragment extends Fragment {
             SimpleDateFormat df = new SimpleDateFormat("yyyy,MM,dd", Locale.getDefault());
             String formattedDate = df.format(currentTime);
 
-           dbHelperCall.AddSimpleData("/Patient/symptom/"+symptomName+"/"+formattedDate+","+symptomHour+","+symptomMinute,symptomSeverity);
+           dbHelperCall.AddSimpleStringData("/Patient/symptom/"+symptomName+"/"+formattedDate+","+symptomHour+","+symptomMinute,symptomSeverity);
         });
 
         popualateUserData(view);

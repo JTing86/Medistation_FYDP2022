@@ -17,8 +17,6 @@ import java.util.ArrayList;
 
 public class MedSearchActivity extends AppCompatActivity {
     private ArrayList<String> meds;
-    private RecyclerView recyclerView;
-    private MedSearchAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,10 +26,10 @@ public class MedSearchActivity extends AppCompatActivity {
         meds = new ArrayList<>();
         populateMeds();
 
-        recyclerView = findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        adapter = new MedSearchAdapter(meds);
+        MedSearchAdapter adapter = new MedSearchAdapter(meds);
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);

@@ -35,5 +35,7 @@
     <string name="medications_schedule_saturday"> Sat </string>
     <string name="medications_schedule_sunday"> Sun </string>
     <string name="medication_schedule_dosage_per_day"> Number of dosages per day:</string>
+    <string name="medication_schedule_add"> Add </string>
+    <string name="medication_dosage_amount"># of dosage</string>
 
 </resources>

@@ -15,20 +15,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.medistation_2.R;
 import com.example.medistation_2.helperFunctions.dbHelper;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class wristbandSettingFragment extends Fragment {
 
@@ -56,10 +51,10 @@ public class wristbandSettingFragment extends Fragment {
         profileUserInfoSaveButton.setOnClickListener(v -> {
             Log.d(TAG,"User Info save button pressed");
             dbHelper dbHelperCall = new dbHelper();
-            dbHelperCall.AddSimpleData("/Patient/wristband/batnotification",((Spinner) requireActivity().findViewById(R.id.wristbandBatteryNotificationDropDown)).getSelectedItem().toString());
-            dbHelperCall.AddSimpleData("/Patient/wristband/symptom1button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton1DropDownMenu)).getSelectedItem().toString());
-            dbHelperCall.AddSimpleData("/Patient/wristband/symptom2button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton2DropDownMenu)).getSelectedItem().toString());
-            dbHelperCall.AddSimpleData("/Patient/wristband/symptom3button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton3DropDownMenu)).getSelectedItem().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/wristband/batnotification",((Spinner) requireActivity().findViewById(R.id.wristbandBatteryNotificationDropDown)).getSelectedItem().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/wristband/symptom1button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton1DropDownMenu)).getSelectedItem().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/wristband/symptom2button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton2DropDownMenu)).getSelectedItem().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/wristband/symptom3button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton3DropDownMenu)).getSelectedItem().toString());
 
         });
         setupDropDownMenu(view);
