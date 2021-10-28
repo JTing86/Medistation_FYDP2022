@@ -1,5 +1,6 @@
 package com.example.medistation_2.ui.medication;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -11,10 +12,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -31,16 +30,11 @@ import com.example.medistation_2.helperFunctions.dbHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MedicationFragment extends Fragment {
 
-    private MedicationViewModel mViewModel;
     private static final String TAG = MedicationFragment.class.getSimpleName();
-
-    public static MedicationFragment newInstance() {
-        return new MedicationFragment();
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -52,10 +46,10 @@ public class MedicationFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(MedicationViewModel.class);
-        // TODO: Use the ViewModel
+        MedicationViewModel mViewModel = new ViewModelProvider(this).get(MedicationViewModel.class);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
@@ -64,12 +58,16 @@ public class MedicationFragment extends Fragment {
         Button pill3SaveButton = view.findViewById(R.id.pill3SaveButton);
         Button pill4SaveButton = view.findViewById(R.id.pill4SaveButton);
         Button pill5SaveButton = view.findViewById(R.id.pill5SaveButton);
-
+        AtomicInteger pill1DailyDosage = new AtomicInteger();
+        AtomicInteger pill2DailyDosage = new AtomicInteger();
+        AtomicInteger pill3DailyDosage = new AtomicInteger();
+        AtomicInteger pill4DailyDosage = new AtomicInteger();
+        AtomicInteger pill5DailyDosage = new AtomicInteger();
         pill1SaveButton.setOnClickListener(v-> {
             Log.d(TAG,"pill1SaveButton Pressed");
             TableLayout tableLayout = view.findViewById(R.id.pill1DosageTable);
-            int dosagePerDay = Integer.parseInt(((EditText) view.findViewById(R.id.pill1DosageInput)).getText().toString());
-            for (int i =1; i <= dosagePerDay; i++)
+            pill1DailyDosage.set(Integer.parseInt(((EditText) view.findViewById(R.id.pill1DosageInput)).getText().toString()));
+            for (int i =1; i <= pill1DailyDosage.get(); i++)
             {
                 TableRow tableRow = new TableRow(getContext());
                 Spinner numberOfPillsDropDownList =  new Spinner(getContext());
@@ -82,6 +80,7 @@ public class MedicationFragment extends Fragment {
                 //second number represent row
                 //third number represent which block of the row
                 rowTitle.setId(Integer.decode("1"+i+"1"));
+                Log.d(TAG,String.valueOf(rowTitle.getId()));
                 rowTitle.setTextSize(18);
                 rowTitle.setTypeface(null,Typeface.BOLD);
 
@@ -99,8 +98,8 @@ public class MedicationFragment extends Fragment {
         pill2SaveButton.setOnClickListener(v-> {
             Log.d(TAG,"pill2SaveButton Pressed");
             TableLayout tableLayout = view.findViewById(R.id.pill2DosageTable);
-            int dosagePerDay = Integer.parseInt(((EditText) view.findViewById(R.id.pill2DosageInput)).getText().toString());
-            for (int i =1; i <= dosagePerDay; i++)
+            pill2DailyDosage.set(Integer.parseInt(((EditText) view.findViewById(R.id.pill2DosageInput)).getText().toString()));
+            for (int i =1; i <= pill2DailyDosage.get(); i++)
             {
                 TableRow tableRow = new TableRow(getContext());
                 Spinner numberOfPillsDropDownList =  new Spinner(getContext());
@@ -130,8 +129,8 @@ public class MedicationFragment extends Fragment {
         pill3SaveButton.setOnClickListener(v-> {
             Log.d(TAG,"pill3SaveButton Pressed");
             TableLayout tableLayout = view.findViewById(R.id.pill3DosageTable);
-            int dosagePerDay = Integer.parseInt(((EditText) view.findViewById(R.id.pill3DosageInput)).getText().toString());
-            for (int i =1; i <= dosagePerDay; i++)
+            pill3DailyDosage.set(Integer.parseInt(((EditText) view.findViewById(R.id.pill3DosageInput)).getText().toString()));
+            for (int i =1; i <= pill3DailyDosage.get(); i++)
             {
                 TableRow tableRow = new TableRow(getContext());
                 Spinner numberOfPillsDropDownList =  new Spinner(getContext());
@@ -161,8 +160,8 @@ public class MedicationFragment extends Fragment {
         pill4SaveButton.setOnClickListener(v-> {
             Log.d(TAG,"pill4SaveButton Pressed");
             TableLayout tableLayout = view.findViewById(R.id.pill4DosageTable);
-            int dosagePerDay = Integer.parseInt(((EditText) view.findViewById(R.id.pill4DosageInput)).getText().toString());
-            for (int i =1; i <= dosagePerDay; i++)
+            pill4DailyDosage.set(Integer.parseInt(((EditText) view.findViewById(R.id.pill4DosageInput)).getText().toString()));
+            for (int i =1; i <= pill4DailyDosage.get(); i++)
             {
                 TableRow tableRow = new TableRow(getContext());
                 Spinner numberOfPillsDropDownList =  new Spinner(getContext());
@@ -192,8 +191,8 @@ public class MedicationFragment extends Fragment {
         pill5SaveButton.setOnClickListener(v-> {
             Log.d(TAG,"pill5SaveButton Pressed");
             TableLayout tableLayout = view.findViewById(R.id.pill5DosageTable);
-            int dosagePerDay = Integer.parseInt(((EditText) view.findViewById(R.id.pill5DosageInput)).getText().toString());
-            for (int i =1; i <= dosagePerDay; i++)
+            pill5DailyDosage.set(Integer.parseInt(((EditText) view.findViewById(R.id.pill5DosageInput)).getText().toString()));
+            for (int i =1; i <= pill5DailyDosage.get(); i++)
             {
                 TableRow tableRow = new TableRow(getContext());
                 Spinner numberOfPillsDropDownList =  new Spinner(getContext());
@@ -220,24 +219,17 @@ public class MedicationFragment extends Fragment {
                 tableLayout.addView(tableRow);
             }
         });
-
         Button scheduleSaveButton = view.findViewById(R.id.scheduleSaveButton);
-        scheduleSaveButton.setOnClickListener(v-> {
-            savePillScheduleToDatabase(view,1);
-        });
+        scheduleSaveButton.setOnClickListener(v-> savePillScheduleToDatabase(view,1,pill1DailyDosage.get()));
     }
     public void initializeDropDownList(Spinner numberOfPillsDropDownList, Spinner hourDropDownList, Spinner minuteDropDownList ){
-
         numberOfPillsDropDownList.setGravity(Gravity.CENTER);
         hourDropDownList.setGravity(Gravity.CENTER);
         minuteDropDownList.setGravity(Gravity.CENTER);
-
         String[] dosage = new String[] {
-                "Dosage",
-                "1","2","3","4","5","6","7","8","9","10"};
+                "Dosage", "1","2","3","4","5","6","7","8","9","10"};
         String[] hour = new String[]{
-                "Hour",
-                "00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23"};
+                "Hour", "00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23"};
         String[] minute = new String[]{
                 "Min",
                 "00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23",
@@ -250,8 +242,7 @@ public class MedicationFragment extends Fragment {
         ArrayAdapter<String> dosageMenuArrayAdapter = new ArrayAdapter<String> (requireActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, dosageList) {
             @Override
             public boolean isEnabled(int position){
-                // Disable the first item from Spinner
-                // First item will be use for hint
+                // Disable the first item from spinner, to be used for hints
                 return position != 0; }
             @Override
             public View getDropDownView(int position,View dropDownView, @NonNull ViewGroup parent) {
@@ -268,8 +259,7 @@ public class MedicationFragment extends Fragment {
         ArrayAdapter<String> hourMenuArrayAdapter = new ArrayAdapter<String> (getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, hourList) {
             @Override
             public boolean isEnabled(int position){
-                // Disable the first item from Spinner
-                // First item will be use for hint
+                // Disable the first item from spinner,to be used for hints
                 return position != 0; }
             @Override
             public View getDropDownView(int position, View dropDownView, @NonNull ViewGroup parent) {
@@ -307,24 +297,27 @@ public class MedicationFragment extends Fragment {
         minuteMenuArrayAdapter.setDropDownViewResource(R.layout.drop_down_menu_spinner);
         minuteDropDownList.setAdapter(minuteMenuArrayAdapter);
     }
-    public void savePillScheduleToDatabase (View view, int pillNumber){
-        String pillName = "pill"+String.valueOf(pillNumber);
+    public void savePillScheduleToDatabase (View view, int pillNumber,int dailyDosage){
+        String pillName = "pill"+ pillNumber;
         dbHelper dbHelperCall = new dbHelper();
+        //retrieve the day of the week selected by user
         String [] toggleButton = new String [] {
-                pillName+"MonToggle",
-                pillName+"TuesToggle",
-                pillName+"WedToggle",
-                pillName+"ThursToggle",
-                pillName+"FriToggle",
-                pillName+"SatToggle",
-                pillName+"SunToggle",};
+                pillName+"MonToggle", pillName+"TuesToggle", pillName+"WedToggle", pillName+"ThursToggle", pillName+"FriToggle", pillName+"SatToggle", pillName+"SunToggle"};
+        String [] dayOfTheWeek = new String [] {
+                pillName+"01", pillName+"02", pillName+"03", pillName+"04", pillName+"05", pillName+"06", pillName+"07"};
         for (int i=0; i<=6; i++){
             int RID = view.getResources().getIdentifier(toggleButton[i],"id", requireActivity().getPackageName());
             ToggleButton dayOfTheWeekToggleButton = view.findViewById(RID);
-            if (dayOfTheWeekToggleButton.isChecked())
-                dbHelperCall.AddSimpleBooleanData("/Patient/medication/pill"+String.valueOf(i)+"/"+toggleButton[i],true);
-            else
-                dbHelperCall.AddSimpleBooleanData("/Patient/medication/pill"+String.valueOf(i)+"/"+toggleButton[i],false);
+            dbHelperCall.AddSimpleBooleanData("/Patient/medication/"+pillName+"/"+dayOfTheWeek[i], dayOfTheWeekToggleButton.isChecked());
+        }
+        //retrieve the dosage schedule for single day
+        for (int i=1;i<=dailyDosage;i++){
+            //String rowTitle = ((TextView) view.findViewById(Integer.decode(pillNumber+String.valueOf(i)+"1"))).getText().toString().toLowerCase();
+            String numberOfPills = ((Spinner) requireActivity().findViewById(Integer.decode(pillNumber+String.valueOf(i)+"2"))).getSelectedItem().toString();
+            String hour = ((Spinner) requireActivity().findViewById(Integer.decode(pillNumber+String.valueOf(i)+"3"))).getSelectedItem().toString();
+            String minute = ((Spinner) requireActivity().findViewById(Integer.decode(pillNumber+String.valueOf(i)+"4"))).getSelectedItem().toString();
+            String data = numberOfPills+","+hour+","+minute;
+            dbHelperCall.AddSimpleStringData("Patient/medication/"+pillName+"/dosage/dose"+i,data);
         }
     }
 }
