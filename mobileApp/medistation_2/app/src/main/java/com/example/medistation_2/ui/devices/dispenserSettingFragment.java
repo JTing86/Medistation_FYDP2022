@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class dispenserSettingFragment extends Fragment {
 
@@ -58,11 +56,11 @@ public class dispenserSettingFragment extends Fragment {
         Button refillSaveButton = view.findViewById(R.id.refillSaveButton);
         refillSaveButton.setOnClickListener(v -> {
             dbHelper dbHelperCall = new dbHelper();
-            dbHelperCall.AddSimpleData("/Patient/dispenser/refillContainer1",((Spinner) requireActivity().findViewById(R.id.dispenserContainer1DropDownMenu)).getSelectedItem().toString());
-            dbHelperCall.AddSimpleData("/Patient/dispenser/refillContainer2",((Spinner) requireActivity().findViewById(R.id.dispenserContainer2DropDownMenu)).getSelectedItem().toString());
-            dbHelperCall.AddSimpleData("/Patient/dispenser/refillContainer3",((Spinner) requireActivity().findViewById(R.id.dispenserContainer3DropDownMenu)).getSelectedItem().toString());
-            dbHelperCall.AddSimpleData("/Patient/dispenser/refillContainer4",((Spinner) requireActivity().findViewById(R.id.dispenserContainer4DropDownMenu)).getSelectedItem().toString());
-            dbHelperCall.AddSimpleData("/Patient/dispenser/refillContainer5",((Spinner) requireActivity().findViewById(R.id.dispenserContainer5DropDownMenu)).getSelectedItem().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/dispenser/refillContainer1",((Spinner) requireActivity().findViewById(R.id.dispenserContainer1DropDownMenu)).getSelectedItem().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/dispenser/refillContainer2",((Spinner) requireActivity().findViewById(R.id.dispenserContainer2DropDownMenu)).getSelectedItem().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/dispenser/refillContainer3",((Spinner) requireActivity().findViewById(R.id.dispenserContainer3DropDownMenu)).getSelectedItem().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/dispenser/refillContainer4",((Spinner) requireActivity().findViewById(R.id.dispenserContainer4DropDownMenu)).getSelectedItem().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/dispenser/refillContainer5",((Spinner) requireActivity().findViewById(R.id.dispenserContainer5DropDownMenu)).getSelectedItem().toString());
         });
         /*
         Button calibrationSaveButton = view.findViewById(R.id.wristbandSymptomSaveButton);
@@ -144,7 +142,7 @@ public class dispenserSettingFragment extends Fragment {
                     currentNumberOfPillsContainer1.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
                     pillsAddedContainer1.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer1Input)).getText().toString()));
                     currentNumberOfPillsContainer1.getAndAdd(Integer.valueOf(String.valueOf(pillsAddedContainer1)));
-                    dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer1",String.valueOf(currentNumberOfPillsContainer1.get()));
+                    dbHelperCall.AddSimpleStringData("/Patient/dispenser/currentAmountContainer1",String.valueOf(currentNumberOfPillsContainer1.get()));
                 });
             }
             if (!(((EditText) view.findViewById(R.id.calibrationContainer2Input)).getText().toString()).equals("")) {
@@ -152,7 +150,7 @@ public class dispenserSettingFragment extends Fragment {
                     currentNumberOfPillsContainer2.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
                     pillsAddedContainer2.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer2Input)).getText().toString()));
                     currentNumberOfPillsContainer2.getAndAdd(Integer.valueOf(String.valueOf(pillsAddedContainer2)));
-                    dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer2",String.valueOf(currentNumberOfPillsContainer2.get()));
+                    dbHelperCall.AddSimpleStringData("/Patient/dispenser/currentAmountContainer2",String.valueOf(currentNumberOfPillsContainer2.get()));
                 });
             }
             if (!(((EditText) view.findViewById(R.id.calibrationContainer3Input)).getText().toString()).equals("")) {
@@ -160,7 +158,7 @@ public class dispenserSettingFragment extends Fragment {
                     currentNumberOfPillsContainer3.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
                     pillsAddedContainer3.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer3Input)).getText().toString()));
                     currentNumberOfPillsContainer3.getAndAdd(Integer.valueOf(String.valueOf(pillsAddedContainer3)));
-                    dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer3",String.valueOf(currentNumberOfPillsContainer3.get()));
+                    dbHelperCall.AddSimpleStringData("/Patient/dispenser/currentAmountContainer3",String.valueOf(currentNumberOfPillsContainer3.get()));
                 });
             }
             if (!(((EditText) view.findViewById(R.id.calibrationContainer4Input)).getText().toString()).equals("")) {
@@ -168,7 +166,7 @@ public class dispenserSettingFragment extends Fragment {
                     currentNumberOfPillsContainer4.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
                     pillsAddedContainer4.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer4Input)).getText().toString()));
                     currentNumberOfPillsContainer4.getAndAdd(Integer.valueOf(String.valueOf(pillsAddedContainer4)));
-                    dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer4",String.valueOf(currentNumberOfPillsContainer4.get()));
+                    dbHelperCall.AddSimpleStringData("/Patient/dispenser/currentAmountContainer4",String.valueOf(currentNumberOfPillsContainer4.get()));
                 });
             }
             if (!(((EditText) view.findViewById(R.id.calibrationContainer5Input)).getText().toString()).equals("")) {
@@ -176,7 +174,7 @@ public class dispenserSettingFragment extends Fragment {
                     currentNumberOfPillsContainer5.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
                     pillsAddedContainer5.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer5Input)).getText().toString()));
                     currentNumberOfPillsContainer5.getAndAdd(Integer.valueOf(String.valueOf(pillsAddedContainer5)));
-                    dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer5",String.valueOf(currentNumberOfPillsContainer5.get()));
+                    dbHelperCall.AddSimpleStringData("/Patient/dispenser/currentAmountContainer5",String.valueOf(currentNumberOfPillsContainer5.get()));
                 });
             }
 
