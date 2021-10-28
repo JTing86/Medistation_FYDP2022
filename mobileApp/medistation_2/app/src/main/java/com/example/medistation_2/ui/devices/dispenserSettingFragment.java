@@ -31,11 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class dispenserSettingFragment extends Fragment {
 
-    private DispenserSettingViewModel mViewModel;
     private static final String TAG = dispenserSettingFragment.class.getSimpleName();
-    public static dispenserSettingFragment newInstance() {
-        return new dispenserSettingFragment();
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -46,8 +42,7 @@ public class dispenserSettingFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(DispenserSettingViewModel.class);
-        // TODO: Use the ViewModel
+        DispenserSettingViewModel mViewModel = new ViewModelProvider(this).get(DispenserSettingViewModel.class);
     }
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -62,71 +57,10 @@ public class dispenserSettingFragment extends Fragment {
             dbHelperCall.AddSimpleStringData("/Patient/dispenser/refillContainer4",((Spinner) requireActivity().findViewById(R.id.dispenserContainer4DropDownMenu)).getSelectedItem().toString());
             dbHelperCall.AddSimpleStringData("/Patient/dispenser/refillContainer5",((Spinner) requireActivity().findViewById(R.id.dispenserContainer5DropDownMenu)).getSelectedItem().toString());
         });
-        /*
-        Button calibrationSaveButton = view.findViewById(R.id.wristbandSymptomSaveButton);
-        calibrationSaveButton.setOnClickListener(v -> {
-            AtomicLong pillsAddedContainer1 = null;
-            AtomicLong pillsAddedContainer2 = null;
-            AtomicLong pillsAddedContainer3 = null;
-            AtomicLong pillsAddedContainer4 = null;
-            AtomicLong pillsAddedContainer5 = null;
-            if ((((EditText) view.findViewById(R.id.calibrationContainer1Input)).getText().toString()) != "")
-                pillsAddedContainer1 = new AtomicLong(Long.parseLong(((EditText) view.findViewById(R.id.calibrationContainer1Input)).getText().toString()));
-            if((((EditText) view.findViewById(R.id.calibrationContainer2Input)).getText().toString()) != "")
-                pillsAddedContainer2 = new AtomicLong(Long.parseLong(((EditText) view.findViewById(R.id.calibrationContainer2Input)).getText().toString()));
-            if ((((EditText) view.findViewById(R.id.calibrationContainer3Input)).getText().toString()) != "")
-                pillsAddedContainer3 = new AtomicLong(Long.parseLong(((EditText) view.findViewById(R.id.calibrationContainer3Input)).getText().toString()));
-            if ((((EditText) view.findViewById(R.id.calibrationContainer4Input)).getText().toString()) != "")
-                pillsAddedContainer4 = new AtomicLong(Long.parseLong(((EditText) view.findViewById(R.id.calibrationContainer4Input)).getText().toString()));
-            if ((((EditText) view.findViewById(R.id.calibrationContainer5Input)).getText().toString()) != "")
-                pillsAddedContainer5 = new AtomicLong(Long.parseLong(((EditText) view.findViewById(R.id.calibrationContainer5Input)).getText().toString()));
-
-            dbHelper dbHelperCall = new dbHelper();
-            AtomicLong finalPillsAddedContainer1 = pillsAddedContainer1;
-            rootDbRef.child("Patient/dispenser/currentAmountContainer1").get().addOnCompleteListener(task -> {
-                finalPillsAddedContainer1.set(finalPillsAddedContainer1.get() + Long.parseLong((String) Objects.requireNonNull(task.getResult()).getValue()));
-                Log.d(TAG,String.valueOf(finalPillsAddedContainer1.get()));
-                Log.d(TAG,Objects.requireNonNull(task.getResult()).getValue().toString());
-                dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer1",String.valueOf(finalPillsAddedContainer1.get()));
-            });
-            AtomicLong finalPillsAddedContainer2 = pillsAddedContainer2;
-            rootDbRef.child("Patient/dispenser/currentAmountContainer2").get().addOnCompleteListener(task -> {
-                finalPillsAddedContainer2.set(finalPillsAddedContainer2.get() + (Long) Objects.requireNonNull(task.getResult()).getValue());
-                Log.d(TAG,String.valueOf(finalPillsAddedContainer2.get()));
-                Log.d(TAG,Objects.requireNonNull(task.getResult()).getValue().toString());
-                dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer2",String.valueOf(finalPillsAddedContainer2.get()));
-            });
-            AtomicLong finalPillsAddedContainer3 = pillsAddedContainer3;
-            rootDbRef.child("Patient/dispenser/currentAmountContainer3").get().addOnCompleteListener(task -> {
-                finalPillsAddedContainer3.set(finalPillsAddedContainer3.get() + (Long) Objects.requireNonNull(task.getResult()).getValue());
-                Log.d(TAG,String.valueOf(finalPillsAddedContainer3.get()));
-                Log.d(TAG,Objects.requireNonNull(task.getResult()).getValue().toString());
-                dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer3",String.valueOf(finalPillsAddedContainer3.get()));
-            });
-            AtomicLong finalPillsAddedContainer4 = pillsAddedContainer4;
-            rootDbRef.child("Patient/dispenser/currentAmountContainer4").get().addOnCompleteListener(task -> {
-                finalPillsAddedContainer4.set(finalPillsAddedContainer4.get() + (Long) Objects.requireNonNull(task.getResult()).getValue());
-                Log.d(TAG,String.valueOf(finalPillsAddedContainer4.get()));
-                Log.d(TAG,Objects.requireNonNull(task.getResult()).getValue().toString());
-                dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer4",String.valueOf(finalPillsAddedContainer4.get()));
-            });
-            AtomicLong finalPillsAddedContainer5 = pillsAddedContainer5;
-            rootDbRef.child("Patient/dispenser/currentAmountContainer5").get().addOnCompleteListener(task -> {
-                finalPillsAddedContainer5.set(finalPillsAddedContainer5.get() + (Long) Objects.requireNonNull(task.getResult()).getValue());
-                Log.d(TAG,String.valueOf(finalPillsAddedContainer5.get()));
-                Log.d(TAG,Objects.requireNonNull(task.getResult()).getValue().toString());
-                dbHelperCall.AddSimpleData("/Patient/dispenser/currentAmountContainer5",String.valueOf(finalPillsAddedContainer5.get()));
-            });
-
-
-
-        });
-        */
 
         Button calibrateSaveButton = view.findViewById(R.id.calibrationSaveButton);
         calibrateSaveButton.setOnClickListener(v -> {
             dbHelper dbHelperCall = new dbHelper();
-
             AtomicInteger currentNumberOfPillsContainer1 = new AtomicInteger();
             AtomicInteger currentNumberOfPillsContainer2 = new AtomicInteger();
             AtomicInteger currentNumberOfPillsContainer3 = new AtomicInteger();
@@ -141,7 +75,7 @@ public class dispenserSettingFragment extends Fragment {
                 rootDbRef.child("Patient/dispenser/currentAmountContainer1").get().addOnCompleteListener(task -> {
                     currentNumberOfPillsContainer1.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
                     pillsAddedContainer1.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer1Input)).getText().toString()));
-                    currentNumberOfPillsContainer1.getAndAdd(Integer.valueOf(String.valueOf(pillsAddedContainer1)));
+                    currentNumberOfPillsContainer1.getAndAdd(Integer.parseInt(String.valueOf(pillsAddedContainer1)));
                     dbHelperCall.AddSimpleStringData("/Patient/dispenser/currentAmountContainer1",String.valueOf(currentNumberOfPillsContainer1.get()));
                 });
             }
@@ -149,7 +83,7 @@ public class dispenserSettingFragment extends Fragment {
                 rootDbRef.child("Patient/dispenser/currentAmountContainer2").get().addOnCompleteListener(task -> {
                     currentNumberOfPillsContainer2.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
                     pillsAddedContainer2.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer2Input)).getText().toString()));
-                    currentNumberOfPillsContainer2.getAndAdd(Integer.valueOf(String.valueOf(pillsAddedContainer2)));
+                    currentNumberOfPillsContainer2.getAndAdd(Integer.parseInt(String.valueOf(pillsAddedContainer2)));
                     dbHelperCall.AddSimpleStringData("/Patient/dispenser/currentAmountContainer2",String.valueOf(currentNumberOfPillsContainer2.get()));
                 });
             }
@@ -157,7 +91,7 @@ public class dispenserSettingFragment extends Fragment {
                 rootDbRef.child("Patient/dispenser/currentAmountContainer3").get().addOnCompleteListener(task -> {
                     currentNumberOfPillsContainer3.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
                     pillsAddedContainer3.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer3Input)).getText().toString()));
-                    currentNumberOfPillsContainer3.getAndAdd(Integer.valueOf(String.valueOf(pillsAddedContainer3)));
+                    currentNumberOfPillsContainer3.getAndAdd(Integer.parseInt(String.valueOf(pillsAddedContainer3)));
                     dbHelperCall.AddSimpleStringData("/Patient/dispenser/currentAmountContainer3",String.valueOf(currentNumberOfPillsContainer3.get()));
                 });
             }
@@ -165,7 +99,7 @@ public class dispenserSettingFragment extends Fragment {
                 rootDbRef.child("Patient/dispenser/currentAmountContainer4").get().addOnCompleteListener(task -> {
                     currentNumberOfPillsContainer4.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
                     pillsAddedContainer4.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer4Input)).getText().toString()));
-                    currentNumberOfPillsContainer4.getAndAdd(Integer.valueOf(String.valueOf(pillsAddedContainer4)));
+                    currentNumberOfPillsContainer4.getAndAdd(Integer.parseInt(String.valueOf(pillsAddedContainer4)));
                     dbHelperCall.AddSimpleStringData("/Patient/dispenser/currentAmountContainer4",String.valueOf(currentNumberOfPillsContainer4.get()));
                 });
             }
@@ -173,13 +107,11 @@ public class dispenserSettingFragment extends Fragment {
                 rootDbRef.child("Patient/dispenser/currentAmountContainer5").get().addOnCompleteListener(task -> {
                     currentNumberOfPillsContainer5.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
                     pillsAddedContainer5.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer5Input)).getText().toString()));
-                    currentNumberOfPillsContainer5.getAndAdd(Integer.valueOf(String.valueOf(pillsAddedContainer5)));
+                    currentNumberOfPillsContainer5.getAndAdd(Integer.parseInt(String.valueOf(pillsAddedContainer5)));
                     dbHelperCall.AddSimpleStringData("/Patient/dispenser/currentAmountContainer5",String.valueOf(currentNumberOfPillsContainer5.get()));
                 });
             }
-
         });
-
         setupDropDownMenu(view);
     }
     public void setupDropDownMenu (View view) {
@@ -193,7 +125,7 @@ public class dispenserSettingFragment extends Fragment {
         String[] numberOfPills = new String[]{"Amount","30","20","15","10","5","Never"};
         List<String> numberOfPillsList = new ArrayList<>(Arrays.asList(numberOfPills));
 
-        ArrayAdapter<String> symptomButtonMenuArrayAdapater = new ArrayAdapter<String> (getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, numberOfPillsList) {
+        ArrayAdapter<String> symptomButtonMenuArrayAdapters = new ArrayAdapter<String> (requireActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, numberOfPillsList) {
             @Override
             public boolean isEnabled(int position){
                 // Disable the first item from Spinner
@@ -210,12 +142,12 @@ public class dispenserSettingFragment extends Fragment {
                 return view;
             }
         };
-        symptomButtonMenuArrayAdapater.setDropDownViewResource(R.layout.drop_down_menu_spinner);
-        container1DropDownMenu.setAdapter(symptomButtonMenuArrayAdapater);
-        container2DropDownMenu.setAdapter(symptomButtonMenuArrayAdapater);
-        container3DropDownMenu.setAdapter(symptomButtonMenuArrayAdapater);
-        container4DropDownMenu.setAdapter(symptomButtonMenuArrayAdapater);
-        container5DropDownMenu.setAdapter(symptomButtonMenuArrayAdapater);
+        symptomButtonMenuArrayAdapters.setDropDownViewResource(R.layout.drop_down_menu_spinner);
+        container1DropDownMenu.setAdapter(symptomButtonMenuArrayAdapters);
+        container2DropDownMenu.setAdapter(symptomButtonMenuArrayAdapters);
+        container3DropDownMenu.setAdapter(symptomButtonMenuArrayAdapters);
+        container4DropDownMenu.setAdapter(symptomButtonMenuArrayAdapters);
+        container5DropDownMenu.setAdapter(symptomButtonMenuArrayAdapters);
 
 
 
