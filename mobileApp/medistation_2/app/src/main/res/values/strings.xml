@@ -37,5 +37,7 @@
     <string name="medication_schedule_dosage_per_day"> Number of dosages per day:</string>
     <string name="medication_schedule_add"> Add </string>
     <string name="medication_dosage_amount"># of dosage</string>
+    <string name="medication_repeat_amount">Repeat current schedule for </string>
+    <string name="medication_number_of_weeks"># of weeks</string>
 
 </resources>
