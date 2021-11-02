@@ -115,5 +115,5 @@ public class wristbandSettingFragment extends Fragment {
         symptom3DropDownlist.setAdapter(symptomButtonMenuArrayAdapater);
 
     }
-
+    //TODO, add function to send notification when battery of wristband is low
 }

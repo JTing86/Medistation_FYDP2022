@@ -153,4 +153,6 @@ public class dispenserSettingFragment extends Fragment {
 
 
     }
+
+    //TODO, add function to send notification when battery of wristband is low
 }

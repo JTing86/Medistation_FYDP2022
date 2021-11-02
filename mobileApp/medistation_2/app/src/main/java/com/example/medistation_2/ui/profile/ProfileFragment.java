@@ -59,9 +59,8 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
         //Button section
-        Button profileUserInfoSaveButton = (Button) view.findViewById(R.id.profileSaveButton);
+        Button profileUserInfoSaveButton = view.findViewById(R.id.profileSaveButton);
         profileUserInfoSaveButton.setOnClickListener(v -> {
-            Log.d(TAG,"User Info save button pressed");
             dbHelper dbHelperCall = new dbHelper();
 
             dbHelperCall.AddSimpleStringData("/Patient/name",((EditText) view.findViewById(R.id.profileNameInput)).getText().toString());
@@ -71,48 +70,24 @@ public class ProfileFragment extends Fragment {
 
         });
         //Save past medication record to database
-        Button profilePastMedicationSaveButton = (Button) view.findViewById(R.id.profilePastMedicationButton);
+        Button profilePastMedicationSaveButton = view.findViewById(R.id.profilePastMedicationButton);
         profilePastMedicationSaveButton.setOnClickListener(v -> {
-            Log.d(TAG,"Save button pressed");
             dbHelper dbHelperCall = new dbHelper();
-            //TODO, change this to a for loop
-            //Row 2
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row1/medName",((EditText) view.findViewById(R.id.profileRowTwoMedInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row1/medDosage",((EditText) view.findViewById(R.id.profileRowTwoDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row1/medDuration",((EditText) view.findViewById(R.id.profileRowTwoDurationInput)).getText().toString());
-            //Row 3
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row2/medName",((EditText) view.findViewById(R.id.profileRowThreeMedInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row2/medDosage",((EditText) view.findViewById(R.id.profileRowThreeDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row2/medDuration",((EditText) view.findViewById(R.id.profileRowThreeDurationInput)).getText().toString());
-            //Row 4
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row3/medName",((EditText) view.findViewById(R.id.profileRowFourMedInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row3/medDosage",((EditText) view.findViewById(R.id.profileRowFourDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row3/medDuration",((EditText) view.findViewById(R.id.profileRowFourDurationInput)).getText().toString());
-            //Row 5
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row4/medName",((EditText) view.findViewById(R.id.profileRowFiveMedInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row4/medDosage",((EditText) view.findViewById(R.id.profileRowFiveDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row4/medDuration",((EditText) view.findViewById(R.id.profileRowFiveDurationInput)).getText().toString());
-            //Row 6
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row5/medName",((EditText) view.findViewById(R.id.profileRowSixMedInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row5/medDosage",((EditText) view.findViewById(R.id.profileRowSixDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row5/medDuration",((EditText) view.findViewById(R.id.profileRowSixDurationInput)).getText().toString());
-            //Row 7
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row6/medName",((EditText) view.findViewById(R.id.profileRowSevenMedInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row6/medDosage",((EditText) view.findViewById(R.id.profileRowSevenDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row6/medDuration",((EditText) view.findViewById(R.id.profileRowSevenDurationInput)).getText().toString());
-            //Row 8
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row7/medName",((EditText) view.findViewById(R.id.profileRowEightMedInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row7/medDosage",((EditText) view.findViewById(R.id.profileRowEightDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row7/medDuration",((EditText) view.findViewById(R.id.profileRowEightDurationInput)).getText().toString());
-            // Row 9
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row8/medName",((EditText) view.findViewById(R.id.profileRowNineMedInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row8/medDosage",((EditText) view.findViewById(R.id.profileRowNineDosageInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row8/medDuration",((EditText) view.findViewById(R.id.profileRowNineDurationInput)).getText().toString());
+            String [] rowNumberDB = {"1","2","3","4","5","6","7","8"};
+            String [] rowNumber = { "Two","Three","Four","Five","Six","Seven","Eight","Nine"};
+            for (int i=0;i<=7;i++){
+                int medNameRID = view.getResources().getIdentifier("profileRow"+rowNumber[i]+"MedInput","id", requireActivity().getPackageName());
+                int medDosageRID = view.getResources().getIdentifier("profileRow"+rowNumber[i]+"DosageInput","id", requireActivity().getPackageName());
+                int medDurationRID = view.getResources().getIdentifier("profileRow"+rowNumber[i]+"DurationInput","id", requireActivity().getPackageName());
 
+                dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row"+rowNumberDB[i]+"/medName",((EditText) view.findViewById(medNameRID)).getText().toString());
+                dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row"+rowNumberDB[i]+"/medDosage",((EditText) view.findViewById(medDosageRID)).getText().toString());
+                dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row"+rowNumberDB[i]+"/medDuration",((EditText) view.findViewById(medDurationRID)).getText().toString());
+            }
         });
 
         //save symptom to database
-        Button profileSymptomSaveButton = (Button) view.findViewById(R.id.profileSymptomsButton);
+        Button profileSymptomSaveButton = view.findViewById(R.id.profileSymptomsButton);
         profileSymptomSaveButton.setOnClickListener(v -> {
             dbHelper dbHelperCall = new dbHelper();
             String symptomName = ((EditText) view.findViewById(R.id.profileSymptomsNameInput)).getText().toString().toLowerCase();
@@ -223,7 +198,7 @@ public class ProfileFragment extends Fragment {
             else {
                 String simpleDataValue = String.valueOf(Objects.requireNonNull(task.getResult()).getValue());
                 Log.d(TAG, simpleDataValue);
-                EditText nameOfUser = (EditText) view.findViewById(R.id.profileNameInput);
+                EditText nameOfUser = view.findViewById(R.id.profileNameInput);
                 nameOfUser.setText(simpleDataValue);
             }
         });
@@ -235,7 +210,7 @@ public class ProfileFragment extends Fragment {
             else {
                 String simpleDataValue = String.valueOf(Objects.requireNonNull(task.getResult()).getValue());
                 Log.d(TAG, simpleDataValue);
-                EditText emailOfUser = (EditText) view.findViewById(R.id.profileEmailInput);
+                EditText emailOfUser = view.findViewById(R.id.profileEmailInput);
                 emailOfUser.setText(simpleDataValue);
             }
         });
@@ -247,7 +222,7 @@ public class ProfileFragment extends Fragment {
             else {
                 String simpleDataValue = String.valueOf(Objects.requireNonNull(task.getResult()).getValue());
                 Log.d(TAG, simpleDataValue);
-                EditText emergencyName = (EditText) view.findViewById(R.id.profileEmergencyNameInput);
+                EditText emergencyName = view.findViewById(R.id.profileEmergencyNameInput);
                 emergencyName.setText(simpleDataValue);
             }
         });

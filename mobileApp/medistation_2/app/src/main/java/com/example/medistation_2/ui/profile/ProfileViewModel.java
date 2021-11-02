@@ -9,5 +9,4 @@ import com.example.medistation_2.R;
 import com.example.medistation_2.helperFunctions.dbHelper;
 
 public class ProfileViewModel extends ViewModel {
-        // TODO: Implement the ViewModel
 }
