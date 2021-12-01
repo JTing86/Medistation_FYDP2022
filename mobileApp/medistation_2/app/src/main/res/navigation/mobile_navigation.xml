@@ -13,9 +13,9 @@
 
     <fragment
         android:id="@+id/navigation_analysis"
-        android:name="com.example.medistation_2.ui.notifications.NotificationsFragment"
+        android:name="com.example.medistation_2.ui.analysis.AnalysisFragment"
         android:label="@string/title_analysis"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_analysis" />
 
     <fragment
         android:id="@+id/navigation_medication"

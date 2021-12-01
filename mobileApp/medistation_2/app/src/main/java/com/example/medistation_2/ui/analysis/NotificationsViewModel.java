@@ -1,4 +1,4 @@
-package com.example.medistation_2.ui.notifications;
+package com.example.medistation_2.ui.analysis;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

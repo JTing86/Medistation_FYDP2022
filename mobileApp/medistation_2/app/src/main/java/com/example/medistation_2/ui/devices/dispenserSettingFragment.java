@@ -39,11 +39,6 @@ public class dispenserSettingFragment extends Fragment {
         return inflater.inflate(R.layout.dispenser_setting_fragment, container, false);
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        DispenserSettingViewModel mViewModel = new ViewModelProvider(this).get(DispenserSettingViewModel.class);
-    }
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference rootDbRef = database.getReference();
@@ -148,11 +143,7 @@ public class dispenserSettingFragment extends Fragment {
         container3DropDownMenu.setAdapter(symptomButtonMenuArrayAdapters);
         container4DropDownMenu.setAdapter(symptomButtonMenuArrayAdapters);
         container5DropDownMenu.setAdapter(symptomButtonMenuArrayAdapters);
-
-
-
-
     }
 
-    //TODO, add function to send notification when battery of wristband is low
+    //TODO, add function to send notification when number of pills in dispenser is low
 }

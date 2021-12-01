@@ -44,13 +44,6 @@ public class MedicationFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        MedicationViewModel mViewModel = new ViewModelProvider(this).get(MedicationViewModel.class);
-    }
-
-    @SuppressLint("SetTextI18n")
-    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
         Button pill1SaveButton = view.findViewById(R.id.pill1SaveButton);
@@ -283,7 +276,7 @@ public class MedicationFragment extends Fragment {
             }
         };
         //Create hour dropdown menu
-        ArrayAdapter<String> hourMenuArrayAdapter = new ArrayAdapter<String> (getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, hourList) {
+        ArrayAdapter<String> hourMenuArrayAdapter = new ArrayAdapter<String> (requireActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, hourList) {
             @Override
             public boolean isEnabled(int position){
                 // Disable the first item from spinner,to be used for hints

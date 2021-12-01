@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".ui.devices.wristbandSettingFragment" >
 
+    <Button
+        android:id="@+id/wristbandMQTTTestButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.538"
+        app:layout_constraintStart_toEndOf="@+id/wristbandSymptomSaveButton"
+        app:layout_constraintTop_toTopOf="@+id/wristbandSymptomSaveButton" />
+
     <Spinner
         android:id="@+id/wristbandSymptomButton3DropDownMenu"
         android:layout_width="wrap_content"
