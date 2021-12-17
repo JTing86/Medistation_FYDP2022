@@ -57,7 +57,6 @@ public class MedicationFragment extends Fragment {
         AtomicInteger pill4DailyDosage = new AtomicInteger();
         AtomicInteger pill5DailyDosage = new AtomicInteger();
         pill1SaveButton.setOnClickListener(v-> {
-            Log.d(TAG,"pill1SaveButton Pressed");
             if (!((EditText) view.findViewById(R.id.pill1DosageInput)).getText().toString().equals("")){
                 TableLayout tableLayout = view.findViewById(R.id.pill1DosageTable);
                 pill1DailyDosage.set(Integer.parseInt(((EditText) view.findViewById(R.id.pill1DosageInput)).getText().toString()));
@@ -90,10 +89,8 @@ public class MedicationFragment extends Fragment {
                     tableLayout.addView(tableRow);
                 }
             }
-
         });
         pill2SaveButton.setOnClickListener(v-> {
-            Log.d(TAG,"pill2SaveButton Pressed");
             if (!((EditText) view.findViewById(R.id.pill2DosageInput)).getText().toString().equals("")) {
                 TableLayout tableLayout = view.findViewById(R.id.pill2DosageTable);
                 tableLayout.removeAllViews();
@@ -126,7 +123,6 @@ public class MedicationFragment extends Fragment {
             }
         });
         pill3SaveButton.setOnClickListener(v-> {
-            Log.d(TAG,"pill3SaveButton Pressed");
             if (!((EditText) view.findViewById(R.id.pill3DosageInput)).getText().toString().equals("")) {
                 TableLayout tableLayout = view.findViewById(R.id.pill3DosageTable);
                 tableLayout.removeAllViews();
@@ -159,7 +155,6 @@ public class MedicationFragment extends Fragment {
             }
         });
         pill4SaveButton.setOnClickListener(v-> {
-            Log.d(TAG,"pill4SaveButton Pressed");
             if (!((EditText) view.findViewById(R.id.pill4DosageInput)).getText().toString().equals("")) {
                 TableLayout tableLayout = view.findViewById(R.id.pill4DosageTable);
                 tableLayout.removeAllViews();
@@ -192,7 +187,6 @@ public class MedicationFragment extends Fragment {
             }
         });
         pill5SaveButton.setOnClickListener(v-> {
-            Log.d(TAG,"pill5SaveButton Pressed");
             if (!((EditText) view.findViewById(R.id.pill5DosageInput)).getText().toString().equals("")) {
                 TableLayout tableLayout = view.findViewById(R.id.pill5DosageTable);
                 tableLayout.removeAllViews();

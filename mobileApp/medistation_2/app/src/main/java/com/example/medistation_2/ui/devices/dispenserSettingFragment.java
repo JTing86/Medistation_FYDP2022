@@ -1,7 +1,5 @@
 package com.example.medistation_2.ui.devices;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -23,6 +21,14 @@ import com.example.medistation_2.helperFunctions.dbHelper;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,11 +38,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class dispenserSettingFragment extends Fragment {
 
     private static final String TAG = dispenserSettingFragment.class.getSimpleName();
+    public MqttAndroidClient client;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.dispenser_setting_fragment, container, false);
+        return inflater.inflate(R.layout.fragment_dispenser_setting, container, false);
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -108,6 +115,24 @@ public class dispenserSettingFragment extends Fragment {
             }
         });
         setupDropDownMenu(view);
+
+        String clientId = MqttClient.generateClientId();
+        client = new MqttAndroidClient(requireContext().getApplicationContext(), "tcp://broker.hivemq.com:1883", clientId);
+        try {
+            IMqttToken token = client.connect();
+            token.setActionCallback(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    //initializeMQTT(client,view);
+                }
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    // Something went wrong e.g. connection timeout or firewall problems
+                }
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
     public void setupDropDownMenu (View view) {
         //set up drop down list
@@ -145,5 +170,16 @@ public class dispenserSettingFragment extends Fragment {
         container5DropDownMenu.setAdapter(symptomButtonMenuArrayAdapters);
     }
 
+    public void MQTTSendData (MqttAndroidClient client, String payload){
+        String topic = "";//TODO: add topic;
+        byte[] encodedPayload;
+        try {
+            encodedPayload = payload.getBytes("UTF-8");
+            MqttMessage message = new MqttMessage(encodedPayload);
+            client.publish(topic, message);
+        } catch (UnsupportedEncodingException | MqttException e) {
+            e.printStackTrace();
+        }
+    }
     //TODO, add function to send notification when number of pills in dispenser is low
 }

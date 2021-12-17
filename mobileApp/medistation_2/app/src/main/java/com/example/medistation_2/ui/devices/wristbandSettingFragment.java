@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.medistation_2.R;
 import com.example.medistation_2.helperFunctions.dbHelper;
+import com.google.android.gms.common.api.Api;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -29,15 +30,16 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class wristbandSettingFragment extends Fragment {
 
     private static final String TAG = wristbandSettingFragment.class.getSimpleName();
+    public MqttAndroidClient client;
     public static wristbandSettingFragment newInstance() {
         return new wristbandSettingFragment();
     }
@@ -50,33 +52,23 @@ public class wristbandSettingFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.wristband_setting_fragment, container, false);
+        return inflater.inflate(R.layout.fragment_wristband_setting, container, false);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
-        Button profileUserInfoSaveButton = view.findViewById(R.id.wristbandSymptomSaveButton);
-        profileUserInfoSaveButton.setOnClickListener(v -> {
-            Log.d(TAG,"User Info save button pressed");
-            dbHelper dbHelperCall = new dbHelper();
-            dbHelperCall.AddSimpleStringData("/Patient/wristband/batnotification",((Spinner) requireActivity().findViewById(R.id.wristbandBatteryNotificationDropDown)).getSelectedItem().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/wristband/symptom1button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton1DropDownMenu)).getSelectedItem().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/wristband/symptom2button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton2DropDownMenu)).getSelectedItem().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/wristband/symptom3button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton3DropDownMenu)).getSelectedItem().toString());
-
-        });
         setupDropDownMenu(view);
 
         String clientId = MqttClient.generateClientId();
-        MqttAndroidClient client = new MqttAndroidClient(requireContext().getApplicationContext(), "tcp://broker.hivemq.com:1883", clientId);
+        client = new MqttAndroidClient(requireContext().getApplicationContext(), "tcp://broker.hivemq.com:1883", clientId);
         try {
             IMqttToken token = client.connect();
             token.setActionCallback(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-                    // We are connected
+                    //initializeMQTT(client,view);
                 }
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
@@ -87,50 +79,15 @@ public class wristbandSettingFragment extends Fragment {
             e.printStackTrace();
         }
 
-        Button wristbandMQTTTestButton = view.findViewById(R.id.wristbandMQTTTestButton);
-        wristbandMQTTTestButton.setOnClickListener(v-> {
-            String topic = "testtopic/testingMedistation";
-            String payload = "Hello, this is a test nathan";
-            int qos = 2;
-            byte[] encodedPayload;
-            try {
-                encodedPayload = payload.getBytes(StandardCharsets.UTF_8);
-                MqttMessage message = new MqttMessage(encodedPayload);
-                client.publish(topic, message);
-            } catch (MqttException e) {
-                e.printStackTrace();
-            }
-            try {
-                IMqttToken subToken = client.subscribe(topic, qos);
-                subToken.setActionCallback(new IMqttActionListener() {
-                    @Override
-                    public void onSuccess(IMqttToken asyncActionToken) { }
-
-                    @Override
-                    public void onFailure(IMqttToken asyncActionToken, Throwable exception) { }
-                });
-            } catch (MqttException e) {
-                e.printStackTrace();
-            }
-            if (client.isConnected()) {
-                client.setCallback(new MqttCallback() {
-                    @Override
-                    public void connectionLost(Throwable cause) {
-                    }
-                    @Override
-                    public void messageArrived(String topic, MqttMessage message) {
-                        Log.d(TAG,"message>>" + new String(message.getPayload()));
-                        Log.d(TAG,"topic>>" + topic);
-                    }
-
-                    @Override
-                    public void deliveryComplete(IMqttDeliveryToken token) {
-
-                    }
-                });
-            }
+        Button profileUserInfoSaveButton = view.findViewById(R.id.wristbandSymptomSaveButton);
+        profileUserInfoSaveButton.setOnClickListener(v -> {
+            dbHelper dbHelperCall = new dbHelper();
+            dbHelperCall.AddSimpleStringData("/Patient/wristband/batnotification",((Spinner) requireActivity().findViewById(R.id.wristbandBatteryNotificationDropDown)).getSelectedItem().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/wristband/symptom1button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton1DropDownMenu)).getSelectedItem().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/wristband/symptom2button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton2DropDownMenu)).getSelectedItem().toString());
+            dbHelperCall.AddSimpleStringData("/Patient/wristband/symptom3button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton3DropDownMenu)).getSelectedItem().toString());
+            MQTTSendData(client, ((Spinner) requireActivity().findViewById(R.id.wristbandBatteryNotificationDropDown)).getSelectedItem().toString());
         });
-
     }
     public void setupDropDownMenu (View view) {
         //set up drop down list
@@ -188,9 +145,51 @@ public class wristbandSettingFragment extends Fragment {
         symptom3DropDownlist.setAdapter(symptomButtonMenuArrayAdapter);
 
     }
-    public void pushNotification (){
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void initializeMQTT (MqttAndroidClient client, View view) {
+        String topic = "";//TODO: add topic;
+        int qos = 2;
+        try {
+            IMqttToken subToken = client.subscribe(topic, qos);
+            subToken.setActionCallback(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) { }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) { }
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+        if (client.isConnected()) {
+            client.setCallback(new MqttCallback() {
+                @Override
+                public void connectionLost(Throwable cause) {
+                }
+                @Override
+                public void messageArrived(String topic, MqttMessage message) {
+                    Log.d(TAG,"message>>" + new String(message.getPayload()));
+                    Log.d(TAG,"topic>>" + topic);
+                }
+
+                @Override
+                public void deliveryComplete(IMqttDeliveryToken token) {
+
+                }
+            });
+        }
+    }
+    public void MQTTSendData (MqttAndroidClient client, String payload){
+        String topic = "";//TODO: add topic
+        byte[] encodedPayload;
+        try {
+            encodedPayload = payload.getBytes("UTF-8");
+            MqttMessage message = new MqttMessage(encodedPayload);
+            client.publish(topic, message);
+        } catch (UnsupportedEncodingException | MqttException e) {
+            e.printStackTrace();
+        }
     }
 
-    //TODO, add function to send notification when battery of wristband is low
 }
