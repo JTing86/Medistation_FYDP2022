@@ -21,6 +21,11 @@ public class dbHelper extends AppCompatActivity {
         DatabaseReference dbRef = database.getReference(path);
         dbRef.setValue(data);
     }
+    public void AddSimpleIntData(String path, int data) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = database.getReference(path);
+        dbRef.setValue(data);
+    }
     public void AddSimpleBooleanData (String path, boolean data) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference dbRef = database.getReference(path);

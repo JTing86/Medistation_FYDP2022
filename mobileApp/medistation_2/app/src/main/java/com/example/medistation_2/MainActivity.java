@@ -56,9 +56,6 @@ public class MainActivity extends AppCompatActivity {
         com.example.medistation_2.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_analysis, R.id.navigation_medication, R.id.navigation_devices, R.id.navigation_profile)
                 .build();
@@ -95,31 +92,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.dispatchTouchEvent(ev);
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.side_options_menu, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.add_medication:
-                // move to the medication search activity
-                Intent add_medication_intent = new Intent(this, MedSearchActivity.class);
-                startActivity(add_medication_intent);
-                return true;
-            case R.id.add_symptom:
-                Intent add_symptom_intent = new Intent(this, SymptomAddActivity.class);
-                startActivity(add_symptom_intent);
-                return true;
-            case R.id.log_out:
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void initializeMQTT (IMqttAsyncClient client,String topic) {
         int qos = 2;
@@ -160,8 +133,6 @@ public class MainActivity extends AppCompatActivity {
     private void pushNotification(String message, String title) {
         String channelName = "Notification";
         String notification = "Description";
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = channelName;
             String description = notification;
