@@ -44,13 +44,6 @@ public class MedicationFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        MedicationViewModel mViewModel = new ViewModelProvider(this).get(MedicationViewModel.class);
-    }
-
-    @SuppressLint("SetTextI18n")
-    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
         Button pill1SaveButton = view.findViewById(R.id.pill1SaveButton);
@@ -64,163 +57,184 @@ public class MedicationFragment extends Fragment {
         AtomicInteger pill4DailyDosage = new AtomicInteger();
         AtomicInteger pill5DailyDosage = new AtomicInteger();
         pill1SaveButton.setOnClickListener(v-> {
-            Log.d(TAG,"pill1SaveButton Pressed");
-            TableLayout tableLayout = view.findViewById(R.id.pill1DosageTable);
-            pill1DailyDosage.set(Integer.parseInt(((EditText) view.findViewById(R.id.pill1DosageInput)).getText().toString()));
-            for (int i =1; i <= pill1DailyDosage.get(); i++)
-            {
-                TableRow tableRow = new TableRow(getContext());
-                Spinner numberOfPillsDropDownList =  new Spinner(getContext());
-                Spinner hourDropDownList =  new Spinner(getContext());
-                Spinner minuteDropDownList = new Spinner(getContext());
+            if (!((EditText) view.findViewById(R.id.pill1DosageInput)).getText().toString().equals("")){
+                TableLayout tableLayout = view.findViewById(R.id.pill1DosageTable);
+                pill1DailyDosage.set(Integer.parseInt(((EditText) view.findViewById(R.id.pill1DosageInput)).getText().toString()));
+                tableLayout.removeAllViews();
+                for (int i =1; i <= pill1DailyDosage.get(); i++)
+                {
+                    TableRow tableRow = new TableRow(getContext());
+                    Spinner numberOfPillsDropDownList =  new Spinner(getContext());
+                    Spinner hourDropDownList =  new Spinner(getContext());
+                    Spinner minuteDropDownList = new Spinner(getContext());
 
-                TextView rowTitle = new TextView(getContext());
-                rowTitle.setText("Dose " + i);
-                //first number represent pill
-                //second number represent row
-                //third number represent which block of the row
-                rowTitle.setId(Integer.decode("1"+i+"1"));
-                Log.d(TAG,String.valueOf(rowTitle.getId()));
-                rowTitle.setTextSize(18);
-                rowTitle.setTypeface(null,Typeface.BOLD);
+                    TextView rowTitle = new TextView(getContext());
+                    rowTitle.setText("Dose " + i);
+                    //first number represent pill
+                    //second number represent row
+                    //third number represent which block of the row
+                    rowTitle.setId(Integer.decode("1"+i+"1"));
+                    Log.d(TAG,String.valueOf(rowTitle.getId()));
+                    rowTitle.setTextSize(18);
+                    rowTitle.setTypeface(null,Typeface.BOLD);
 
-                numberOfPillsDropDownList.setId(Integer.decode("1"+i+"2"));
-                hourDropDownList.setId(Integer.decode("1"+i+"3"));
-                minuteDropDownList.setId(Integer.decode("1"+i+"4"));
-                initializeDropDownList(numberOfPillsDropDownList,hourDropDownList,minuteDropDownList);
-                tableRow.addView(rowTitle);
-                tableRow.addView(numberOfPillsDropDownList);
-                tableRow.addView(hourDropDownList);
-                tableRow.addView(minuteDropDownList);
-                tableLayout.addView(tableRow);
+                    numberOfPillsDropDownList.setId(Integer.decode("1"+i+"2"));
+                    hourDropDownList.setId(Integer.decode("1"+i+"3"));
+                    minuteDropDownList.setId(Integer.decode("1"+i+"4"));
+                    initializeDropDownList(numberOfPillsDropDownList,hourDropDownList,minuteDropDownList);
+                    tableRow.addView(rowTitle);
+                    tableRow.addView(numberOfPillsDropDownList);
+                    tableRow.addView(hourDropDownList);
+                    tableRow.addView(minuteDropDownList);
+                    tableLayout.addView(tableRow);
+                }
             }
         });
         pill2SaveButton.setOnClickListener(v-> {
-            Log.d(TAG,"pill2SaveButton Pressed");
-            TableLayout tableLayout = view.findViewById(R.id.pill2DosageTable);
-            pill2DailyDosage.set(Integer.parseInt(((EditText) view.findViewById(R.id.pill2DosageInput)).getText().toString()));
-            for (int i =1; i <= pill2DailyDosage.get(); i++)
-            {
-                TableRow tableRow = new TableRow(getContext());
-                Spinner numberOfPillsDropDownList =  new Spinner(getContext());
-                Spinner hourDropDownList =  new Spinner(getContext());
-                Spinner minuteDropDownList = new Spinner(getContext());
+            if (!((EditText) view.findViewById(R.id.pill2DosageInput)).getText().toString().equals("")) {
+                TableLayout tableLayout = view.findViewById(R.id.pill2DosageTable);
+                tableLayout.removeAllViews();
+                pill2DailyDosage.set(Integer.parseInt(((EditText) view.findViewById(R.id.pill2DosageInput)).getText().toString()));
+                for (int i = 1; i <= pill2DailyDosage.get(); i++) {
+                    TableRow tableRow = new TableRow(getContext());
+                    Spinner numberOfPillsDropDownList = new Spinner(getContext());
+                    Spinner hourDropDownList = new Spinner(getContext());
+                    Spinner minuteDropDownList = new Spinner(getContext());
 
-                TextView rowTitle = new TextView(getContext());
-                rowTitle.setText("Dose " + i);
-                //first number represent pill
-                //second number represent row
-                //third number represent which block of the row
-                rowTitle.setId(Integer.decode("2"+i+"1"));
-                rowTitle.setTextSize(18);
-                rowTitle.setTypeface(null,Typeface.BOLD);
+                    TextView rowTitle = new TextView(getContext());
+                    rowTitle.setText("Dose " + i);
+                    //first number represent pill
+                    //second number represent row
+                    //third number represent which block of the row
+                    rowTitle.setId(Integer.decode("2" + i + "1"));
+                    rowTitle.setTextSize(18);
+                    rowTitle.setTypeface(null, Typeface.BOLD);
 
-                numberOfPillsDropDownList.setId(Integer.decode("2"+i+"2"));
-                hourDropDownList.setId(Integer.decode("2"+i+"3"));
-                minuteDropDownList.setId(Integer.decode("2"+i+"4"));
-                initializeDropDownList(numberOfPillsDropDownList,hourDropDownList,minuteDropDownList);
-                tableRow.addView(rowTitle);
-                tableRow.addView(numberOfPillsDropDownList);
-                tableRow.addView(hourDropDownList);
-                tableRow.addView(minuteDropDownList);
-                tableLayout.addView(tableRow);
+                    numberOfPillsDropDownList.setId(Integer.decode("2" + i + "2"));
+                    hourDropDownList.setId(Integer.decode("2" + i + "3"));
+                    minuteDropDownList.setId(Integer.decode("2" + i + "4"));
+                    initializeDropDownList(numberOfPillsDropDownList, hourDropDownList, minuteDropDownList);
+                    tableRow.addView(rowTitle);
+                    tableRow.addView(numberOfPillsDropDownList);
+                    tableRow.addView(hourDropDownList);
+                    tableRow.addView(minuteDropDownList);
+                    tableLayout.addView(tableRow);
+                }
             }
         });
         pill3SaveButton.setOnClickListener(v-> {
-            Log.d(TAG,"pill3SaveButton Pressed");
-            TableLayout tableLayout = view.findViewById(R.id.pill3DosageTable);
-            pill3DailyDosage.set(Integer.parseInt(((EditText) view.findViewById(R.id.pill3DosageInput)).getText().toString()));
-            for (int i =1; i <= pill3DailyDosage.get(); i++)
-            {
-                TableRow tableRow = new TableRow(getContext());
-                Spinner numberOfPillsDropDownList =  new Spinner(getContext());
-                Spinner hourDropDownList =  new Spinner(getContext());
-                Spinner minuteDropDownList = new Spinner(getContext());
+            if (!((EditText) view.findViewById(R.id.pill3DosageInput)).getText().toString().equals("")) {
+                TableLayout tableLayout = view.findViewById(R.id.pill3DosageTable);
+                tableLayout.removeAllViews();
+                pill3DailyDosage.set(Integer.parseInt(((EditText) view.findViewById(R.id.pill3DosageInput)).getText().toString()));
+                for (int i = 1; i <= pill3DailyDosage.get(); i++) {
+                    TableRow tableRow = new TableRow(getContext());
+                    Spinner numberOfPillsDropDownList = new Spinner(getContext());
+                    Spinner hourDropDownList = new Spinner(getContext());
+                    Spinner minuteDropDownList = new Spinner(getContext());
 
-                TextView rowTitle = new TextView(getContext());
-                rowTitle.setText("Dose " + i);
-                //first number represent pill
-                //second number represent row
-                //third number represent which block of the row
-                rowTitle.setId(Integer.decode("3"+i+"1"));
-                rowTitle.setTextSize(18);
-                rowTitle.setTypeface(null,Typeface.BOLD);
+                    TextView rowTitle = new TextView(getContext());
+                    rowTitle.setText("Dose " + i);
+                    //first number represent pill
+                    //second number represent row
+                    //third number represent which block of the row
+                    rowTitle.setId(Integer.decode("3" + i + "1"));
+                    rowTitle.setTextSize(18);
+                    rowTitle.setTypeface(null, Typeface.BOLD);
 
-                numberOfPillsDropDownList.setId(Integer.decode("3"+i+"2"));
-                hourDropDownList.setId(Integer.decode("3"+i+"3"));
-                minuteDropDownList.setId(Integer.decode("3"+i+"4"));
-                initializeDropDownList(numberOfPillsDropDownList,hourDropDownList,minuteDropDownList);
-                tableRow.addView(rowTitle);
-                tableRow.addView(numberOfPillsDropDownList);
-                tableRow.addView(hourDropDownList);
-                tableRow.addView(minuteDropDownList);
-                tableLayout.addView(tableRow);
+                    numberOfPillsDropDownList.setId(Integer.decode("3" + i + "2"));
+                    hourDropDownList.setId(Integer.decode("3" + i + "3"));
+                    minuteDropDownList.setId(Integer.decode("3" + i + "4"));
+                    initializeDropDownList(numberOfPillsDropDownList, hourDropDownList, minuteDropDownList);
+                    tableRow.addView(rowTitle);
+                    tableRow.addView(numberOfPillsDropDownList);
+                    tableRow.addView(hourDropDownList);
+                    tableRow.addView(minuteDropDownList);
+                    tableLayout.addView(tableRow);
+                }
             }
         });
         pill4SaveButton.setOnClickListener(v-> {
-            Log.d(TAG,"pill4SaveButton Pressed");
-            TableLayout tableLayout = view.findViewById(R.id.pill4DosageTable);
-            pill4DailyDosage.set(Integer.parseInt(((EditText) view.findViewById(R.id.pill4DosageInput)).getText().toString()));
-            for (int i =1; i <= pill4DailyDosage.get(); i++)
-            {
-                TableRow tableRow = new TableRow(getContext());
-                Spinner numberOfPillsDropDownList =  new Spinner(getContext());
-                Spinner hourDropDownList =  new Spinner(getContext());
-                Spinner minuteDropDownList = new Spinner(getContext());
+            if (!((EditText) view.findViewById(R.id.pill4DosageInput)).getText().toString().equals("")) {
+                TableLayout tableLayout = view.findViewById(R.id.pill4DosageTable);
+                tableLayout.removeAllViews();
+                pill4DailyDosage.set(Integer.parseInt(((EditText) view.findViewById(R.id.pill4DosageInput)).getText().toString()));
+                for (int i = 1; i <= pill4DailyDosage.get(); i++) {
+                    TableRow tableRow = new TableRow(getContext());
+                    Spinner numberOfPillsDropDownList = new Spinner(getContext());
+                    Spinner hourDropDownList = new Spinner(getContext());
+                    Spinner minuteDropDownList = new Spinner(getContext());
 
-                TextView rowTitle = new TextView(getContext());
-                rowTitle.setText("Dose " + i);
-                //first number represent pill
-                //second number represent row
-                //third number represent which block of the row
-                rowTitle.setId(Integer.decode("4"+i+"1"));
-                rowTitle.setTextSize(18);
-                rowTitle.setTypeface(null,Typeface.BOLD);
+                    TextView rowTitle = new TextView(getContext());
+                    rowTitle.setText("Dose " + i);
+                    //first number represent pill
+                    //second number represent row
+                    //third number represent which block of the row
+                    rowTitle.setId(Integer.decode("4" + i + "1"));
+                    rowTitle.setTextSize(18);
+                    rowTitle.setTypeface(null, Typeface.BOLD);
 
-                numberOfPillsDropDownList.setId(Integer.decode("4"+i+"2"));
-                hourDropDownList.setId(Integer.decode("4"+i+"3"));
-                minuteDropDownList.setId(Integer.decode("4"+i+"4"));
-                initializeDropDownList(numberOfPillsDropDownList,hourDropDownList,minuteDropDownList);
-                tableRow.addView(rowTitle);
-                tableRow.addView(numberOfPillsDropDownList);
-                tableRow.addView(hourDropDownList);
-                tableRow.addView(minuteDropDownList);
-                tableLayout.addView(tableRow);
+                    numberOfPillsDropDownList.setId(Integer.decode("4" + i + "2"));
+                    hourDropDownList.setId(Integer.decode("4" + i + "3"));
+                    minuteDropDownList.setId(Integer.decode("4" + i + "4"));
+                    initializeDropDownList(numberOfPillsDropDownList, hourDropDownList, minuteDropDownList);
+                    tableRow.addView(rowTitle);
+                    tableRow.addView(numberOfPillsDropDownList);
+                    tableRow.addView(hourDropDownList);
+                    tableRow.addView(minuteDropDownList);
+                    tableLayout.addView(tableRow);
+                }
             }
         });
         pill5SaveButton.setOnClickListener(v-> {
-            Log.d(TAG,"pill5SaveButton Pressed");
-            TableLayout tableLayout = view.findViewById(R.id.pill5DosageTable);
-            pill5DailyDosage.set(Integer.parseInt(((EditText) view.findViewById(R.id.pill5DosageInput)).getText().toString()));
-            for (int i =1; i <= pill5DailyDosage.get(); i++)
-            {
-                TableRow tableRow = new TableRow(getContext());
-                Spinner numberOfPillsDropDownList =  new Spinner(getContext());
-                Spinner hourDropDownList =  new Spinner(getContext());
-                Spinner minuteDropDownList = new Spinner(getContext());
+            if (!((EditText) view.findViewById(R.id.pill5DosageInput)).getText().toString().equals("")) {
+                TableLayout tableLayout = view.findViewById(R.id.pill5DosageTable);
+                tableLayout.removeAllViews();
+                pill5DailyDosage.set(Integer.parseInt(((EditText) view.findViewById(R.id.pill5DosageInput)).getText().toString()));
+                for (int i = 1; i <= pill5DailyDosage.get(); i++) {
+                    TableRow tableRow = new TableRow(getContext());
+                    Spinner numberOfPillsDropDownList = new Spinner(getContext());
+                    Spinner hourDropDownList = new Spinner(getContext());
+                    Spinner minuteDropDownList = new Spinner(getContext());
 
-                TextView rowTitle = new TextView(getContext());
-                rowTitle.setText("Dose " + i);
-                //first number represent pill
-                //second number represent row
-                //third number represent which block of the row
-                rowTitle.setId(Integer.decode("5"+i+"1"));
-                rowTitle.setTextSize(18);
-                rowTitle.setTypeface(null,Typeface.BOLD);
+                    TextView rowTitle = new TextView(getContext());
+                    rowTitle.setText("Dose " + i);
+                    //first number represent pill
+                    //second number represent row
+                    //third number represent which block of the row
+                    rowTitle.setId(Integer.decode("5" + i + "1"));
+                    rowTitle.setTextSize(18);
+                    rowTitle.setTypeface(null, Typeface.BOLD);
 
-                numberOfPillsDropDownList.setId(Integer.decode("5"+i+"2"));
-                hourDropDownList.setId(Integer.decode("5"+i+"3"));
-                minuteDropDownList.setId(Integer.decode("5"+i+"4"));
-                initializeDropDownList(numberOfPillsDropDownList,hourDropDownList,minuteDropDownList);
-                tableRow.addView(rowTitle);
-                tableRow.addView(numberOfPillsDropDownList);
-                tableRow.addView(hourDropDownList);
-                tableRow.addView(minuteDropDownList);
-                tableLayout.addView(tableRow);
+                    numberOfPillsDropDownList.setId(Integer.decode("5" + i + "2"));
+                    hourDropDownList.setId(Integer.decode("5" + i + "3"));
+                    minuteDropDownList.setId(Integer.decode("5" + i + "4"));
+                    initializeDropDownList(numberOfPillsDropDownList, hourDropDownList, minuteDropDownList);
+                    tableRow.addView(rowTitle);
+                    tableRow.addView(numberOfPillsDropDownList);
+                    tableRow.addView(hourDropDownList);
+                    tableRow.addView(minuteDropDownList);
+                    tableLayout.addView(tableRow);
+                }
             }
         });
         Button scheduleSaveButton = view.findViewById(R.id.scheduleSaveButton);
-        scheduleSaveButton.setOnClickListener(v-> savePillScheduleToDatabase(view,1,pill1DailyDosage.get()));
+        scheduleSaveButton.setOnClickListener(v-> {
+            dbHelper dbHelperCall = new dbHelper();
+            dbHelperCall.deleteNode("Patient/medication");
+            if (pill1DailyDosage.get()!=0)
+                savePillScheduleToDatabase(view,1,pill2DailyDosage.get());
+            if (pill2DailyDosage.get()!=0)
+                savePillScheduleToDatabase(view,2,pill2DailyDosage.get());
+            if (pill3DailyDosage.get()!=0)
+                savePillScheduleToDatabase(view,3,pill3DailyDosage.get());
+            if (pill4DailyDosage.get()!=0)
+                savePillScheduleToDatabase(view,4,pill4DailyDosage.get());
+            if (pill5DailyDosage.get()!=0)
+                savePillScheduleToDatabase(view,5,pill5DailyDosage.get());
+            String scheduleNumberOfRepeats = ((EditText) view.findViewById(R.id.scheduleRepeatAmountInput)).getText().toString();
+            dbHelperCall.AddSimpleStringData("Patient/medication/repeat",scheduleNumberOfRepeats);
+        });
     }
     public void initializeDropDownList(Spinner numberOfPillsDropDownList, Spinner hourDropDownList, Spinner minuteDropDownList ){
         numberOfPillsDropDownList.setGravity(Gravity.CENTER);
@@ -256,7 +270,7 @@ public class MedicationFragment extends Fragment {
             }
         };
         //Create hour dropdown menu
-        ArrayAdapter<String> hourMenuArrayAdapter = new ArrayAdapter<String> (getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, hourList) {
+        ArrayAdapter<String> hourMenuArrayAdapter = new ArrayAdapter<String> (requireActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, hourList) {
             @Override
             public boolean isEnabled(int position){
                 // Disable the first item from spinner,to be used for hints
@@ -316,7 +330,7 @@ public class MedicationFragment extends Fragment {
             String numberOfPills = ((Spinner) requireActivity().findViewById(Integer.decode(pillNumber+String.valueOf(i)+"2"))).getSelectedItem().toString();
             String hour = ((Spinner) requireActivity().findViewById(Integer.decode(pillNumber+String.valueOf(i)+"3"))).getSelectedItem().toString();
             String minute = ((Spinner) requireActivity().findViewById(Integer.decode(pillNumber+String.valueOf(i)+"4"))).getSelectedItem().toString();
-            String data = numberOfPills+","+hour+","+minute;
+            String data = numberOfPills+","+hour+","+minute;//storage format:numberOfPills,hourOfTheDay,minuteOfTheDay
             dbHelperCall.AddSimpleStringData("Patient/medication/"+pillName+"/dosage/dose"+i,data);
         }
     }

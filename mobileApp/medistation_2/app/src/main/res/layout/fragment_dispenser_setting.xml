@@ -108,59 +108,60 @@
         android:id="@+id/dispenserContainer5DropDownMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="244dp"
+        android:layout_marginTop="8dp"
         android:dropDownWidth="wrap_content"
         android:spinnerMode="dropdown"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.79"
-        app:layout_constraintStart_toEndOf="@+id/refillContainer5Title"
-        app:layout_constraintTop_toBottomOf="@+id/dispenserSettingTitle" />
+        app:layout_constraintEnd_toEndOf="@+id/dispenserContainer4DropDownMenu"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/dispenserContainer4DropDownMenu"
+        app:layout_constraintTop_toBottomOf="@+id/refillContainer4Title"
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <Spinner
         android:id="@+id/dispenserContainer4DropDownMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="204dp"
+        android:layout_marginTop="8dp"
         android:dropDownWidth="wrap_content"
         android:spinnerMode="dropdown"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.79"
-        app:layout_constraintStart_toEndOf="@+id/refillContainer4Title"
-        app:layout_constraintTop_toBottomOf="@+id/dispenserSettingTitle" />
+        app:layout_constraintEnd_toEndOf="@+id/dispenserContainer3DropDownMenu"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/dispenserContainer3DropDownMenu"
+        app:layout_constraintTop_toBottomOf="@+id/refillContainer3Title" />
 
     <Spinner
         android:id="@+id/dispenserContainer3DropDownMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="164dp"
+        android:layout_marginTop="8dp"
         android:dropDownWidth="wrap_content"
         android:spinnerMode="dropdown"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.79"
-        app:layout_constraintStart_toEndOf="@+id/refillContainer3Title"
-        app:layout_constraintTop_toBottomOf="@+id/dispenserSettingTitle" />
+        app:layout_constraintEnd_toEndOf="@+id/dispenserContainer2DropDownMenu"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/dispenserContainer2DropDownMenu"
+        app:layout_constraintTop_toBottomOf="@+id/refillContainer2Title" />
 
     <Spinner
         android:id="@+id/dispenserContainer2DropDownMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="8dp"
         android:dropDownWidth="wrap_content"
         android:spinnerMode="dropdown"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.79"
-        app:layout_constraintStart_toEndOf="@+id/refillContainer2Title"
-        app:layout_constraintTop_toBottomOf="@+id/dispenserSettingTitle" />
+        app:layout_constraintEnd_toEndOf="@+id/dispenserContainer1DropDownMenu"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/dispenserContainer1DropDownMenu"
+        app:layout_constraintTop_toBottomOf="@+id/refillContainer1Title" />
 
     <Spinner
         android:id="@+id/dispenserContainer1DropDownMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="64dp"
         android:dropDownWidth="wrap_content"
         android:spinnerMode="dropdown"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.79"
+        app:layout_constraintHorizontal_bias="0.789"
         app:layout_constraintStart_toEndOf="@+id/refillContainer1Title"
         app:layout_constraintTop_toBottomOf="@+id/dispenserSettingTitle" />
 
@@ -280,7 +281,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/save"
+        android:text="Save"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.891"
         app:layout_constraintStart_toEndOf="@+id/dispenserRefillTitle"
@@ -367,7 +368,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="192dp"
-        android:text="@string/save"
+        android:text="Save"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

@@ -25,7 +25,6 @@ import com.example.medistation_2.ui.profile.ProfileViewModel;
 
 public class DevicesFragment extends Fragment {
     private static final String TAG = DevicesFragment.class.getSimpleName();
-    private DevicesViewModel mViewModel;
 
     public static DevicesFragment newInstance() {
         return new DevicesFragment();
@@ -37,12 +36,6 @@ public class DevicesFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_devices, container, false);
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        ProfileViewModel mViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
-
-    }
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         Button wristbandNavButton =  view.findViewById(R.id.deviceWristbandButton);
