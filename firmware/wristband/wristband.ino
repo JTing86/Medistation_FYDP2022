@@ -10,8 +10,8 @@
 
 String sendRequest(String type, String path, String payload = "");
 
-const unsigned long BPM_SAMPLE_PERIOD = 24*60*60*1000/5; // 5 samples per day
-const unsigned long TEMP_SAMPLE_PERIOD = 24*60*60*1000/2; // 2 samples per day
+const unsigned long BPM_SAMPLE_PERIOD = 24*60*60*1000/24; // 24 samples per day
+const unsigned long TEMP_SAMPLE_PERIOD = 24*60*60*1000; // 1 sample per day
 
 const char* broker = "broker.hivemq.com";
 
@@ -35,17 +35,17 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
 
-//  while(!sensor.begin(Wire, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
-//  {
-//    Serial.println("MAX30105 was not found. Please check wiring/power. ");
-//    
-//  }
-//
-//  sensor.setup();
-//  sensor.setPulseAmplitudeRed(0x0A);
-//  sensor.setPulseAmplitudeGreen(0);
-//
-//  sensor.enableDIETEMPRDY(); //Enable the temp ready interrupt. This is required.
+  while(!sensor.begin(Wire, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
+  {
+    Serial.println("MAX30105 was not found. Please check wiring/power. ");
+    
+  }
+
+  sensor.setup();
+  sensor.setPulseAmplitudeRed(0x0A);
+  sensor.setPulseAmplitudeGreen(0);
+
+  sensor.enableDIETEMPRDY(); //Enable the temp ready interrupt. This is required.
 
   Serial.println("start");
   WiFiManager wifiManager;
@@ -63,11 +63,9 @@ void setup() {
 
   bpm_timer = millis();
   temp_timer = bpm_timer;
-
-  //Serial.println(sendRequest("GET","/Patient/name.json"));
 }
 
-// sends HTTP request
+// sends HTTP request to firebase DB
 String sendRequest(String type, String path, String payload) {
   secureClient.setInsecure();//skip verification
   if (!secureClient.connect(database_url.c_str(), 443)){
