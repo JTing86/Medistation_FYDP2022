@@ -19,7 +19,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.medistation_2.R;
 import com.example.medistation_2.helperFunctions.dbHelper;
-import com.google.android.gms.common.api.Api;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -31,7 +30,6 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -82,10 +80,10 @@ public class wristbandSettingFragment extends Fragment {
         Button profileUserInfoSaveButton = view.findViewById(R.id.wristbandSymptomSaveButton);
         profileUserInfoSaveButton.setOnClickListener(v -> {
             dbHelper dbHelperCall = new dbHelper();
-            dbHelperCall.AddSimpleStringData("/Patient/wristband/batnotification",((Spinner) requireActivity().findViewById(R.id.wristbandBatteryNotificationDropDown)).getSelectedItem().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/wristband/symptom1button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton1DropDownMenu)).getSelectedItem().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/wristband/symptom2button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton2DropDownMenu)).getSelectedItem().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/wristband/symptom3button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton3DropDownMenu)).getSelectedItem().toString());
+            dbHelperCall.addSimpleData("/Patient/wristband/batnotification",((Spinner) requireActivity().findViewById(R.id.wristbandBatteryNotificationDropDown)).getSelectedItem().toString());
+            dbHelperCall.addSimpleData("/Patient/wristband/symptom1button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton1DropDownMenu)).getSelectedItem().toString());
+            dbHelperCall.addSimpleData("/Patient/wristband/symptom2button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton2DropDownMenu)).getSelectedItem().toString());
+            dbHelperCall.addSimpleData("/Patient/wristband/symptom3button",((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton3DropDownMenu)).getSelectedItem().toString());
             MQTTSendData(client, ((Spinner) requireActivity().findViewById(R.id.wristbandBatteryNotificationDropDown)).getSelectedItem().toString());
         });
     }

@@ -11,11 +11,39 @@
     tools:context=".ui.devices.DevicesFragment"
     tools:layout_editor_absoluteY="81dp">
 
+    <EditText
+        android:id="@+id/profilePhoneInput"
+        android:layout_width="229dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="116dp"
+        android:autofillHints="testHint"
+        android:inputType="textShortMessage|textAutoCorrect|phone"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/profileEmailInput"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/profileEmailInput"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="LabelFor,SpeakableTextPresentCheck" />
+
+    <TextView
+        android:id="@+id/profileNumber"
+        android:layout_width="69dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="28dp"
+        android:text="Phone:"
+        android:textSize="20sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintEnd_toEndOf="@+id/profileEmail"
+        app:layout_constraintHorizontal_bias="0.023"
+        app:layout_constraintStart_toStartOf="@+id/profileEmail"
+        app:layout_constraintTop_toBottomOf="@+id/profileEmail"
+        tools:ignore="HardcodedText" />
+
     <Button
         android:id="@+id/profileSymptomsButton"
         android:layout_width="70dp"
         android:layout_height="48dp"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="64dp"
         android:text="Save"
         android:textSize="11sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -40,13 +68,13 @@
         android:id="@+id/profileSaveButton"
         android:layout_width="70dp"
         android:layout_height="48dp"
-        android:layout_marginTop="228dp"
+        android:layout_marginTop="8dp"
         android:text="Save"
         android:textSize="11sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/profileEmergencyNameInput" />
 
     <TextView
         android:id="@+id/profilePastMedication"
@@ -83,7 +111,7 @@
         android:layout_marginStart="37dp"
         android:layout_marginLeft="37dp"
         android:layout_marginTop="40dp"
-        android:text="@string/profile_name"
+        android:text="Name"
         android:textSize="11sp"
         android:textStyle="bold|italic"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,7 +121,6 @@
         android:id="@+id/profileEmergencyNumberInput"
         android:layout_width="161dp"
         android:layout_height="48dp"
-        android:layout_marginTop="56dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:autofillHints="testHint"
@@ -102,19 +129,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/profileEmergencyNameInput"
-        app:layout_constraintTop_toBottomOf="@+id/profileEmailInput"
+        app:layout_constraintTop_toBottomOf="@+id/emergencyContact"
         tools:ignore="LabelFor,SpeakableTextPresentCheck" />
 
     <EditText
         android:id="@+id/profileEmergencyNameInput"
         android:layout_width="161dp"
         android:layout_height="48dp"
-        android:layout_marginTop="66dp"
         android:autofillHints="testHint"
         android:inputType="textUri|textShortMessage|textAutoCorrect|textMultiLine|text"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/emergencyContact"
-        app:layout_constraintTop_toBottomOf="@+id/email"
+        app:layout_constraintTop_toBottomOf="@+id/emergencyContact"
         tools:ignore="LabelFor,SpeakableTextPresentCheck" />
 
     <EditText
@@ -125,9 +151,9 @@
         android:layout_marginLeft="48dp"
         android:layout_marginTop="60dp"
         android:autofillHints="testHint"
-        android:inputType="textUri|textShortMessage|textAutoCorrect|textMultiLine|text|textEmailAddress"
+        android:inputType="none|textWebEmailAddress"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/email"
+        app:layout_constraintStart_toEndOf="@+id/profileEmail"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="LabelFor,SpeakableTextPresentCheck" />
 
@@ -141,7 +167,7 @@
         android:autofillHints="name"
         android:inputType="textShortMessage|textAutoCorrect|text"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/name"
+        app:layout_constraintStart_toEndOf="@+id/profileName"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="LabelFor,SpeakableTextPresentCheck" />
 
@@ -149,31 +175,31 @@
         android:id="@+id/emergencyContact"
         android:layout_width="196dp"
         android:layout_height="43dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="84dp"
         android:text="@string/profile_emergency_contact"
         android:textSize="20sp"
         android:textStyle="bold|italic"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.148"
+        app:layout_constraintHorizontal_bias="0.137"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email" />
+        app:layout_constraintTop_toBottomOf="@+id/profileEmail" />
 
     <TextView
-        android:id="@+id/email"
+        android:id="@+id/profileEmail"
         android:layout_width="69dp"
         android:layout_height="27dp"
         android:layout_marginTop="28dp"
         android:text="Email:"
         android:textSize="20sp"
         android:textStyle="bold|italic"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/profileName"
         app:layout_constraintHorizontal_bias="0.093"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name"
+        app:layout_constraintStart_toStartOf="@+id/profileName"
+        app:layout_constraintTop_toBottomOf="@+id/profileName"
         tools:ignore="HardcodedText" />
 
     <TextView
-        android:id="@+id/name"
+        android:id="@+id/profileName"
         android:layout_width="69dp"
         android:layout_height="27dp"
         android:layout_marginStart="32dp"
@@ -563,109 +589,6 @@
                 android:textColor="@android:color/black"
                 android:textSize="11sp" />
         </TableRow>
-
-        <TableRow android:orientation="vertical">
-            // Row 8
-
-            <EditText
-                android:id="@+id/profileRowEightMedInput"
-                android:layout_width="125dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:autofillHints="testHint"
-                android:background="#808080"
-                android:gravity="center"
-                android:hint="@string/profile_med_name"
-                android:inputType="text"
-                android:paddingStart="3dp"
-                android:paddingTop="0dp"
-                android:paddingEnd="3dp"
-                android:paddingBottom="0dp"
-                android:textColor="@android:color/black"
-                android:textSize="11sp" />
-
-            <EditText
-                android:id="@+id/profileRowEightDosageInput"
-                android:layout_width="70dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:autofillHints="testHint"
-                android:background="#C0C0C0"
-                android:gravity="center"
-                android:hint="@string/profile_dosage"
-                android:inputType="text"
-                android:paddingStart="3dp"
-                android:paddingEnd="3dp"
-                android:textColor="@android:color/black"
-                android:textSize="11sp" />
-
-            <EditText
-                android:id="@+id/profileRowEightDurationInput"
-                android:layout_width="125dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:autofillHints="testHint"
-                android:background="#808080"
-                android:gravity="center"
-                android:hint="@string/profile_duration"
-                android:inputType="text"
-                android:paddingStart="3dp"
-                android:paddingEnd="3dp"
-                android:textColor="@android:color/black"
-                android:textSize="11sp" />
-        </TableRow>
-
-        <TableRow android:orientation="vertical">
-            // Row 9
-
-            <EditText
-                android:id="@+id/profileRowNineMedInput"
-                android:layout_width="125dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:autofillHints="testHint"
-                android:background="#808080"
-                android:gravity="center"
-                android:hint="@string/profile_med_name"
-                android:inputType="text"
-                android:paddingStart="3dp"
-                android:paddingTop="0dp"
-                android:paddingEnd="3dp"
-                android:paddingBottom="0dp"
-                android:textColor="@android:color/black"
-                android:textSize="11sp" />
-
-            <EditText
-                android:id="@+id/profileRowNineDosageInput"
-                android:layout_width="70dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:autofillHints="textHints"
-                android:background="#C0C0C0"
-                android:gravity="center"
-                android:hint="@string/profile_dosage"
-                android:inputType="text"
-                android:paddingStart="3dp"
-                android:paddingEnd="3dp"
-                android:textColor="@android:color/black"
-                android:textSize="11sp" />
-
-            <EditText
-                android:id="@+id/profileRowNineDurationInput"
-                android:layout_width="125dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:autofillHints="textHints"
-                android:background="#808080"
-                android:gravity="center"
-                android:hint="@string/profile_duration"
-                android:inputType="text"
-                android:paddingStart="3dp"
-                android:paddingEnd="3dp"
-                android:textColor="@android:color/black"
-                android:textSize="11sp" />
-        </TableRow>
-
     </TableLayout>
 
     <EditText

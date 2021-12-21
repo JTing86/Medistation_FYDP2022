@@ -1,6 +1,5 @@
 package com.example.medistation_2.ui.medication;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -22,7 +21,6 @@ import android.widget.ToggleButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.medistation_2.R;
 import com.example.medistation_2.helperFunctions.dbHelper;
@@ -233,7 +231,7 @@ public class MedicationFragment extends Fragment {
             if (pill5DailyDosage.get()!=0)
                 savePillScheduleToDatabase(view,5,pill5DailyDosage.get());
             String scheduleNumberOfRepeats = ((EditText) view.findViewById(R.id.scheduleRepeatAmountInput)).getText().toString();
-            dbHelperCall.AddSimpleStringData("Patient/medication/repeat",scheduleNumberOfRepeats);
+            dbHelperCall.addSimpleData("Patient/medication/repeat",scheduleNumberOfRepeats);
         });
     }
     public void initializeDropDownList(Spinner numberOfPillsDropDownList, Spinner hourDropDownList, Spinner minuteDropDownList ){
@@ -322,7 +320,7 @@ public class MedicationFragment extends Fragment {
         for (int i=0; i<=6; i++){
             int RID = view.getResources().getIdentifier(toggleButton[i],"id", requireActivity().getPackageName());
             ToggleButton dayOfTheWeekToggleButton = view.findViewById(RID);
-            dbHelperCall.AddSimpleBooleanData("/Patient/medication/"+pillName+"/"+dayOfTheWeek[i], dayOfTheWeekToggleButton.isChecked());
+            dbHelperCall.addSimpleData("/Patient/medication/"+pillName+"/"+dayOfTheWeek[i], (boolean) dayOfTheWeekToggleButton.isChecked());
         }
         //retrieve the dosage schedule for single day
         for (int i=1;i<=dailyDosage;i++){
@@ -331,7 +329,7 @@ public class MedicationFragment extends Fragment {
             String hour = ((Spinner) requireActivity().findViewById(Integer.decode(pillNumber+String.valueOf(i)+"3"))).getSelectedItem().toString();
             String minute = ((Spinner) requireActivity().findViewById(Integer.decode(pillNumber+String.valueOf(i)+"4"))).getSelectedItem().toString();
             String data = numberOfPills+","+hour+","+minute;//storage format:numberOfPills,hourOfTheDay,minuteOfTheDay
-            dbHelperCall.AddSimpleStringData("Patient/medication/"+pillName+"/dosage/dose"+i,data);
+            dbHelperCall.addSimpleData("Patient/medication/"+pillName+"/dosage/dose"+i,data);
         }
     }
 }

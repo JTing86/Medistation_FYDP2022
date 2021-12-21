@@ -15,12 +15,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.medistation_2.R;
 import com.example.medistation_2.helperFunctions.dbHelper;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,36 +47,32 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        ProfileViewModel mViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
-    }
-
-    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-
         //Button section
         Button profileUserInfoSaveButton = view.findViewById(R.id.profileSaveButton);
         profileUserInfoSaveButton.setOnClickListener(v -> {
             dbHelper dbHelperCall = new dbHelper();
-            dbHelperCall.AddSimpleStringData("/Patient/name",((EditText) view.findViewById(R.id.profileNameInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/email/",((EditText) view.findViewById(R.id.profileEmailInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/emergencyName", ((EditText) view.findViewById(R.id.profileEmergencyNameInput)).getText().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/emergencyNumber",((EditText) view.findViewById(R.id.profileEmergencyNumberInput)).getText().toString());
+            dbHelperCall.addSimpleData("name",((EditText) view.findViewById(R.id.profileNameInput)).getText().toString());
+            dbHelperCall.addSimpleData("email",((EditText) view.findViewById(R.id.profileEmailInput)).getText().toString());
+            dbHelperCall.addSimpleData("phone",((EditText) view.findViewById(R.id.profilePhoneInput)).getText().toString());
+            dbHelperCall.addSimpleData("caretaker/name", ((EditText) view.findViewById(R.id.profileEmergencyNameInput)).getText().toString());
+            dbHelperCall.addSimpleData("caretaker/phone",Integer.parseInt(((EditText) view.findViewById(R.id.profileEmergencyNumberInput)).getText().toString()));
         });
         //Save past medication record to database
         Button profilePastMedicationSaveButton = view.findViewById(R.id.profilePastMedicationButton);
         profilePastMedicationSaveButton.setOnClickListener(v -> {
             dbHelper dbHelperCall = new dbHelper();
-            String [] rowNumberDB = {"1","2","3","4","5","6","7","8"};
-            String [] rowNumber = { "Two","Three","Four","Five","Six","Seven","Eight","Nine"};
+            String [] rowNumberDB = {"1","2","3","4","5","6","7"};
+            String [] rowNumber = { "Two","Three","Four","Five","Six","Seven"};
             for (int i=0;i<=7;i++){
                 int medNameRID = view.getResources().getIdentifier("profileRow"+rowNumber[i]+"MedInput","id", requireActivity().getPackageName());
                 int medDosageRID = view.getResources().getIdentifier("profileRow"+rowNumber[i]+"DosageInput","id", requireActivity().getPackageName());
                 int medDurationRID = view.getResources().getIdentifier("profileRow"+rowNumber[i]+"DurationInput","id", requireActivity().getPackageName());
-                dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row"+rowNumberDB[i]+"/medName",((EditText) view.findViewById(medNameRID)).getText().toString());
-                dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row"+rowNumberDB[i]+"/medDosage",((EditText) view.findViewById(medDosageRID)).getText().toString());
-                dbHelperCall.AddSimpleStringData("/Patient/pastMedications/row"+rowNumberDB[i]+"/medDuration",((EditText) view.findViewById(medDurationRID)).getText().toString());
+                try {
+                    addPastMedication("pastMedication/","cough","start","end","2");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -89,7 +87,7 @@ public class ProfileFragment extends Fragment {
             Date currentTime = Calendar.getInstance().getTime();
             SimpleDateFormat df = new SimpleDateFormat("yyyy,MM,dd", Locale.getDefault());
             String formattedDate = df.format(currentTime);
-           dbHelperCall.AddSimpleStringData("/Patient/symptom/"+symptomName+"/"+formattedDate+","+symptomHour+","+symptomMinute,symptomSeverity);
+           dbHelperCall.addSimpleData("/Patient/symptom/"+symptomName+"/"+formattedDate+","+symptomHour+","+symptomMinute,symptomSeverity);
         });
 
         populateUserData(view);
@@ -175,52 +173,29 @@ public class ProfileFragment extends Fragment {
     public void populateUserData (@NonNull View view) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference rootDbRef = database.getReference();
-        //display current name of user stored in the database
-        rootDbRef.child("Patient").child("name").get().addOnCompleteListener(task -> {
-            if (!task.isSuccessful()) {
-                Log.e(TAG, "Error getting data", task.getException());
-            }
-            else {
-                String simpleDataValue = String.valueOf(Objects.requireNonNull(task.getResult()).getValue());
-                Log.d(TAG, simpleDataValue);
-                EditText nameOfUser = view.findViewById(R.id.profileNameInput);
-                nameOfUser.setText(simpleDataValue);
-            }
+        //display current user information stored in the database
+        rootDbRef.child("name").get().addOnCompleteListener(task -> {
+            EditText nameOfUser = view.findViewById(R.id.profileNameInput);
+            nameOfUser.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
         });
-        //display current phone number of user stored in the database
-        rootDbRef.child("Patient").child("email").get().addOnCompleteListener(task -> {
-            if (!task.isSuccessful()) {
-                Log.e(TAG, "Error getting data", task.getException());
-            }
-            else {
-                String simpleDataValue = String.valueOf(Objects.requireNonNull(task.getResult()).getValue());
-                Log.d(TAG, simpleDataValue);
-                EditText emailOfUser = view.findViewById(R.id.profileEmailInput);
-                emailOfUser.setText(simpleDataValue);
-            }
+        rootDbRef.child("email").get().addOnCompleteListener(task -> {
+            EditText emailOfUser = view.findViewById(R.id.profileEmailInput);
+            emailOfUser.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
         });
-        //display current emergency name stored in the database
-        rootDbRef.child("Patient").child("emergencyName").get().addOnCompleteListener(task -> {
-            if (!task.isSuccessful()) {
-                Log.e(TAG, "Error getting data", task.getException());
-            }
-            else {
-                String simpleDataValue = String.valueOf(Objects.requireNonNull(task.getResult()).getValue());
-                EditText emergencyName = view.findViewById(R.id.profileEmergencyNameInput);
-                emergencyName.setText(simpleDataValue);
-            }
+        rootDbRef.child("phone").get().addOnCompleteListener(task -> {
+            EditText phoneOfuser = view.findViewById(R.id.profilePhoneInput);
+            phoneOfuser.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
         });
-        //display current emergency phone stored in the database
-        rootDbRef.child("Patient").child("emergencyNumber").get().addOnCompleteListener(task -> {
-            if (!task.isSuccessful()) {
-                Log.e(TAG, "Error getting data", task.getException());
-            }
-            else {
-                String simpleDataValue = String.valueOf(Objects.requireNonNull(task.getResult()).getValue());
-                EditText emergencyNumber = view.findViewById(R.id.profileEmergencyNumberInput);
-                emergencyNumber.setText(simpleDataValue);
-            }
+        //display current emergency contact stored in the database
+        rootDbRef.child("caretaker").child("name").get().addOnCompleteListener(task -> {
+                EditText emergencyNumber = view.findViewById(R.id.profileEmergencyNameInput);
+                emergencyNumber.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
         });
+        rootDbRef.child("caretaker").child("phone").get().addOnCompleteListener(task -> {
+            EditText emergencyNumber = view.findViewById(R.id.profileEmergencyNumberInput);
+            emergencyNumber.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
+        });
+
         //past medication display section
         //row2
         rootDbRef.child("Patient/pastMedications/row2/medName").get().addOnCompleteListener(task -> {
@@ -301,32 +276,17 @@ public class ProfileFragment extends Fragment {
             EditText row7Duration = view.findViewById(R.id.profileRowSevenDurationInput);
             row7Duration.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
         });
-        //row8
-        rootDbRef.child("Patient/pastMedications/row8/medName").get().addOnCompleteListener(task -> {
-            EditText row8MedicationName = view.findViewById(R.id.profileRowEightMedInput);
-            row8MedicationName.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
-        });
-        rootDbRef.child("Patient/pastMedications/row8/medDosage").get().addOnCompleteListener(task -> {
-            EditText row8Dosage = view.findViewById(R.id.profileRowEightDosageInput);
-            row8Dosage.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
-        });
-        rootDbRef.child("Patient/pastMedications/row8/medDuration").get().addOnCompleteListener(task -> {
-            EditText row8Duration = view.findViewById(R.id.profileRowEightDurationInput);
-            row8Duration.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
-        });
-        //row9
-        rootDbRef.child("Patient/pastMedications/row9/medName").get().addOnCompleteListener(task -> {
-            EditText row9MedicationName = view.findViewById(R.id.profileRowNineMedInput);
-            row9MedicationName.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
-        });
-        rootDbRef.child("Patient/pastMedications/row9/medDosage").get().addOnCompleteListener(task -> {
-            EditText row9Dosage = view.findViewById(R.id.profileRowNineDosageInput);
-            row9Dosage.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
-        });
-        rootDbRef.child("Patient/pastMedications/row9/medDuration").get().addOnCompleteListener(task -> {
-            EditText row9Duration = view.findViewById(R.id.profileRowNineDurationInput);
-            row9Duration.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
-        });
+
     }
 
+    public void addPastMedication(String path, String name, String start, String end, String dosage) throws JSONException {
+        JSONObject data = new JSONObject();
+        data.put("name",name);
+        data.put ("start",start);
+        data.put ("end", end);
+        data.put ("dosage", dosage);
+        Log.d(TAG,"Reached here");
+        dbHelper dbAdd = new dbHelper();
+        dbAdd.addJSONData(path,data);
+    }
 }

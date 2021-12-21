@@ -7,6 +7,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class dbHelper extends AppCompatActivity {
 
     private static final String TAG = dbHelper.class.toString();
@@ -16,17 +21,17 @@ public class dbHelper extends AppCompatActivity {
         super.onCreate(savedInstanceState);
     }
 
-    public void AddSimpleStringData(String path, String data) {
+    public void addSimpleData(String path, String data) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference dbRef = database.getReference(path);
         dbRef.setValue(data);
     }
-    public void AddSimpleIntData(String path, int data) {
+    public void addSimpleData(String path, int data) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference dbRef = database.getReference(path);
         dbRef.setValue(data);
     }
-    public void AddSimpleBooleanData (String path, boolean data) {
+    public void addSimpleData(String path, boolean data) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference dbRef = database.getReference(path);
         dbRef.setValue(data);
@@ -35,5 +40,12 @@ public class dbHelper extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference dbRef = database.getReference(path);
         dbRef.removeValue();
+    }
+    public void addJSONData (String path, JSONObject data){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = database.getReference(path);
+        Map<String, String> dbData = new HashMap<>();
+        dbData.put("1","1");
+        dbRef.setValue(dbData);
     }
 }

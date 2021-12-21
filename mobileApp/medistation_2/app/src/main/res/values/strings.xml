@@ -10,8 +10,7 @@
     <string name="add_symptom">Add symptom/side effect</string>
 
     <string name="profile_dosage">Dosage</string>
-    <string name="profile_name">name</string>
-    <string name="profile_duration">yy/mm/dd - yy/mm/dd</string>
+    <string name="profile_duration">yy mm dd - yy mm dd</string>
     <string name="profile_duration_title">Duration</string>
     <string name="profile_med_name"> Med Name</string>
     <string name="profile_emergency_contact"> Emergency Contact</string>
