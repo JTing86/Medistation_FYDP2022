@@ -177,17 +177,17 @@ void loop() {
   }
   client.loop();
 
-//  if(millis() - bpm_timer >= BPM_SAMPLE_PERIOD) {
-//    byte avg_bpm = getHeartRate();
-//    bpm_timer = millis();
-//    // send to db
-//  }
-//
-//  if(millis() - temp_timer >= TEMP_SAMPLE_PERIOD) {
-//    //get temp and send to db
-//    float temperature = sensor.readTemperature();
-//    temp_timer = millis();
-//  }
+  if(millis() - bpm_timer >= BPM_SAMPLE_PERIOD) {
+    byte avg_bpm = getHeartRate();
+    bpm_timer = millis();
+    // send to db
+  }
+
+  if(millis() - temp_timer >= TEMP_SAMPLE_PERIOD) {
+    //get temp and send to db
+    float temperature = sensor.readTemperature();
+    temp_timer = millis();
+  }
 
 
 }
