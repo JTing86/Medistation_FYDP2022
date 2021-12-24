@@ -41,15 +41,17 @@
 
     <Button
         android:id="@+id/profileSymptomsButton"
-        android:layout_width="70dp"
-        android:layout_height="48dp"
-        android:layout_marginBottom="64dp"
+        android:layout_width="72dp"
+        android:layout_height="43dp"
+        android:layout_marginBottom="96dp"
         android:text="Save"
         android:textSize="11sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/profilePastMedicationButton"
+        app:layout_constraintHorizontal_bias="0.828"
+        app:layout_constraintStart_toStartOf="@+id/profilePastMedicationButton"
+        app:layout_constraintTop_toBottomOf="@+id/profile_med_table"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/profileSymptoms"
@@ -251,11 +253,11 @@
                 android:paddingEnd="3dp"
                 android:text="@string/medication_name"
                 android:textColor="@android:color/black"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/profileColumnTwoTitle"
-                android:layout_width="70dp"
+                android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="#C0C0C0"
@@ -266,11 +268,11 @@
                 android:paddingBottom="0dp"
                 android:text="@string/profile_dosage"
                 android:textColor="@android:color/black"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/profileColumnThreeTitle"
-                android:layout_width="125dp"
+                android:layout_width="1dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="#808080"
@@ -281,7 +283,7 @@
                 android:paddingBottom="0dp"
                 android:text="@string/profile_duration_title"
                 android:textColor="@android:color/black"
-                android:textSize="15sp" />
+                android:textSize="14sp" />
 
         </TableRow>
 
@@ -289,7 +291,7 @@
             //Row 2
 
             <EditText
-                android:id="@+id/profileRowTwoMedInput"
+                android:id="@+id/profileRow1Med"
                 android:layout_width="125dp"
                 android:layout_height="wrap_content"
                 android:autofillHints="testHint"
@@ -302,26 +304,26 @@
                 android:paddingEnd="3dp"
                 android:paddingBottom="0dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
 
             <EditText
-                android:id="@+id/profileRowTwoDosageInput"
-                android:layout_width="50dp"
+                android:id="@+id/profileRow1Dosage"
+                android:layout_width="20dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:autofillHints="testHint"
                 android:background="#C0C0C0"
                 android:gravity="center"
                 android:hint="@string/profile_dosage"
-                android:inputType="text"
+                android:inputType="number"
                 android:paddingStart="3dp"
                 android:paddingEnd="3dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
 
             <EditText
-                android:id="@+id/profileRowTwoDurationInput"
-                android:layout_width="125dp"
+                android:id="@+id/profileRow1Duration"
+                android:layout_width="145dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:autofillHints="testHint"
@@ -332,14 +334,14 @@
                 android:paddingStart="3dp"
                 android:paddingEnd="3dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
         </TableRow>
 
         <TableRow android:orientation="vertical">
             //Row 3
 
             <EditText
-                android:id="@+id/profileRowThreeMedInput"
+                android:id="@+id/profileRow2Med"
                 android:layout_width="125dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -353,26 +355,26 @@
                 android:paddingEnd="3dp"
                 android:paddingBottom="0dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
 
             <EditText
-                android:id="@+id/profileRowThreeDosageInput"
-                android:layout_width="70dp"
+                android:id="@+id/profileRow2Dosage"
+                android:layout_width="20dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:autofillHints="testHint"
                 android:background="#C0C0C0"
                 android:gravity="center"
                 android:hint="@string/profile_dosage"
-                android:inputType="text"
+                android:inputType="number"
                 android:paddingStart="3dp"
                 android:paddingEnd="3dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
 
             <EditText
-                android:id="@+id/profileRowThreeDurationInput"
-                android:layout_width="125dp"
+                android:id="@+id/profileRow2Duration"
+                android:layout_width="145dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:autofillHints="testHint"
@@ -383,14 +385,14 @@
                 android:paddingStart="3dp"
                 android:paddingEnd="3dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
         </TableRow>
 
         <TableRow android:orientation="vertical">
             // Row 4
 
             <EditText
-                android:id="@+id/profileRowFourMedInput"
+                android:id="@+id/profileRow3Med"
                 android:layout_width="125dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -404,26 +406,26 @@
                 android:paddingEnd="3dp"
                 android:paddingBottom="0dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
 
             <EditText
-                android:id="@+id/profileRowFourDosageInput"
-                android:layout_width="70dp"
+                android:id="@+id/profileRow3Dosage"
+                android:layout_width="20dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:autofillHints="testHint"
                 android:background="#C0C0C0"
                 android:gravity="center"
                 android:hint="@string/profile_dosage"
-                android:inputType="text"
+                android:inputType="number"
                 android:paddingStart="3dp"
                 android:paddingEnd="3dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
 
             <EditText
-                android:id="@+id/profileRowFourDurationInput"
-                android:layout_width="125dp"
+                android:id="@+id/profileRow3Duration"
+                android:layout_width="145dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:autofillHints="testHint"
@@ -434,14 +436,14 @@
                 android:paddingStart="3dp"
                 android:paddingEnd="3dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
         </TableRow>
 
         <TableRow android:orientation="vertical">
             // Row 5
 
             <EditText
-                android:id="@+id/profileRowFiveMedInput"
+                android:id="@+id/profileRow4Med"
                 android:layout_width="125dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -455,26 +457,26 @@
                 android:paddingEnd="3dp"
                 android:paddingBottom="0dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
 
             <EditText
-                android:id="@+id/profileRowFiveDosageInput"
-                android:layout_width="70dp"
+                android:id="@+id/profileRow4Dosage"
+                android:layout_width="20dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:autofillHints="testHint"
                 android:background="#C0C0C0"
                 android:gravity="center"
                 android:hint="@string/profile_dosage"
-                android:inputType="text"
+                android:inputType="number"
                 android:paddingStart="3dp"
                 android:paddingEnd="3dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
 
             <EditText
-                android:id="@+id/profileRowFiveDurationInput"
-                android:layout_width="125dp"
+                android:id="@+id/profileRow4Duration"
+                android:layout_width="145dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:autofillHints="testHint"
@@ -485,14 +487,14 @@
                 android:paddingStart="3dp"
                 android:paddingEnd="3dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
         </TableRow>
 
         <TableRow android:orientation="vertical">
             // Row 6
 
             <EditText
-                android:id="@+id/profileRowSixMedInput"
+                android:id="@+id/profileRow5Med"
                 android:layout_width="125dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -506,26 +508,26 @@
                 android:paddingEnd="3dp"
                 android:paddingBottom="0dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
 
             <EditText
-                android:id="@+id/profileRowSixDosageInput"
-                android:layout_width="70dp"
+                android:id="@+id/profileRow5Dosage"
+                android:layout_width="20dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:autofillHints="testHint"
                 android:background="#C0C0C0"
                 android:gravity="center"
                 android:hint="@string/profile_dosage"
-                android:inputType="text"
+                android:inputType="number"
                 android:paddingStart="3dp"
                 android:paddingEnd="3dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
 
             <EditText
-                android:id="@+id/profileRowSixDurationInput"
-                android:layout_width="125dp"
+                android:id="@+id/profileRow5Duration"
+                android:layout_width="145dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:autofillHints="testHint"
@@ -536,14 +538,14 @@
                 android:paddingStart="3dp"
                 android:paddingEnd="3dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
         </TableRow>
 
         <TableRow android:orientation="vertical">
             // Row 7
 
             <EditText
-                android:id="@+id/profileRowSevenMedInput"
+                android:id="@+id/profileRow6Med"
                 android:layout_width="125dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -557,26 +559,26 @@
                 android:paddingEnd="3dp"
                 android:paddingBottom="0dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
 
             <EditText
-                android:id="@+id/profileRowSevenDosageInput"
-                android:layout_width="70dp"
+                android:id="@+id/profileRow6Dosage"
+                android:layout_width="20dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:autofillHints="testHint"
                 android:background="#C0C0C0"
                 android:gravity="center"
                 android:hint="@string/profile_dosage"
-                android:inputType="text"
+                android:inputType="number"
                 android:paddingStart="3dp"
                 android:paddingEnd="3dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
 
             <EditText
-                android:id="@+id/profileRowSevenDurationInput"
-                android:layout_width="125dp"
+                android:id="@+id/profileRow6Duration"
+                android:layout_width="145dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:autofillHints="testHint"
@@ -587,7 +589,7 @@
                 android:paddingStart="3dp"
                 android:paddingEnd="3dp"
                 android:textColor="@android:color/black"
-                android:textSize="11sp" />
+                android:textSize="14sp" />
         </TableRow>
     </TableLayout>
 
@@ -614,8 +616,8 @@
         android:layout_marginStart="5dp"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="40dp"
-        android:spinnerMode="dropdown"
         android:dropDownWidth="wrap_content"
+        android:spinnerMode="dropdown"
         app:layout_constraintStart_toEndOf="@+id/profileSymptomsNameInput"
         app:layout_constraintTop_toBottomOf="@+id/profile_med_table" />
 
