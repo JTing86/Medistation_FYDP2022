@@ -52,7 +52,12 @@ public class dbHelper extends AppCompatActivity {
         dbRef.setValue(data);
     }
 
-    public static void addToDB(String path, ArrayList<String> data) {
+    public static void addToDBStrArray(String path, ArrayList<String> data) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = database.getReference(path);
+        dbRef.setValue(data);
+    }
+    public static void addToDBIntegerArray(String path, ArrayList<Integer> data) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference dbRef = database.getReference(path);
         dbRef.setValue(data);

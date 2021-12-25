@@ -183,7 +183,6 @@ public class ProfileFragment extends Fragment {
             emergencyNumber.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
         });
         //past medication display section
-        dbHelper dbHelper = new dbHelper();
         String[] rowNumber = {"1", "2", "3", "4", "5", "6"};
         for (String s : rowNumber) {
             rootDbRef.child("pastMedications/" + s).get().addOnCompleteListener(task -> {
@@ -206,10 +205,10 @@ public class ProfileFragment extends Fragment {
                 int medDurationRID = view.getResources().getIdentifier("profileRow" + s + "Duration", "id", requireActivity().getPackageName());
                 Map<String, Object> pastMedication = (Map<String, Object>) Objects.requireNonNull(task.getResult()).getValue();
                 if (pastMedication != null) {
-                    String start = dbHelper.fromEpochTime((Long) pastMedication.get("start"));
+                    String start = com.example.medistation_2.helperFunctions.dbHelper.fromEpochTime((Long) pastMedication.get("start"));
                     int index = start.indexOf(" ");
                     start = start.substring(0, index);
-                    String end = dbHelper.fromEpochTime((Long) pastMedication.get("end"));
+                    String end = com.example.medistation_2.helperFunctions.dbHelper.fromEpochTime((Long) pastMedication.get("end"));
                     index = end.indexOf(" ");
                     end = end.substring(0, index);
                     ((EditText) view.findViewById(medDurationRID)).setText(start + " " + end);
@@ -251,8 +250,6 @@ public class ProfileFragment extends Fragment {
     public void saveSymptoms(View view) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference rootDbRef = database.getReference();
-
-        HashMap<String, Object> symptomInfo = new HashMap<>();
         String symptomName = ((EditText) view.findViewById(R.id.profileSymptomsNameInput)).getText().toString().toLowerCase();
         String symptomSeverity = ((Spinner) requireActivity().findViewById(R.id.profileSeverityDropDownList)).getSelectedItem().toString();
         String hour = ((Spinner) requireActivity().findViewById(R.id.profileHourDropList)).getSelectedItem().toString();
@@ -286,13 +283,13 @@ public class ProfileFragment extends Fragment {
                 if (dataSnapshot.child(path).exists()) {
                     rootDbRef.child(path).get().addOnCompleteListener(task -> {
                         ArrayList<String> symptomRecords;
-                        symptomRecords = (ArrayList<String>) task.getResult().getValue();
+                        symptomRecords = (ArrayList<String>) Objects.requireNonNull(task.getResult()).getValue();
                         assert symptomRecords != null;
                         if (symptomRecords.contains(symptomName)) {
                             Log.d(TAG, "Contain symptom");
                             int symptomLocation = symptomRecords.indexOf(symptomName);
                             rootDbRef.child("symptom/" + symptomLocation + "/occurrence").get().addOnCompleteListener(numOfOccurrence -> {
-                                long occurrenceCount = Objects.requireNonNull(numOfOccurrence.getResult().getChildrenCount());
+                                long occurrenceCount = Objects.requireNonNull(numOfOccurrence.getResult()).getChildrenCount();
                                 Map<String, Object> occurrence = new HashMap<>();
                                 occurrence.put("date", time);
                                 occurrence.put("severity", severity);
@@ -300,7 +297,7 @@ public class ProfileFragment extends Fragment {
                             });
                         } else {
                             symptomRecords.add(symptomName);
-                            dbHelper.addToDB("symptomRecord", symptomRecords);
+                            dbHelper.addToDBStrArray("symptomRecord", symptomRecords);
                             rootDbRef.child(path).get().addOnCompleteListener(numOfSymptom -> {
                                 long symptomCount = Objects.requireNonNull(numOfSymptom.getResult()).getChildrenCount();
                                 symptomCount = symptomCount - 1;
@@ -314,7 +311,7 @@ public class ProfileFragment extends Fragment {
                     });
                 } else {
                     symptomRecords.add(symptomName);
-                    dbHelper.addToDB("symptomRecord", symptomRecords);
+                    dbHelper.addToDBStrArray("symptomRecord", symptomRecords);
                     Map<String, Object> occurrence = new HashMap<>();
                     occurrence.put("date", time);
                     occurrence.put("severity", severity);
@@ -324,7 +321,7 @@ public class ProfileFragment extends Fragment {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         };
         rootDbRef.addListenerForSingleValueEvent(valueEventListener);

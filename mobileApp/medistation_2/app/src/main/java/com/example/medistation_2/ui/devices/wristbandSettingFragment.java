@@ -133,61 +133,20 @@ public class wristbandSettingFragment extends Fragment {
         symptom3DropDownList.setAdapter(symptomButtonMenuArrayAdapter);
     }
 
-    /*
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-
-    public void initializeMQTT(MqttAndroidClient client, View view) {
-        String topic = "";//TODO: add topic;
-        int qos = 2;
-        try {
-            IMqttToken subToken = client.subscribe(topic, qos);
-            subToken.setActionCallback(new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                }
-
-                @Override
-                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                }
-            });
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
-        if (client.isConnected()) {
-            client.setCallback(new MqttCallback() {
-                @Override
-                public void connectionLost(Throwable cause) {
-                }
-
-                @Override
-                public void messageArrived(String topic, MqttMessage message) {
-                    Log.d(TAG, "message>>" + new String(message.getPayload()));
-                    Log.d(TAG, "topic>>" + topic);
-                }
-
-                @Override
-                public void deliveryComplete(IMqttDeliveryToken token) {
-
-                }
-            });
-        }
-    }
-     */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void saveButtonPressed(View view) {
         MQTT mqtt = new MQTT();
-        dbHelper db = new dbHelper();
         String wbNotifBatLevel = ((Spinner) requireActivity().findViewById(R.id.wristbandBatteryNotificationDropDown)).getSelectedItem().toString();
         String button1 = ((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton1DropDownMenu)).getSelectedItem().toString();
         String button2 = ((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton2DropDownMenu)).getSelectedItem().toString();
         String button3 = ((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton3DropDownMenu)).getSelectedItem().toString();
         //Wristband Battery Notification Level
         if (wbNotifBatLevel.equals("Never")) {
-            db.addToDB("wristband/alertLevel",0);
+            dbHelper.addToDB("wristband/alertLevel",0);
             mqtt.MQTTSendData(client, "threshold", 0, "medistaion2021/battery/threshold");
         } else if (!wbNotifBatLevel.equals("Battery Level")) {
             int batteryLevel = Integer.parseInt(wbNotifBatLevel.substring(0, wbNotifBatLevel.length() - 1));
-            db.addToDB("wristband/alertLevel",batteryLevel);
+            dbHelper.addToDB("wristband/alertLevel",batteryLevel);
             mqtt.MQTTSendData(client, "threshold", batteryLevel, "medistaion2021/battery/threshold");
         }
 
@@ -201,7 +160,7 @@ public class wristbandSettingFragment extends Fragment {
         if (!button3.equals("Symptom")){
             wristbandButtons.add(button3);
         }
-        db.addToDB("wristband/button",wristbandButtons);
+        dbHelper.addToDBStrArray("wristband/button",wristbandButtons);
         mqtt.MQTTSendStrListData(client,"symptoms", wristbandButtons,"medistation2021/wristband/buttons");
     }
 
