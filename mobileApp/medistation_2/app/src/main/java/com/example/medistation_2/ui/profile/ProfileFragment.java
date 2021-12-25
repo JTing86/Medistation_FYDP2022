@@ -3,6 +3,7 @@ package com.example.medistation_2.ui.profile;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,11 @@ import androidx.fragment.app.Fragment;
 
 import com.example.medistation_2.R;
 import com.example.medistation_2.helperFunctions.dbHelper;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONException;
 
@@ -106,7 +110,7 @@ public class ProfileFragment extends Fragment {
             }
         };
         //Create hour drop down menu
-        ArrayAdapter<String> hourMenuArrayAdapter = new ArrayAdapter<String>(Objects.requireNonNull(getActivity()).getBaseContext(), android.R.layout.simple_spinner_dropdown_item, hourList) {
+        ArrayAdapter<String> hourMenuArrayAdapter = new ArrayAdapter<String>(requireActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, hourList) {
             @Override
             public boolean isEnabled(int position) {
                 // Disable the first item from Spinner
@@ -216,7 +220,6 @@ public class ProfileFragment extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void addPastMedication(View view) throws JSONException {
-        dbHelper dbHelper = new dbHelper();
         String timeTrailingZero = " 00:00:00.000";
         String[] rowNumber = {"1", "2", "3", "4", "5", "6"};
         for (String s : rowNumber) {
@@ -228,32 +231,35 @@ public class ProfileFragment extends Fragment {
             if (!((((TextView) view.findViewById(medDosageRID)).getText().toString()).equals("") || (((TextView) view.findViewById(medNameRID)).getText().toString()).equals(""))) {
                 pastMedications.put("name", ((TextView) view.findViewById(medNameRID)).getText().toString());
                 pastMedications.put("dosage", Integer.parseInt(((TextView) view.findViewById(medDosageRID)).getText().toString()));
-                pastMedications.put("start", dbHelper.toEpochTime(startEnd[0] + timeTrailingZero));
-                pastMedications.put("end", dbHelper.toEpochTime(startEnd[1] + timeTrailingZero));
-                dbHelper.addToDB("pastMedications/" + s, pastMedications);
+                pastMedications.put("start", com.example.medistation_2.helperFunctions.dbHelper.toEpochTime(startEnd[0] + timeTrailingZero));
+                pastMedications.put("end", com.example.medistation_2.helperFunctions.dbHelper.toEpochTime(startEnd[1] + timeTrailingZero));
+                com.example.medistation_2.helperFunctions.dbHelper.addToDB("pastMedications/" + s, pastMedications);
             }
         }
     }
 
     public void saveUserInfo(View view) {
-        dbHelper dbHelperCall = new dbHelper();
-        dbHelperCall.addToDB("name", ((EditText) view.findViewById(R.id.profileNameInput)).getText().toString());
-        dbHelperCall.addToDB("email", ((EditText) view.findViewById(R.id.profileEmailInput)).getText().toString());
-        dbHelperCall.addToDB("phone", ((EditText) view.findViewById(R.id.profilePhoneInput)).getText().toString());
-        dbHelperCall.addToDB("caretaker/name", ((EditText) view.findViewById(R.id.profileEmergencyNameInput)).getText().toString());
-        dbHelperCall.addToDB("caretaker/phone", Integer.parseInt(((EditText) view.findViewById(R.id.profileEmergencyNumberInput)).getText().toString()));
+        dbHelper.addToDB("name", ((EditText) view.findViewById(R.id.profileNameInput)).getText().toString());
+        dbHelper.addToDB("email", ((EditText) view.findViewById(R.id.profileEmailInput)).getText().toString());
+        dbHelper.addToDB("phone", ((EditText) view.findViewById(R.id.profilePhoneInput)).getText().toString());
+        dbHelper.addToDB("caretaker/name", ((EditText) view.findViewById(R.id.profileEmergencyNameInput)).getText().toString());
+        dbHelper.addToDB("caretaker/phone", Integer.parseInt(((EditText) view.findViewById(R.id.profileEmergencyNumberInput)).getText().toString()));
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     //TODO: Need to work on this based on new database structure
     public void saveSymptoms(View view) {
-        dbHelper dbHelper = new dbHelper();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference rootDbRef = database.getReference();
+
         HashMap<String, Object> symptomInfo = new HashMap<>();
         String symptomName = ((EditText) view.findViewById(R.id.profileSymptomsNameInput)).getText().toString().toLowerCase();
-        if (!(symptomName.equals(" ") || String.valueOf(((Spinner) requireActivity().findViewById(R.id.profileHourDropList)).getSelectedItem()).equals("Hour") || String.valueOf(((Spinner) requireActivity().findViewById(R.id.profileMinuteDropList)).getSelectedItem()).equals("Minute"))) {
-            int symptomHour = Integer.parseInt(String.valueOf(((Spinner) requireActivity().findViewById(R.id.profileHourDropList)).getSelectedItem()));
-            int symptomMinute = Integer.parseInt(String.valueOf(((Spinner) requireActivity().findViewById(R.id.profileMinuteDropList)).getSelectedItem()));
-            String symptomSeverity = ((Spinner) requireActivity().findViewById(R.id.profileSeverityDropDownList)).getSelectedItem().toString();
+        String symptomSeverity = ((Spinner) requireActivity().findViewById(R.id.profileSeverityDropDownList)).getSelectedItem().toString();
+        String hour = ((Spinner) requireActivity().findViewById(R.id.profileHourDropList)).getSelectedItem().toString();
+        String minute = ((Spinner) requireActivity().findViewById(R.id.profileMinuteDropList)).getSelectedItem().toString();
+        if (!(symptomName.equals(" ") || hour.equals("Hour") || minute.equals("Min") || symptomSeverity.equals("Severity"))) {
+            int symptomHour = Integer.parseInt(hour);
+            int symptomMinute = Integer.parseInt(minute);
             int severity = 0;
             switch (symptomSeverity) {
                 case "Moderate":
@@ -266,13 +272,61 @@ public class ProfileFragment extends Fragment {
             Date currentTime = Calendar.getInstance().getTime();
             SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
             String formattedDate = df.format(currentTime) + " " + symptomHour + ":" + symptomMinute + ":00.000";
-            symptomInfo.put ("name", symptomName);
-            Map <String, Object> occurrence = new HashMap<>();
-            occurrence.put ("severity", severity);
-            occurrence.put ("date",dbHelper.toEpochTime(formattedDate));
-            symptomInfo.put("occurrence",occurrence);
-            dbHelper.addToDB("symptom/1",symptomInfo);
+            Long time = dbHelper.toEpochTime(formattedDate);
+            checkIfSymptomExist(rootDbRef, "symptomRecord", symptomName, time, severity);
 
         }
+    }
+
+    public void checkIfSymptomExist(DatabaseReference rootDbRef, String path, String symptomName, Long time, int severity) {
+        ArrayList<String> symptomRecords = new ArrayList<>();
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.child(path).exists()) {
+                    rootDbRef.child(path).get().addOnCompleteListener(task -> {
+                        ArrayList<String> symptomRecords;
+                        symptomRecords = (ArrayList<String>) task.getResult().getValue();
+                        assert symptomRecords != null;
+                        if (symptomRecords.contains(symptomName)) {
+                            Log.d(TAG, "Contain symptom");
+                            int symptomLocation = symptomRecords.indexOf(symptomName);
+                            rootDbRef.child("symptom/" + symptomLocation + "/occurrence").get().addOnCompleteListener(numOfOccurrence -> {
+                                long occurrenceCount = Objects.requireNonNull(numOfOccurrence.getResult().getChildrenCount());
+                                Map<String, Object> occurrence = new HashMap<>();
+                                occurrence.put("date", time);
+                                occurrence.put("severity", severity);
+                                dbHelper.addToDB("symptom/" + symptomLocation + "/occurrence/" + occurrenceCount, occurrence);
+                            });
+                        } else {
+                            symptomRecords.add(symptomName);
+                            dbHelper.addToDB("symptomRecord", symptomRecords);
+                            rootDbRef.child(path).get().addOnCompleteListener(numOfSymptom -> {
+                                long symptomCount = Objects.requireNonNull(numOfSymptom.getResult()).getChildrenCount();
+                                symptomCount = symptomCount - 1;
+                                Map<String, Object> occurrence = new HashMap<>();
+                                occurrence.put("date", time);
+                                occurrence.put("severity", severity);
+                                dbHelper.addToDB("symptom/" + symptomCount + "/name", symptomName);
+                                dbHelper.addToDB("symptom/" + symptomCount + "/occurrence/0", occurrence);
+                            });
+                        }
+                    });
+                } else {
+                    symptomRecords.add(symptomName);
+                    dbHelper.addToDB("symptomRecord", symptomRecords);
+                    Map<String, Object> occurrence = new HashMap<>();
+                    occurrence.put("date", time);
+                    occurrence.put("severity", severity);
+                    dbHelper.addToDB("symptom/0/name", symptomName);
+                    dbHelper.addToDB("symptom/0/occurrence/0", occurrence);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
+        rootDbRef.addListenerForSingleValueEvent(valueEventListener);
     }
 }
