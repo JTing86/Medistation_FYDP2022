@@ -15,7 +15,7 @@ public class MQTT {
     private static final String TAG = MQTT.class.getSimpleName();
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void MQTTSendData(MqttAndroidClient client, String key, String payload, String topic) {
+    public static void MQTTSendData(MqttAndroidClient client, String key, String payload, String topic) {
         byte[] encodedPayload;
         String MQTTPayload = "{\"" + key + "\": " + payload + "}";
         try {
@@ -28,7 +28,7 @@ public class MQTT {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void MQTTSendData(MqttAndroidClient client, String key, int payload, String topic) {
+    public static void MQTTSendData(MqttAndroidClient client, String key, int payload, String topic) {
         byte[] encodedPayload;
         String MQTTPayload = "{\"" + key + "\": " + payload + "}";
         try {
@@ -41,7 +41,7 @@ public class MQTT {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void MQTTSendStrListData(MqttAndroidClient client, String key, ArrayList<String> payload, String topic) {
+    public static void MQTTSendStrListData(MqttAndroidClient client, String key, ArrayList<String> payload, String topic) {
         byte[] encodedPayload;
         StringBuilder MQTTPayload = new StringBuilder("{\"" + key + "\": [");
         for (String s: payload){
@@ -59,7 +59,7 @@ public class MQTT {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void MQTTSendIntListData(MqttAndroidClient client, String key, ArrayList<Integer> payload, String topic) {
+    public static void MQTTSendIntListData(MqttAndroidClient client, String key, ArrayList<Integer> payload, String topic) {
         byte[] encodedPayload;
         StringBuilder MQTTPayload = new StringBuilder("{\"" + key + "\": [");
         for (Integer s: payload){

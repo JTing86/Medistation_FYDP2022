@@ -69,8 +69,6 @@ public class dbHelper extends AppCompatActivity {
         dbRef.setValue(data);
     }
 
-
-
     public static void deleteNode(String path) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference dbRef = database.getReference(path);
@@ -91,7 +89,6 @@ public class dbHelper extends AppCompatActivity {
         Date date = new Date(epochTime);
         DateFormat format = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SSS");
         format.setTimeZone(TimeZone.getTimeZone("Canada/Eastern"));
-        Log.d(TAG, format.format(date));
         return format.format(date);
     }
 

@@ -42,7 +42,6 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.nio.charset.StandardCharsets;
 
-//Testing Comment
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.toString();
@@ -73,7 +72,9 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     initializeMQTT(client,"medistation2021/battery/send");
-                    initializeMQTT(client,"medistation2021/pill-status");
+                    initializeMQTT(client,"medistation2021/wifi-status/send");
+                    initializeMQTT(client,"medistation2021/health-status");
+                    initializeMQTT(client, "medistation2021/pill/status");
                 }
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
@@ -121,8 +122,8 @@ public class MainActivity extends AppCompatActivity {
                         pushNotification("Battery Level: " + new String(message.getPayload()),"Low Wristband Battery");
                         //TODO: message and title acting as placeholders 
                     }
-                    else if (topic.equals("medistation2021/pill-status")) {
-                        pushNotification("Pill Not Taken: " + new String(message.getPayload()),"Pill Missed");
+                    else if (topic.equals("medistation2021/health-status")) {
+
                         //TODO: message and title acting as placeholders
                     }
                 }

@@ -113,8 +113,6 @@ public class dispenserSettingFragment extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void refillNotification() {
-        dbHelper dbHelperCall = new dbHelper();
-        MQTT mqtt = new MQTT();
         String currentContainer1Pill = ((Spinner) requireActivity().findViewById(R.id.dispenserContainer1DropDownMenu)).getSelectedItem().toString();
         String currentContainer2Pill = ((Spinner) requireActivity().findViewById(R.id.dispenserContainer2DropDownMenu)).getSelectedItem().toString();
         String currentContainer3Pill = ((Spinner) requireActivity().findViewById(R.id.dispenserContainer3DropDownMenu)).getSelectedItem().toString();
@@ -122,56 +120,55 @@ public class dispenserSettingFragment extends Fragment {
         String currentContainer5Pill = ((Spinner) requireActivity().findViewById(R.id.dispenserContainer5DropDownMenu)).getSelectedItem().toString();
         ArrayList<Integer> refillNotificationNumbers = new ArrayList<>();
         if (!(currentContainer1Pill.equals("Amount") || currentContainer1Pill.equals("Never"))) {
-            dbHelperCall.addToDB("/medications/0/alertAmount", Integer.parseInt(currentContainer1Pill));
+            dbHelper.addToDB("/medications/0/alertAmount", Integer.parseInt(currentContainer1Pill));
             refillNotificationNumbers.add(Integer.parseInt(currentContainer1Pill));
         } else if (currentContainer1Pill.equals("Never")) {
-            dbHelperCall.addToDB("/medications/0/alertAmount", 0);
+            dbHelper.addToDB("/medications/0/alertAmount", 0);
             refillNotificationNumbers.add(0);
         } else {
             refillNotificationNumbers.add(null);
         }
         if (!(currentContainer2Pill.equals("Amount") || currentContainer2Pill.equals("Never"))) {
-            dbHelperCall.addToDB("/medications/1/alertAmount", Integer.parseInt(currentContainer2Pill));
+            dbHelper.addToDB("/medications/1/alertAmount", Integer.parseInt(currentContainer2Pill));
             refillNotificationNumbers.add(Integer.parseInt(currentContainer2Pill));
         } else if (currentContainer2Pill.equals("Never")) {
-            dbHelperCall.addToDB("/medications/1/alertAmount", 0);
+            dbHelper.addToDB("/medications/1/alertAmount", 0);
             refillNotificationNumbers.add(0);
         } else {
             refillNotificationNumbers.add(null);
         }
         if (!(currentContainer3Pill.equals("Amount") || currentContainer3Pill.equals("Never"))) {
-            dbHelperCall.addToDB("/medications/2/alertAmount", Integer.parseInt(currentContainer3Pill));
+            dbHelper.addToDB("/medications/2/alertAmount", Integer.parseInt(currentContainer3Pill));
             refillNotificationNumbers.add(Integer.parseInt(currentContainer3Pill));
         } else if (currentContainer3Pill.equals("Never")) {
-            dbHelperCall.addToDB("/medications/2/alertAmount", 0);
+            dbHelper.addToDB("/medications/2/alertAmount", 0);
             refillNotificationNumbers.add(0);
         } else {
             refillNotificationNumbers.add(null);
         }
         if (!(currentContainer4Pill.equals("Amount") || currentContainer4Pill.equals("Never"))) {
-            dbHelperCall.addToDB("/medications/3/alertAmount", Integer.parseInt(currentContainer4Pill));
+            dbHelper.addToDB("/medications/3/alertAmount", Integer.parseInt(currentContainer4Pill));
             refillNotificationNumbers.add(Integer.parseInt(currentContainer4Pill));
         } else if (currentContainer4Pill.equals("Never")) {
-            dbHelperCall.addToDB("/medications/3/alertAmount", 0);
+            dbHelper.addToDB("/medications/3/alertAmount", 0);
             refillNotificationNumbers.add(0);
         } else {
             refillNotificationNumbers.add(null);
         }
         if (!(currentContainer5Pill.equals("Amount") || currentContainer5Pill.equals("Never"))) {
-            dbHelperCall.addToDB("/medications/4/alertAmount", Integer.parseInt(currentContainer5Pill));
+            dbHelper.addToDB("/medications/4/alertAmount", Integer.parseInt(currentContainer5Pill));
             refillNotificationNumbers.add(Integer.parseInt(currentContainer5Pill));
         } else if (currentContainer5Pill.equals("Never")) {
-            dbHelperCall.addToDB("/medications/4/alertAmount", 0);
+            dbHelper.addToDB("/medications/4/alertAmount", 0);
             refillNotificationNumbers.add(0);
         } else {
             refillNotificationNumbers.add(null);
         }
-        mqtt.MQTTSendIntListData(client, "amount", refillNotificationNumbers, "medistation2021/dispenser/alert");
+        MQTT.MQTTSendIntListData(client, "amount", refillNotificationNumbers, "medistation2021/dispenser/alert");
 
     }
 
     public void calibration() {
-        dbHelper dbHelperCall = new dbHelper();
         String container1RefillAmount = ((EditText) requireActivity().findViewById(R.id.calibrationContainer1Input)).getText().toString();
         String container2RefillAmount = ((EditText) requireActivity().findViewById(R.id.calibrationContainer2Input)).getText().toString();
         String container3RefillAmount = ((EditText) requireActivity().findViewById(R.id.calibrationContainer3Input)).getText().toString();
@@ -179,15 +176,15 @@ public class dispenserSettingFragment extends Fragment {
         String container5RefillAmount = ((EditText) requireActivity().findViewById(R.id.calibrationContainer5Input)).getText().toString();
 
         if (!(container1RefillAmount.equals("")))
-            dbHelperCall.addToDB("/medications/0/currentAmount", Integer.parseInt(container1RefillAmount));
+            dbHelper.addToDB("/medications/0/currentAmount", Integer.parseInt(container1RefillAmount));
         if (!(container2RefillAmount.equals("")))
-            dbHelperCall.addToDB("/medications/1/currentAmount", Integer.parseInt(container2RefillAmount));
+            dbHelper.addToDB("/medications/1/currentAmount", Integer.parseInt(container2RefillAmount));
         if (!(container3RefillAmount.equals("")))
-            dbHelperCall.addToDB("/medications/2/currentAmount", Integer.parseInt(container3RefillAmount));
+            dbHelper.addToDB("/medications/2/currentAmount", Integer.parseInt(container3RefillAmount));
         if (!(container4RefillAmount.equals("")))
-            dbHelperCall.addToDB("/medications/3/currentAmount", Integer.parseInt(container4RefillAmount));
+            dbHelper.addToDB("/medications/3/currentAmount", Integer.parseInt(container4RefillAmount));
         if (!(container5RefillAmount.equals("")))
-            dbHelperCall.addToDB("/medications/4/currentAmount", Integer.parseInt(container5RefillAmount));
+            dbHelper.addToDB("/medications/4/currentAmount", Integer.parseInt(container5RefillAmount));
     }
     //TODO, add function to send notification when number of pills in dispenser is low
 }

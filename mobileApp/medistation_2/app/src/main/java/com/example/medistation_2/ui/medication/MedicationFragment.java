@@ -2,6 +2,7 @@ package com.example.medistation_2.ui.medication;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -21,9 +22,11 @@ import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.example.medistation_2.R;
+import com.example.medistation_2.helperFunctions.MQTT;
 import com.example.medistation_2.helperFunctions.dbHelper;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,19 +34,23 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class MedicationFragment extends Fragment {
 
     private static final String TAG = MedicationFragment.class.getSimpleName();
-
+    public MqttAndroidClient client;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -51,6 +58,7 @@ public class MedicationFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_medication, container, false);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
@@ -62,6 +70,25 @@ public class MedicationFragment extends Fragment {
         Button pill5SaveButton = view.findViewById(R.id.pill5SaveButton);
         boolean[] pillSelector = new boolean[5];
         Integer[] dailyDosage = new Integer[5];
+
+        String clientId = MqttClient.generateClientId();
+        client = new MqttAndroidClient(requireContext().getApplicationContext(), "tcp://broker.hivemq.com:1883", clientId);
+        try {
+            IMqttToken token = client.connect();
+            token.setActionCallback(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.d(TAG,"MQTT successfully connected in dispenser setting fragment");
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.d(TAG,"MQTT client in dispenser setting fragment did not connect successfully");
+                }
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
 
         pill1SaveButton.setOnClickListener(v -> {
             String pill1DailyDosage = String.valueOf(((TextView) view.findViewById(R.id.pill1DosageInput)).getText());
@@ -115,8 +142,10 @@ public class MedicationFragment extends Fragment {
                 savePillScheduleToDatabase(view, "4", dailyDosage[3]);
             if (pillSelector[4])
                 savePillScheduleToDatabase(view, "5", dailyDosage[4]);
-
+            Handler handler = new Handler();
+            handler.postDelayed(() -> informDispenser(pillSelector), 5000);   //5 seconds
         });
+
     }
 
     public void initializeDropDownList(Spinner numberOfPillsDropDownList, Spinner hourDropDownList, Spinner minuteDropDownList) {
@@ -231,7 +260,7 @@ public class MedicationFragment extends Fragment {
                 singleDosage.put("hour", Integer.parseInt(hour));
                 singleDosage.put("minute", Integer.parseInt(minute));
             }
-            totalDosagePerPill.put(String.valueOf(i),singleDosage);
+            totalDosagePerPill.put(String.valueOf(i), singleDosage);
         }
         dbHelper.addToDB("medications/" + (Integer.parseInt(pillNumber) - 1) + "/dose/", totalDosagePerPill);
         //save the pill name to database
@@ -240,7 +269,6 @@ public class MedicationFragment extends Fragment {
         if (!(pillNameUserInput.equals("Pill Name"))) {
             dbHelper.addToDB("medications/" + (Integer.parseInt(pillNumber) - 1) + "/name", pillNameUserInput);
         }
-
     }
 
     public void dosageTableCreator(View view, int dosageInputID, int dosageTableID, String pillNumber) {
@@ -254,7 +282,7 @@ public class MedicationFragment extends Fragment {
             Spinner minuteDropDownList = new Spinner(getContext());
 
             TextView rowTitle = new TextView(getContext());
-            rowTitle.setText("Dose " + i );
+            rowTitle.setText("Dose " + i);
             //first number represent pill
             //second number represent row
             //third number represent which block of the row
@@ -297,5 +325,15 @@ public class MedicationFragment extends Fragment {
             };
             rootDbRef.addListenerForSingleValueEvent(valueEventListener);
         }
+    }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void informDispenser(boolean [] schedule){
+        ArrayList<Integer> scheduleChange = new ArrayList<>();
+        for (int i =0; i< schedule.length;i++){
+            if(schedule[i]){
+                scheduleChange.add(i);
+            }
+        }
+        MQTT.MQTTSendIntListData(client,"pillNumber",scheduleChange,"medistation2021/pill/schedule");
     }
 }
