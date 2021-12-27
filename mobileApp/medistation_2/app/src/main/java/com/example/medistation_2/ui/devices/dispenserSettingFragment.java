@@ -35,7 +35,7 @@ import java.util.List;
 public class dispenserSettingFragment extends Fragment {
 
     private static final String TAG = dispenserSettingFragment.class.getSimpleName();
-    public MqttAndroidClient client;
+    private MqttAndroidClient client;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,

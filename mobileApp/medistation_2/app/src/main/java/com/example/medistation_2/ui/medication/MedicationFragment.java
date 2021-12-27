@@ -266,6 +266,7 @@ public class MedicationFragment extends Fragment {
         //save the pill name to database
         int pillNameUserInputID = view.getResources().getIdentifier(("pill" + pillNumber + "NameInput"), "id", requireActivity().getPackageName());
         String pillNameUserInput = ((EditText) requireActivity().findViewById(pillNameUserInputID)).getText().toString();
+        pillNameUserInput = pillNameUserInput.replace(" ","");
         if (!(pillNameUserInput.equals("Pill Name"))) {
             dbHelper.addToDB("medications/" + (Integer.parseInt(pillNumber) - 1) + "/name", pillNameUserInput);
         }

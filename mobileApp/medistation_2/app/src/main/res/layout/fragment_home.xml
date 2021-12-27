@@ -6,75 +6,172 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
-    <TextView
-        android:id="@+id/homeWristbandSignalStrengthValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/homeWristbandSignalStrength"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/homeWristbandSignalStrength"
-        app:layout_constraintTop_toBottomOf="@+id/homeWristbandSignalStrength"
-        app:layout_constraintVertical_bias="0.239" />
-
-    <TextView
-        android:id="@+id/homeDispenserSignalStrengthValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/homeSignalStrengthLabel"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/homeSignalStrengthLabel"
-        app:layout_constraintTop_toBottomOf="@+id/homeSignalStrengthLabel"
-        app:layout_constraintVertical_bias="0.169" />
-
-    <TextView
-        android:id="@+id/homeWristbandSignalStrength"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Signal Strength"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/homeSignalStrengthLabel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.851"
-        app:layout_constraintStart_toEndOf="@+id/homeSignalStrengthLabel"
-        app:layout_constraintTop_toTopOf="@+id/homeSignalStrengthLabel"
-        app:layout_constraintVertical_bias="0.183" />
-
-    <TextView
-        android:id="@+id/homeSignalStrengthLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Signal Strength"
-        android:textSize="18sp"
-        android:textStyle="bold"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.06"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homeDispenserLabel"
-        app:layout_constraintVertical_bias="0.148" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
 
-    <TextView
-        android:id="@+id/homeWristbandLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Wristband"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/homeDispenserLabel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.785"
-        app:layout_constraintStart_toEndOf="@+id/homeDispenserLabel"
-        app:layout_constraintTop_toTopOf="@+id/homeDispenserLabel"
-        app:layout_constraintVertical_bias="0.0" />
+        <View
+            android:id="@+id/homeDeviceStatusBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#3CFF33"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <View
+            android:id="@+id/homeDispenserBackground"
+            android:layout_width="165dp"
+            android:layout_height="200dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:background="#BDFDF4"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.413" />
+
+        <View
+            android:id="@+id/homeWristbandBackground"
+            android:layout_width="165dp"
+            android:layout_height="200dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            android:background="#BDFDF4"
+            app:layout_constraintBottom_toBottomOf="@+id/homeDispenserBackground"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.995"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/homeDispenserBackground"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/homeDispenserLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dispenser"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/homeDispenserBackground"
+            app:layout_constraintEnd_toEndOf="@+id/homeDispenserBackground"
+            app:layout_constraintStart_toStartOf="@+id/homeDispenserBackground"
+            app:layout_constraintTop_toTopOf="@+id/homeDispenserBackground"
+            app:layout_constraintVertical_bias="0.056" />
+
+        <TextView
+            android:id="@+id/homeWristbandLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wristband"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/homeDispenserLabel"
+            app:layout_constraintEnd_toEndOf="@+id/homeWristbandBackground"
+            app:layout_constraintStart_toStartOf="@+id/homeWristbandBackground"
+            app:layout_constraintTop_toTopOf="@+id/homeDispenserLabel"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/homeWristbandSignalStrength"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Signal Strength"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/homeSignalStrengthLabel"
+            app:layout_constraintEnd_toEndOf="@+id/homeWristbandBackground"
+            app:layout_constraintStart_toStartOf="@+id/homeWristbandBackground"
+            app:layout_constraintTop_toTopOf="@+id/homeSignalStrengthLabel"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/homeSignalStrengthLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Signal Strength"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/homeDispenserBackground"
+            app:layout_constraintEnd_toEndOf="@+id/homeDispenserBackground"
+            app:layout_constraintStart_toStartOf="@+id/homeDispenserBackground"
+            app:layout_constraintTop_toBottomOf="@+id/homeDispenserLabel"
+            app:layout_constraintVertical_bias="0.584" />
+
+        <ImageView
+            android:id="@+id/homeDispenserWifiSignal"
+            android:layout_width="119dp"
+            android:layout_height="45dp"
+            android:src="@drawable/wifi_signal_0"
+            app:layout_constraintBottom_toBottomOf="@+id/homeDispenserBackground"
+            app:layout_constraintEnd_toEndOf="@+id/homeSignalStrengthLabel"
+            app:layout_constraintStart_toStartOf="@+id/homeSignalStrengthLabel"
+            app:layout_constraintTop_toBottomOf="@+id/homeSignalStrengthLabel"
+            android:contentDescription="Wifi Signal Strength" />
+
+        <ImageView
+            android:id="@+id/homeWristbandWifiSignal"
+            android:layout_width="119dp"
+            android:layout_height="45dp"
+            android:src="@drawable/wifi_signal_0"
+            app:layout_constraintBottom_toBottomOf="@+id/homeDispenserWifiSignal"
+            app:layout_constraintEnd_toEndOf="@+id/homeWristbandSignalStrength"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/homeWristbandSignalStrength"
+            app:layout_constraintTop_toTopOf="@+id/homeDispenserWifiSignal"
+            android:contentDescription="Wifi Signal Strength" />
+
+        <TextView
+            android:id="@+id/homeRefillText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/homeSignalStrengthLabel"
+            app:layout_constraintEnd_toEndOf="@+id/homeDispenserBackground"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/homeSignalStrengthLabel"
+            app:layout_constraintTop_toBottomOf="@+id/homeDispenserLabel" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="37dp"
+            android:layout_height="37dp"
+            android:src="@drawable/vertical_battery_icon"
+            app:layout_constraintBottom_toBottomOf="@+id/homeRefillText"
+            app:layout_constraintEnd_toEndOf="@+id/homeWristbandSignalStrength"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/homeWristbandSignalStrength"
+            app:layout_constraintTop_toTopOf="@+id/homeRefillText"
+            app:layout_constraintVertical_bias="0.562" />
+
+        <TextView
+            android:id="@+id/homeWristbandBatteryLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="60%"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/homeWristbandSignalStrength"
+            app:layout_constraintEnd_toEndOf="@+id/homeWristbandBackground"
+            app:layout_constraintHorizontal_bias="0.25"
+            app:layout_constraintStart_toEndOf="@+id/imageView2"
+            app:layout_constraintTop_toBottomOf="@+id/homeWristbandLabel" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <TextView
         android:id="@+id/homeHeartRateValue"
@@ -119,20 +216,6 @@
         app:layout_constraintVertical_bias="0.042" />
 
     <TextView
-        android:id="@+id/homeDispenserLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Dispenser"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.118"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.645" />
-
-    <TextView
         android:id="@+id/homeHeartRateLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -145,5 +228,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.373" />
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

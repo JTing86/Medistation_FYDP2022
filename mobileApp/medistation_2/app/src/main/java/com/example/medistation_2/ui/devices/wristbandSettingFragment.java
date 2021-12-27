@@ -33,7 +33,7 @@ import java.util.List;
 public class wristbandSettingFragment extends Fragment {
 
     private static final String TAG = wristbandSettingFragment.class.getSimpleName();
-    public MqttAndroidClient client;
+    private MqttAndroidClient client;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -135,7 +135,6 @@ public class wristbandSettingFragment extends Fragment {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void saveButtonPressed(View view) {
-        MQTT mqtt = new MQTT();
         String wbNotifBatLevel = ((Spinner) requireActivity().findViewById(R.id.wristbandBatteryNotificationDropDown)).getSelectedItem().toString();
         String button1 = ((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton1DropDownMenu)).getSelectedItem().toString();
         String button2 = ((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton2DropDownMenu)).getSelectedItem().toString();
@@ -143,11 +142,11 @@ public class wristbandSettingFragment extends Fragment {
         //Wristband Battery Notification Level
         if (wbNotifBatLevel.equals("Never")) {
             dbHelper.addToDB("wristband/alertLevel",0);
-            mqtt.MQTTSendData(client, "threshold", 0, "medistaion2021/battery/threshold");
+            MQTT.MQTTSendData(client, "threshold", 0,requireContext().getString(R.string.batteryThreshold));
         } else if (!wbNotifBatLevel.equals("Battery Level")) {
             int batteryLevel = Integer.parseInt(wbNotifBatLevel.substring(0, wbNotifBatLevel.length() - 1));
             dbHelper.addToDB("wristband/alertLevel",batteryLevel);
-            mqtt.MQTTSendData(client, "threshold", batteryLevel, "medistaion2021/battery/threshold");
+            MQTT.MQTTSendData(client, "threshold", batteryLevel, requireContext().getString(R.string.batteryThreshold));
         }
 
         ArrayList <String> wristbandButtons = new ArrayList<>();
@@ -161,8 +160,6 @@ public class wristbandSettingFragment extends Fragment {
             wristbandButtons.add(button3);
         }
         dbHelper.addToDBStrArray("wristband/button",wristbandButtons);
-        mqtt.MQTTSendStrListData(client,"symptoms", wristbandButtons,"medistation2021/wristband/buttons");
+        MQTT.MQTTSendStrListData(client,"symptoms", wristbandButtons,"medistation2021/wristband/buttons");
     }
-
-
 }
