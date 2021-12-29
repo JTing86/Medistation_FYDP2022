@@ -7,26 +7,16 @@
     tools:context=".ui.home.HomeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="350dp"
+        android:background="#3CFF33"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0">
-
-        <View
-            android:id="@+id/homeDeviceStatusBackground"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#3CFF33"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
 
         <View
             android:id="@+id/homeDispenserBackground"
@@ -112,24 +102,24 @@
             android:id="@+id/homeDispenserWifiSignal"
             android:layout_width="119dp"
             android:layout_height="45dp"
+            android:contentDescription="Wifi Signal Strength"
             android:src="@drawable/wifi_signal_0"
             app:layout_constraintBottom_toBottomOf="@+id/homeDispenserBackground"
             app:layout_constraintEnd_toEndOf="@+id/homeSignalStrengthLabel"
             app:layout_constraintStart_toStartOf="@+id/homeSignalStrengthLabel"
-            app:layout_constraintTop_toBottomOf="@+id/homeSignalStrengthLabel"
-            android:contentDescription="Wifi Signal Strength" />
+            app:layout_constraintTop_toBottomOf="@+id/homeSignalStrengthLabel" />
 
         <ImageView
             android:id="@+id/homeWristbandWifiSignal"
             android:layout_width="119dp"
             android:layout_height="45dp"
+            android:contentDescription="Wifi Signal Strength"
             android:src="@drawable/wifi_signal_0"
             app:layout_constraintBottom_toBottomOf="@+id/homeDispenserWifiSignal"
             app:layout_constraintEnd_toEndOf="@+id/homeWristbandSignalStrength"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/homeWristbandSignalStrength"
-            app:layout_constraintTop_toTopOf="@+id/homeDispenserWifiSignal"
-            android:contentDescription="Wifi Signal Strength" />
+            app:layout_constraintTop_toTopOf="@+id/homeDispenserWifiSignal" />
 
         <TextView
             android:id="@+id/homeRefillText"
@@ -169,67 +159,101 @@
             app:layout_constraintStart_toEndOf="@+id/imageView2"
             app:layout_constraintTop_toBottomOf="@+id/homeWristbandLabel" />
 
+        <TextView
+            android:id="@+id/homeDeviceStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Device Status"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/homeDispenserBackground"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.51" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    <TextView
-        android:id="@+id/homeHeartRateValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/homeHeartRateLabel"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="#BDFDF4"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.383"
-        app:layout_constraintStart_toEndOf="@+id/homeHeartRateLabel"
-        app:layout_constraintTop_toTopOf="@+id/homeHeartRateLabel"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/homeTempValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/homeTempLabel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.195"
-        app:layout_constraintStart_toEndOf="@+id/homeTempLabel"
-        app:layout_constraintTop_toTopOf="@+id/homeTempLabel"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/homeTempLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Temperature (\u2103):"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/homeHeartRateLabel"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/homeHeartRateLabel"
-        app:layout_constraintTop_toBottomOf="@+id/homeHeartRateLabel"
-        app:layout_constraintVertical_bias="0.042" />
-
-    <TextView
-        android:id="@+id/homeHeartRateLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Current heart rate (BPM):"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.128"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.373" />
+        app:layout_constraintVertical_bias="1.0">
 
+        <TextView
+            android:id="@+id/homeTempLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="28dp"
+            android:text="Temperature (\u2103):"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/homeHeartRateLabel"
+            app:layout_constraintTop_toBottomOf="@+id/homeHeartRateLabel"
+            app:layout_constraintVertical_bias="0.833" />
 
+        <TextView
+            android:id="@+id/homeHeartRateValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/homeHeartRateLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.623"
+            app:layout_constraintStart_toEndOf="@+id/homeHeartRateLabel"
+            app:layout_constraintTop_toTopOf="@+id/homeHeartRateLabel"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/homeTempValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/homeTempLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.195"
+            app:layout_constraintStart_toEndOf="@+id/homeTempLabel"
+            app:layout_constraintTop_toTopOf="@+id/homeTempLabel"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/homeHeartRateLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Current heart rate (BPM):"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.129"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.42" />
+
+        <TextView
+            android:id="@+id/homeHealthStatusLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Health Status"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/homeHeartRateLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

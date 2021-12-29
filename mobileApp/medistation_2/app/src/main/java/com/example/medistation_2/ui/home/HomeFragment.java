@@ -1,5 +1,6 @@
 package com.example.medistation_2.ui.home;
 
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,7 +45,8 @@ import java.util.Map;
 import java.util.Objects;
 
 public class HomeFragment extends Fragment {
-    private static final String TAG = HomeFragment.class.getSimpleName(); ;
+    private static final String TAG = HomeFragment.class.getSimpleName();
+    ;
     private MqttAndroidClient client;
 
     @Override
@@ -63,7 +65,7 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         initializeMQTT(view);
-        dispenserRefillTime(view);
+        dispenserRefillTime();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -77,8 +79,8 @@ public class HomeFragment extends Fragment {
                 public void onSuccess(IMqttToken asyncActionToken) {
                     MQTTSubscribe("medistation2021/wifi-status/send", view);
                     MQTTSubscribe("medistation2021/health-status/send", view);
-                    MQTTSubscribe("medistation2021/battery/send",view);
-                    MQTT.MQTTSendData(client, "battery","",requireContext().getString(R.string.batteryRequest));
+                    MQTTSubscribe("medistation2021/battery/send", view);
+                    MQTT.MQTTSendData(client, "battery", "", requireContext().getString(R.string.batteryRequest));
                 }
 
                 @Override
@@ -116,13 +118,13 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws JSONException {
                     if (topic.equals(requireContext().getString(R.string.wifiStatusSend))) {
-                        wifiStatusDisplay(view, message);
+                        wifiStatusDisplay(message);
                     } else if (topic.equals(requireContext().getString(R.string.healthStatusSend))) {
-                        healthStatusDisplay(view, message);
-                    } else if (topic.equals(requireContext().getString((R.string.batterySend)))){
-                        int batteryLevel = Integer.parseInt(String.valueOf(JsonHelper.intDecoder("percentage",new String(message.getPayload()))));
+                        healthStatusDisplay(message);
+                    } else if (topic.equals(requireContext().getString((R.string.batterySend)))) {
+                        int batteryLevel = Integer.parseInt(String.valueOf(JsonHelper.intDecoder("percentage", new String(message.getPayload()))));
                         TextView wristbandBatteryLevel = (TextView) requireActivity().findViewById(R.id.homeWristbandBatteryLevel);
-                        wristbandBatteryLevel.setText(batteryLevel+"%");
+                        wristbandBatteryLevel.setText(batteryLevel + "%");
                     }
                 }
 
@@ -133,11 +135,11 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    public void wifiStatusDisplay(View view, MqttMessage message) throws JSONException {
+    public void wifiStatusDisplay(MqttMessage message) throws JSONException {
         int signalStrength = JsonHelper.intDecoder("quality", new String(message.getPayload()));
         String device = JsonHelper.stringDecoder("device", new String(message.getPayload()));
-        ImageView wristbandWifiStatus = view.findViewById(R.id.homeWristbandWifiSignal);
-        ImageView dispenserWifiStatus = view.findViewById(R.id.homeDispenserWifiSignal);
+        ImageView wristbandWifiStatus = requireActivity().findViewById(R.id.homeWristbandWifiSignal);
+        ImageView dispenserWifiStatus = requireActivity().findViewById(R.id.homeDispenserWifiSignal);
         if (device.equals("wristband")) {
             switch (signalStrength) {
                 case 1:
@@ -177,14 +179,24 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    public void healthStatusDisplay(View view, MqttMessage message) throws JSONException {
-        TextView heartRateValue = view.findViewById(R.id.homeHeartRateValue);
-        TextView temperature = view.findViewById(R.id.homeTempValue);
-        heartRateValue.setText(String.valueOf(JsonHelper.intDecoder("bpm", new String(message.getPayload()))));
-        temperature.setText(String.valueOf(JsonHelper.intDecoder("temp", new String(message.getPayload()))));
+    public void healthStatusDisplay( MqttMessage message) throws JSONException {
+        TextView heartRateValue = requireActivity().findViewById(R.id.homeHeartRateValue);
+        TextView temperatureValue = requireActivity().findViewById(R.id.homeTempValue);
+        int temperature = JsonHelper.intDecoder("temp",new String (message.getPayload()));
+        int heartRate = JsonHelper.intDecoder("bpm", new String(message.getPayload()));
+        heartRateValue.setText(String.valueOf(heartRate));
+        if ((temperature-37)>0.5) {
+            temperatureValue.setText(temperature + " (Higher Than Average)");
+            temperatureValue.setTextColor(Color.RED);
+        } else if ((temperature-37)<-0.5) {
+            temperatureValue.setText(temperature + " (Lower Than Average)");
+            temperatureValue.setTextColor(Color.BLUE);
+        } else {
+            temperatureValue.setText(temperature + " (Normal)");
+        }
     }
 
-    public void dispenserRefillTime(View view) {
+    public void dispenserRefillTime() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference rootDbRef = database.getReference();
         ValueEventListener valueEventListener = new ValueEventListener() {
@@ -194,9 +206,8 @@ public class HomeFragment extends Fragment {
                 if (dataSnapshot.child("/medications").exists()) {
                     rootDbRef.child("/medications").get().addOnCompleteListener(task -> {
                         ArrayList<Objects> medication = (ArrayList<Objects>) task.getResult().getValue();
-                        int numOfMedicatons = (int) task.getResult().getChildrenCount();
                         ArrayList<Integer> currentAmount = new ArrayList<>();
-                        for (int i = 0; i< Objects.requireNonNull(medication).size(); i++){
+                        for (int i = 0; i < Objects.requireNonNull(medication).size(); i++) {
                             try {
                                 currentAmount.add(JsonHelper.intDecoder("currentAmount", String.valueOf(medication.get(i))));
                             } catch (JSONException e) {
@@ -205,10 +216,11 @@ public class HomeFragment extends Fragment {
                         }
                         int lowestCurrentAmount = Collections.min(currentAmount);
                         TextView refillText = (TextView) requireActivity().findViewById(R.id.homeRefillText);
-                        refillText.setText("Refill in "+ lowestCurrentAmount +" day(s)");
+                        refillText.setText("Refill in " + lowestCurrentAmount + " day(s)");
                     });
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
@@ -216,4 +228,5 @@ public class HomeFragment extends Fragment {
         };
         rootDbRef.addListenerForSingleValueEvent(valueEventListener);
     }
+
 }

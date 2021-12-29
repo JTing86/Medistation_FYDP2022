@@ -126,7 +126,7 @@ public class dispenserSettingFragment extends Fragment {
             dbHelper.addToDB("/medications/0/alertAmount", 0);
             refillNotificationNumbers.add(0);
         } else {
-            refillNotificationNumbers.add(null);
+            refillNotificationNumbers.add(-1);
         }
         if (!(currentContainer2Pill.equals("Amount") || currentContainer2Pill.equals("Never"))) {
             dbHelper.addToDB("/medications/1/alertAmount", Integer.parseInt(currentContainer2Pill));
@@ -135,7 +135,7 @@ public class dispenserSettingFragment extends Fragment {
             dbHelper.addToDB("/medications/1/alertAmount", 0);
             refillNotificationNumbers.add(0);
         } else {
-            refillNotificationNumbers.add(null);
+            refillNotificationNumbers.add(-1);
         }
         if (!(currentContainer3Pill.equals("Amount") || currentContainer3Pill.equals("Never"))) {
             dbHelper.addToDB("/medications/2/alertAmount", Integer.parseInt(currentContainer3Pill));
@@ -144,7 +144,7 @@ public class dispenserSettingFragment extends Fragment {
             dbHelper.addToDB("/medications/2/alertAmount", 0);
             refillNotificationNumbers.add(0);
         } else {
-            refillNotificationNumbers.add(null);
+            refillNotificationNumbers.add(-1);
         }
         if (!(currentContainer4Pill.equals("Amount") || currentContainer4Pill.equals("Never"))) {
             dbHelper.addToDB("/medications/3/alertAmount", Integer.parseInt(currentContainer4Pill));
@@ -153,7 +153,7 @@ public class dispenserSettingFragment extends Fragment {
             dbHelper.addToDB("/medications/3/alertAmount", 0);
             refillNotificationNumbers.add(0);
         } else {
-            refillNotificationNumbers.add(null);
+            refillNotificationNumbers.add(-1);
         }
         if (!(currentContainer5Pill.equals("Amount") || currentContainer5Pill.equals("Never"))) {
             dbHelper.addToDB("/medications/4/alertAmount", Integer.parseInt(currentContainer5Pill));
@@ -162,7 +162,7 @@ public class dispenserSettingFragment extends Fragment {
             dbHelper.addToDB("/medications/4/alertAmount", 0);
             refillNotificationNumbers.add(0);
         } else {
-            refillNotificationNumbers.add(null);
+            refillNotificationNumbers.add(-1);
         }
         MQTT.MQTTSendIntListData(client, "amount", refillNotificationNumbers, "medistation2021/dispenser/alert");
 
