@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:fadeScrollbars="false"
@@ -854,47 +855,6 @@
             app:layout_constraintStart_toStartOf="@+id/pill5DayOfTheWeek"
             app:layout_constraintTop_toBottomOf="@+id/pill5DayOfTheWeek" />
 
-        <EditText
-            android:id="@+id/scheduleRepeatAmountInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autofillHints="null"
-            android:background="@color/white"
-            android:gravity="center"
-            android:hint="@string/medication_number_of_weeks"
-            android:inputType="number"
-            android:maxLines="1"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toStartOf="@+id/weeks"
-            app:layout_constraintHorizontal_bias="0.534"
-            app:layout_constraintStart_toEndOf="@+id/scheduleRepeatText"
-            app:layout_constraintTop_toTopOf="@+id/scheduleRepeatText" />
-
-        <TextView
-            android:id="@+id/scheduleRepeatText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/medication_repeat_amount"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.12"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pill5DosageTable" />
-
-        <TextView
-            android:id="@+id/weeks"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
-            android:text="weeks"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/scheduleRepeatAmountInput" />
-
         <Button
             android:id="@+id/scheduleSaveButton"
             android:layout_width="wrap_content"
@@ -903,9 +863,81 @@
             android:text="Save"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/scheduleRepeatText" />
+            app:layout_constraintTop_toBottomOf="@+id/pill5DosageTable" />
+
+        <EditText
+            android:id="@+id/pill1NameInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:autofillHints="null"
+            android:background="@color/white"
+            android:hint="Pill Name"
+            app:layout_constraintBottom_toBottomOf="@+id/pill1Name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.05"
+            app:layout_constraintStart_toEndOf="@+id/pill1Name"
+            app:layout_constraintTop_toTopOf="@+id/pill1Name"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <EditText
+            android:id="@+id/pill2NameInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints="null"
+            android:background="@color/white"
+            android:hint="Pill Name"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/pill2Name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.05"
+            app:layout_constraintStart_toEndOf="@+id/pill2Name"
+            app:layout_constraintTop_toTopOf="@+id/pill2Name"
+            app:layout_constraintVertical_bias="1.0" />
+        <EditText
+            android:id="@+id/pill3NameInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints="null"
+            android:background="@color/white"
+            android:hint="Pill Name"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/pill3Name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.05"
+            app:layout_constraintStart_toEndOf="@+id/pill3Name"
+            app:layout_constraintTop_toTopOf="@+id/pill3Name"
+            app:layout_constraintVertical_bias="1.0" />
+        <EditText
+            android:id="@+id/pill4NameInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints="null"
+            android:background="@color/white"
+            android:hint="Pill Name"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/pill4Name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.05"
+            app:layout_constraintStart_toEndOf="@+id/pill4Name"
+            app:layout_constraintTop_toTopOf="@+id/pill4Name"
+            app:layout_constraintVertical_bias="1.0" />
+        <EditText
+            android:id="@+id/pill5NameInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints="null"
+            android:background="@color/white"
+            android:hint="Pill Name"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/pill5Name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.05"
+            app:layout_constraintStart_toEndOf="@+id/pill5Name"
+            app:layout_constraintTop_toTopOf="@+id/pill5Name"
+            app:layout_constraintVertical_bias="1.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

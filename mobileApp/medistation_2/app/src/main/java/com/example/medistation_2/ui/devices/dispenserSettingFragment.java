@@ -1,12 +1,9 @@
 package com.example.medistation_2.ui.devices;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,29 +13,29 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
+
 import com.example.medistation_2.R;
+import com.example.medistation_2.helperFunctions.MQTT;
 import com.example.medistation_2.helperFunctions.dbHelper;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class dispenserSettingFragment extends Fragment {
 
     private static final String TAG = dispenserSettingFragment.class.getSimpleName();
-    public MqttAndroidClient client;
+    private MqttAndroidClient client;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -46,75 +43,15 @@ public class dispenserSettingFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_dispenser_setting, container, false);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference rootDbRef = database.getReference();
+        setupDropDownMenu(view);
 
         Button refillSaveButton = view.findViewById(R.id.refillSaveButton);
-        refillSaveButton.setOnClickListener(v -> {
-            dbHelper dbHelperCall = new dbHelper();
-            dbHelperCall.AddSimpleStringData("/Patient/dispenser/refillContainer1",((Spinner) requireActivity().findViewById(R.id.dispenserContainer1DropDownMenu)).getSelectedItem().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/dispenser/refillContainer2",((Spinner) requireActivity().findViewById(R.id.dispenserContainer2DropDownMenu)).getSelectedItem().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/dispenser/refillContainer3",((Spinner) requireActivity().findViewById(R.id.dispenserContainer3DropDownMenu)).getSelectedItem().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/dispenser/refillContainer4",((Spinner) requireActivity().findViewById(R.id.dispenserContainer4DropDownMenu)).getSelectedItem().toString());
-            dbHelperCall.AddSimpleStringData("/Patient/dispenser/refillContainer5",((Spinner) requireActivity().findViewById(R.id.dispenserContainer5DropDownMenu)).getSelectedItem().toString());
-        });
+        refillSaveButton.setOnClickListener(v -> refillNotification());
 
         Button calibrateSaveButton = view.findViewById(R.id.calibrationSaveButton);
-        calibrateSaveButton.setOnClickListener(v -> {
-            dbHelper dbHelperCall = new dbHelper();
-            AtomicInteger currentNumberOfPillsContainer1 = new AtomicInteger();
-            AtomicInteger currentNumberOfPillsContainer2 = new AtomicInteger();
-            AtomicInteger currentNumberOfPillsContainer3 = new AtomicInteger();
-            AtomicInteger currentNumberOfPillsContainer4 = new AtomicInteger();
-            AtomicInteger currentNumberOfPillsContainer5 = new AtomicInteger();
-            AtomicInteger pillsAddedContainer1 = new AtomicInteger();
-            AtomicInteger pillsAddedContainer2 = new AtomicInteger();
-            AtomicInteger pillsAddedContainer3 = new AtomicInteger();
-            AtomicInteger pillsAddedContainer4 = new AtomicInteger();
-            AtomicInteger pillsAddedContainer5 = new AtomicInteger();
-            if (!(((EditText) view.findViewById(R.id.calibrationContainer1Input)).getText().toString()).equals("")) {
-                rootDbRef.child("Patient/dispenser/currentAmountContainer1").get().addOnCompleteListener(task -> {
-                    currentNumberOfPillsContainer1.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
-                    pillsAddedContainer1.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer1Input)).getText().toString()));
-                    currentNumberOfPillsContainer1.getAndAdd(Integer.parseInt(String.valueOf(pillsAddedContainer1)));
-                    dbHelperCall.AddSimpleStringData("/Patient/dispenser/currentAmountContainer1",String.valueOf(currentNumberOfPillsContainer1.get()));
-                });
-            }
-            if (!(((EditText) view.findViewById(R.id.calibrationContainer2Input)).getText().toString()).equals("")) {
-                rootDbRef.child("Patient/dispenser/currentAmountContainer2").get().addOnCompleteListener(task -> {
-                    currentNumberOfPillsContainer2.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
-                    pillsAddedContainer2.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer2Input)).getText().toString()));
-                    currentNumberOfPillsContainer2.getAndAdd(Integer.parseInt(String.valueOf(pillsAddedContainer2)));
-                    dbHelperCall.AddSimpleStringData("/Patient/dispenser/currentAmountContainer2",String.valueOf(currentNumberOfPillsContainer2.get()));
-                });
-            }
-            if (!(((EditText) view.findViewById(R.id.calibrationContainer3Input)).getText().toString()).equals("")) {
-                rootDbRef.child("Patient/dispenser/currentAmountContainer3").get().addOnCompleteListener(task -> {
-                    currentNumberOfPillsContainer3.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
-                    pillsAddedContainer3.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer3Input)).getText().toString()));
-                    currentNumberOfPillsContainer3.getAndAdd(Integer.parseInt(String.valueOf(pillsAddedContainer3)));
-                    dbHelperCall.AddSimpleStringData("/Patient/dispenser/currentAmountContainer3",String.valueOf(currentNumberOfPillsContainer3.get()));
-                });
-            }
-            if (!(((EditText) view.findViewById(R.id.calibrationContainer4Input)).getText().toString()).equals("")) {
-                rootDbRef.child("Patient/dispenser/currentAmountContainer4").get().addOnCompleteListener(task -> {
-                    currentNumberOfPillsContainer4.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
-                    pillsAddedContainer4.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer4Input)).getText().toString()));
-                    currentNumberOfPillsContainer4.getAndAdd(Integer.parseInt(String.valueOf(pillsAddedContainer4)));
-                    dbHelperCall.AddSimpleStringData("/Patient/dispenser/currentAmountContainer4",String.valueOf(currentNumberOfPillsContainer4.get()));
-                });
-            }
-            if (!(((EditText) view.findViewById(R.id.calibrationContainer5Input)).getText().toString()).equals("")) {
-                rootDbRef.child("Patient/dispenser/currentAmountContainer5").get().addOnCompleteListener(task -> {
-                    currentNumberOfPillsContainer5.set(Integer.parseInt((String) Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getValue())));
-                    pillsAddedContainer5.set(Integer.parseInt( ((EditText) view.findViewById(R.id.calibrationContainer5Input)).getText().toString()));
-                    currentNumberOfPillsContainer5.getAndAdd(Integer.parseInt(String.valueOf(pillsAddedContainer5)));
-                    dbHelperCall.AddSimpleStringData("/Patient/dispenser/currentAmountContainer5",String.valueOf(currentNumberOfPillsContainer5.get()));
-                });
-            }
-        });
-        setupDropDownMenu(view);
+        calibrateSaveButton.setOnClickListener(v -> calibration());
 
         String clientId = MqttClient.generateClientId();
         client = new MqttAndroidClient(requireContext().getApplicationContext(), "tcp://broker.hivemq.com:1883", clientId);
@@ -123,18 +60,20 @@ public class dispenserSettingFragment extends Fragment {
             token.setActionCallback(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-                    //initializeMQTT(client,view);
+                    Log.d(TAG,"MQTT successfully connected in dispenser setting fragment");
                 }
+
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    // Something went wrong e.g. connection timeout or firewall problems
+                    Log.d(TAG,"MQTT client in dispenser setting fragment did not connect successfully");
                 }
             });
         } catch (MqttException e) {
             e.printStackTrace();
         }
     }
-    public void setupDropDownMenu (View view) {
+
+    public void setupDropDownMenu(View view) {
         //set up drop down list
         Spinner container1DropDownMenu = view.findViewById(R.id.dispenserContainer1DropDownMenu);
         Spinner container2DropDownMenu = view.findViewById(R.id.dispenserContainer2DropDownMenu);
@@ -142,20 +81,22 @@ public class dispenserSettingFragment extends Fragment {
         Spinner container4DropDownMenu = view.findViewById(R.id.dispenserContainer4DropDownMenu);
         Spinner container5DropDownMenu = view.findViewById(R.id.dispenserContainer5DropDownMenu);
 
-        String[] numberOfPills = new String[]{"Amount","30","20","15","10","5","Never"};
+        String[] numberOfPills = new String[]{"Amount", "30", "20", "15", "10", "5", "Never"};
         List<String> numberOfPillsList = new ArrayList<>(Arrays.asList(numberOfPills));
 
-        ArrayAdapter<String> symptomButtonMenuArrayAdapters = new ArrayAdapter<String> (requireActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, numberOfPillsList) {
+        ArrayAdapter<String> symptomButtonMenuArrayAdapters = new ArrayAdapter<String>(requireActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, numberOfPillsList) {
             @Override
-            public boolean isEnabled(int position){
+            public boolean isEnabled(int position) {
                 // Disable the first item from Spinner
                 // First item will be use for hint
-                return position != 0; }
+                return position != 0;
+            }
+
             @Override
-            public View getDropDownView(int position,View dropDownView, @NonNull ViewGroup parent) {
+            public View getDropDownView(int position, View dropDownView, @NonNull ViewGroup parent) {
                 View view = super.getDropDownView(position, dropDownView, parent);
                 TextView tv = (TextView) view;
-                if(position == 0)
+                if (position == 0)
                     tv.setTextColor(Color.GRAY);
                 else
                     tv.setTextColor(Color.BLACK);
@@ -170,16 +111,80 @@ public class dispenserSettingFragment extends Fragment {
         container5DropDownMenu.setAdapter(symptomButtonMenuArrayAdapters);
     }
 
-    public void MQTTSendData (MqttAndroidClient client, String payload){
-        String topic = "";//TODO: add topic;
-        byte[] encodedPayload;
-        try {
-            encodedPayload = payload.getBytes("UTF-8");
-            MqttMessage message = new MqttMessage(encodedPayload);
-            client.publish(topic, message);
-        } catch (UnsupportedEncodingException | MqttException e) {
-            e.printStackTrace();
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void refillNotification() {
+        String currentContainer1Pill = ((Spinner) requireActivity().findViewById(R.id.dispenserContainer1DropDownMenu)).getSelectedItem().toString();
+        String currentContainer2Pill = ((Spinner) requireActivity().findViewById(R.id.dispenserContainer2DropDownMenu)).getSelectedItem().toString();
+        String currentContainer3Pill = ((Spinner) requireActivity().findViewById(R.id.dispenserContainer3DropDownMenu)).getSelectedItem().toString();
+        String currentContainer4Pill = ((Spinner) requireActivity().findViewById(R.id.dispenserContainer4DropDownMenu)).getSelectedItem().toString();
+        String currentContainer5Pill = ((Spinner) requireActivity().findViewById(R.id.dispenserContainer5DropDownMenu)).getSelectedItem().toString();
+        ArrayList<Integer> refillNotificationNumbers = new ArrayList<>();
+        if (!(currentContainer1Pill.equals("Amount") || currentContainer1Pill.equals("Never"))) {
+            dbHelper.addToDB("/medications/0/alertAmount", Integer.parseInt(currentContainer1Pill));
+            refillNotificationNumbers.add(Integer.parseInt(currentContainer1Pill));
+        } else if (currentContainer1Pill.equals("Never")) {
+            dbHelper.addToDB("/medications/0/alertAmount", 0);
+            refillNotificationNumbers.add(0);
+        } else {
+            refillNotificationNumbers.add(-1);
         }
+        if (!(currentContainer2Pill.equals("Amount") || currentContainer2Pill.equals("Never"))) {
+            dbHelper.addToDB("/medications/1/alertAmount", Integer.parseInt(currentContainer2Pill));
+            refillNotificationNumbers.add(Integer.parseInt(currentContainer2Pill));
+        } else if (currentContainer2Pill.equals("Never")) {
+            dbHelper.addToDB("/medications/1/alertAmount", 0);
+            refillNotificationNumbers.add(0);
+        } else {
+            refillNotificationNumbers.add(-1);
+        }
+        if (!(currentContainer3Pill.equals("Amount") || currentContainer3Pill.equals("Never"))) {
+            dbHelper.addToDB("/medications/2/alertAmount", Integer.parseInt(currentContainer3Pill));
+            refillNotificationNumbers.add(Integer.parseInt(currentContainer3Pill));
+        } else if (currentContainer3Pill.equals("Never")) {
+            dbHelper.addToDB("/medications/2/alertAmount", 0);
+            refillNotificationNumbers.add(0);
+        } else {
+            refillNotificationNumbers.add(-1);
+        }
+        if (!(currentContainer4Pill.equals("Amount") || currentContainer4Pill.equals("Never"))) {
+            dbHelper.addToDB("/medications/3/alertAmount", Integer.parseInt(currentContainer4Pill));
+            refillNotificationNumbers.add(Integer.parseInt(currentContainer4Pill));
+        } else if (currentContainer4Pill.equals("Never")) {
+            dbHelper.addToDB("/medications/3/alertAmount", 0);
+            refillNotificationNumbers.add(0);
+        } else {
+            refillNotificationNumbers.add(-1);
+        }
+        if (!(currentContainer5Pill.equals("Amount") || currentContainer5Pill.equals("Never"))) {
+            dbHelper.addToDB("/medications/4/alertAmount", Integer.parseInt(currentContainer5Pill));
+            refillNotificationNumbers.add(Integer.parseInt(currentContainer5Pill));
+        } else if (currentContainer5Pill.equals("Never")) {
+            dbHelper.addToDB("/medications/4/alertAmount", 0);
+            refillNotificationNumbers.add(0);
+        } else {
+            refillNotificationNumbers.add(-1);
+        }
+        MQTT.MQTTSendIntListData(client, "amount", refillNotificationNumbers, "medistation2021/dispenser/alert");
+
+    }
+
+    public void calibration() {
+        String container1RefillAmount = ((EditText) requireActivity().findViewById(R.id.calibrationContainer1Input)).getText().toString();
+        String container2RefillAmount = ((EditText) requireActivity().findViewById(R.id.calibrationContainer2Input)).getText().toString();
+        String container3RefillAmount = ((EditText) requireActivity().findViewById(R.id.calibrationContainer3Input)).getText().toString();
+        String container4RefillAmount = ((EditText) requireActivity().findViewById(R.id.calibrationContainer4Input)).getText().toString();
+        String container5RefillAmount = ((EditText) requireActivity().findViewById(R.id.calibrationContainer5Input)).getText().toString();
+
+        if (!(container1RefillAmount.equals("")))
+            dbHelper.addToDB("/medications/0/currentAmount", Integer.parseInt(container1RefillAmount));
+        if (!(container2RefillAmount.equals("")))
+            dbHelper.addToDB("/medications/1/currentAmount", Integer.parseInt(container2RefillAmount));
+        if (!(container3RefillAmount.equals("")))
+            dbHelper.addToDB("/medications/2/currentAmount", Integer.parseInt(container3RefillAmount));
+        if (!(container4RefillAmount.equals("")))
+            dbHelper.addToDB("/medications/3/currentAmount", Integer.parseInt(container4RefillAmount));
+        if (!(container5RefillAmount.equals("")))
+            dbHelper.addToDB("/medications/4/currentAmount", Integer.parseInt(container5RefillAmount));
     }
     //TODO, add function to send notification when number of pills in dispenser is low
 }

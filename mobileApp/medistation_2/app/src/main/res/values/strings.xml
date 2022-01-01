@@ -10,8 +10,7 @@
     <string name="add_symptom">Add symptom/side effect</string>
 
     <string name="profile_dosage">Dosage</string>
-    <string name="profile_name">name</string>
-    <string name="profile_duration">yy/mm/dd - yy/mm/dd</string>
+    <string name="profile_duration">yyyyMMdd yyyyMMdd</string>
     <string name="profile_duration_title">Duration</string>
     <string name="profile_med_name"> Med Name</string>
     <string name="profile_emergency_contact"> Emergency Contact</string>
@@ -42,7 +41,7 @@
     <string name="medication_number_of_weeks"># of weeks</string>
     //MQTT Topics
     <string name="batteryRequest">medistation2021/battery/request</string>
-    <string name="betteryThreshold">medistaion2021/battery/threshold</string>
+    <string name="batteryThreshold">medistaion2021/battery/threshold </string>
     <string name="batterySend">medistation2021/battery/send</string>
     <string name="wifiStatusSend">medistation2021/wifi-status/send</string>
     <string name="wifiStatusRequest">medistation2021/wifi-status/request</string>
