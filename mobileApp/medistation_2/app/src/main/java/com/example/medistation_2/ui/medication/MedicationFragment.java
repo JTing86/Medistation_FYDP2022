@@ -42,6 +42,8 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -153,7 +155,7 @@ public class MedicationFragment extends Fragment {
         hourDropDownList.setGravity(Gravity.CENTER);
         minuteDropDownList.setGravity(Gravity.CENTER);
         String[] dosage = new String[]{
-                "Dosage", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+                "Dosage", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
         String[] hour = new String[]{
                 "Hour", "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"};
         String[] minute = new String[]{
@@ -249,17 +251,24 @@ public class MedicationFragment extends Fragment {
         //save the dosage schedule for single day to database
         dbHelper.deleteNode("medications/" + (Integer.parseInt(pillNumber) - 1) + "/dose");
         Map<String, Object> totalDosagePerPill = new HashMap<>();
-
+        List <String> totalDailyDosage = new ArrayList<>();
         for (int i = 1; i <= dailyDosage; i++) {
-            Map<String, Object> singleDosage = new HashMap<>();
             String numberOfPills = ((Spinner) requireActivity().findViewById(Integer.decode(pillNumber + i + "1"))).getSelectedItem().toString();
             String hour = ((Spinner) requireActivity().findViewById(Integer.decode(pillNumber + i + "2"))).getSelectedItem().toString();
             String minute = ((Spinner) requireActivity().findViewById(Integer.decode(pillNumber + i + "3"))).getSelectedItem().toString();
             if (!(numberOfPills.equals("Dosage") || hour.equals("Hour") || minute.equals("Min"))) {
-                singleDosage.put("quantity", Integer.parseInt(numberOfPills));
-                singleDosage.put("hour", Integer.parseInt(hour));
-                singleDosage.put("minute", Integer.parseInt(minute));
+                totalDailyDosage.add(hour+minute+numberOfPills);
             }
+        }
+        Collections.sort(totalDailyDosage);
+        for (int i =0; i< dailyDosage;i++) {
+            Map<String, Object> singleDosage = new HashMap<>();
+            String hour = String.valueOf(totalDailyDosage.get(i)).substring(0,2);
+            String minute = String.valueOf(totalDailyDosage.get(i)).substring(2,4);
+            String numberOfPills = String.valueOf(totalDailyDosage.get(i)).substring(4);
+            singleDosage.put("quantity", Integer.parseInt(numberOfPills));
+            singleDosage.put("hour", Integer.parseInt(hour));
+            singleDosage.put("minute", Integer.parseInt(minute));
             totalDosagePerPill.put(String.valueOf(i), singleDosage);
         }
         dbHelper.addToDB("medications/" + (Integer.parseInt(pillNumber) - 1) + "/dose/", totalDosagePerPill);
