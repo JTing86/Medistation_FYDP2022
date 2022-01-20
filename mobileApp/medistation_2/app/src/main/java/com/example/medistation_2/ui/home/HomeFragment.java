@@ -3,11 +3,9 @@ package com.example.medistation_2.ui.home;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,11 +33,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONException;
 
-import java.lang.reflect.Array;
-import java.sql.Time;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -71,7 +65,9 @@ public class HomeFragment extends Fragment {
 
         initializeMQTT(view);
         dispenserRefillTime();
-        nextPillTime(view);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            nextPillTime(view);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -268,15 +264,15 @@ public class HomeFragment extends Fragment {
     }
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public Long findNextDose (HashMap <String, Object> medicine, int dayOfTheWeek, String currentTime){
-        Long currentHour = Long.parseLong(currentTime.substring(0,2));
-        Long currentMinute = Long.parseLong(currentTime.substring(3,5));
+        long currentHour = Long.parseLong(currentTime.substring(0,2));
+        long currentMinute = Long.parseLong(currentTime.substring(3,5));
         int day = dayOfTheWeek;
         int daysArrayindex = 0;
         boolean foundDayOfTheWeek = false;
         ArrayList<Long> daysArray = (ArrayList<Long>) medicine.get("days");
         HashMap<String,Object> individualDose;
         do {
-            for (int i = 0; i < daysArray.size(); i++) {
+            for (int i = 0; i < Objects.requireNonNull(daysArray).size(); i++) {
                 if (daysArray.get(i).equals((long) day % 7)) {
                     foundDayOfTheWeek = true;
                     daysArrayindex = i;
@@ -289,9 +285,9 @@ public class HomeFragment extends Fragment {
                 if (day == dayOfTheWeek) {
                     for (int i = 0; i< Objects.requireNonNull(allDoses).size(); i++){
                         individualDose = (HashMap<String, Object>) allDoses.get(i);
-                        Long hour = (Long) individualDose.get("hour");
-                        Long minute = (Long) individualDose.get("minute");
-                        if(hour >= currentHour && minute >= currentMinute){
+                        long hour = (long) individualDose.get("hour");
+                        long minute = (long) individualDose.get("minute");
+                        if(hour > currentHour || (hour == currentHour && minute >= currentMinute)){
                             return totalWeekMinute((long) day,hour,minute);
                         }
                     }
@@ -308,6 +304,7 @@ public class HomeFragment extends Fragment {
                         return totalWeekMinute(daysArray.get(daysArrayindex+1),hour,minute);
                     }
                 }
+                assert allDoses != null;
                 individualDose = (HashMap<String, Object>) allDoses.get(0);
                 Long hour = (Long) individualDose.get("hour");
                 Long minute = (Long) individualDose.get("minute");
