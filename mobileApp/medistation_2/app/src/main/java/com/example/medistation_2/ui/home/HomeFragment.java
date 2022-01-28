@@ -45,7 +45,6 @@ import java.util.Objects;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = HomeFragment.class.getSimpleName();
-    ;
     private MqttAndroidClient client;
 
     @Override
@@ -62,8 +61,7 @@ public class HomeFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
-        initializeMQTT(view);
+        initializeMQTT();
         dispenserRefillTime();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             nextPillTime(view);
@@ -71,7 +69,7 @@ public class HomeFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void initializeMQTT(View view) {
+    public void initializeMQTT() {
         String clientId = MqttClient.generateClientId();
         client = new MqttAndroidClient(requireContext().getApplicationContext(), "tcp://broker.hivemq.com:1883", clientId);
         try {
@@ -145,9 +143,9 @@ public class HomeFragment extends Fragment {
         if (device.equals("wristband")) {
             switch (signalStrength) {
                 case 1:
-                    wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_1);
+                    wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_4);
                     break;
-                case 2:
+                /*case 2:
                     wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_2);
                     break;
                 case 3:
@@ -155,7 +153,7 @@ public class HomeFragment extends Fragment {
                     break;
                 case 4:
                     wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_4);
-                    break;
+                    break;*/
                 default:
                     wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_0);
                     break;
@@ -165,7 +163,7 @@ public class HomeFragment extends Fragment {
                 case 1:
                     dispenserWifiStatus.setImageResource(R.drawable.wifi_signal_1);
                     break;
-                case 2:
+                /*case 2:
                     dispenserWifiStatus.setImageResource(R.drawable.wifi_signal_2);
                     break;
                 case 3:
@@ -173,7 +171,7 @@ public class HomeFragment extends Fragment {
                     break;
                 case 4:
                     dispenserWifiStatus.setImageResource(R.drawable.wifi_signal_4);
-                    break;
+                    break;*/
                 default:
                     dispenserWifiStatus.setImageResource(R.drawable.wifi_signal_0);
                     break;

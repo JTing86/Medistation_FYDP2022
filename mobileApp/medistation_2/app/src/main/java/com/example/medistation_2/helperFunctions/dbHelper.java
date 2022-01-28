@@ -62,6 +62,11 @@ public class dbHelper extends AppCompatActivity {
         DatabaseReference dbRef = database.getReference(path);
         dbRef.setValue(data);
     }
+    public static void addToDBLongArray(String path, ArrayList<Long> data) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = database.getReference(path);
+        dbRef.setValue(data);
+    }
 
     public static void addToDB(String path, Map<String, Object> data) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();

@@ -123,46 +123,46 @@ public class dispenserSettingFragment extends Fragment {
             dbHelper.addToDB("/medications/0/alertAmount", Integer.parseInt(currentContainer1Pill));
             refillNotificationNumbers.add(Integer.parseInt(currentContainer1Pill));
         } else if (currentContainer1Pill.equals("Never")) {
-            dbHelper.addToDB("/medications/0/alertAmount", 0);
-            refillNotificationNumbers.add(0);
-        } else {
+            dbHelper.addToDB("/medications/0/alertAmount", -1);
             refillNotificationNumbers.add(-1);
+        } else {
+            refillNotificationNumbers.add(0);
         }
         if (!(currentContainer2Pill.equals("Amount") || currentContainer2Pill.equals("Never"))) {
             dbHelper.addToDB("/medications/1/alertAmount", Integer.parseInt(currentContainer2Pill));
             refillNotificationNumbers.add(Integer.parseInt(currentContainer2Pill));
         } else if (currentContainer2Pill.equals("Never")) {
-            dbHelper.addToDB("/medications/1/alertAmount", 0);
-            refillNotificationNumbers.add(0);
-        } else {
+            dbHelper.addToDB("/medications/1/alertAmount", -1);
             refillNotificationNumbers.add(-1);
+        } else {
+            refillNotificationNumbers.add(0);
         }
         if (!(currentContainer3Pill.equals("Amount") || currentContainer3Pill.equals("Never"))) {
             dbHelper.addToDB("/medications/2/alertAmount", Integer.parseInt(currentContainer3Pill));
             refillNotificationNumbers.add(Integer.parseInt(currentContainer3Pill));
         } else if (currentContainer3Pill.equals("Never")) {
-            dbHelper.addToDB("/medications/2/alertAmount", 0);
-            refillNotificationNumbers.add(0);
-        } else {
+            dbHelper.addToDB("/medications/2/alertAmount", -1);
             refillNotificationNumbers.add(-1);
+        } else {
+            refillNotificationNumbers.add(0);
         }
         if (!(currentContainer4Pill.equals("Amount") || currentContainer4Pill.equals("Never"))) {
             dbHelper.addToDB("/medications/3/alertAmount", Integer.parseInt(currentContainer4Pill));
             refillNotificationNumbers.add(Integer.parseInt(currentContainer4Pill));
         } else if (currentContainer4Pill.equals("Never")) {
-            dbHelper.addToDB("/medications/3/alertAmount", 0);
-            refillNotificationNumbers.add(0);
-        } else {
+            dbHelper.addToDB("/medications/3/alertAmount", -1);
             refillNotificationNumbers.add(-1);
+        } else {
+            refillNotificationNumbers.add(0);
         }
         if (!(currentContainer5Pill.equals("Amount") || currentContainer5Pill.equals("Never"))) {
             dbHelper.addToDB("/medications/4/alertAmount", Integer.parseInt(currentContainer5Pill));
             refillNotificationNumbers.add(Integer.parseInt(currentContainer5Pill));
         } else if (currentContainer5Pill.equals("Never")) {
-            dbHelper.addToDB("/medications/4/alertAmount", 0);
-            refillNotificationNumbers.add(0);
-        } else {
+            dbHelper.addToDB("/medications/4/alertAmount", -1);
             refillNotificationNumbers.add(-1);
+        } else {
+            refillNotificationNumbers.add(0);
         }
         MQTT.MQTTSendIntListData(client, "amount", refillNotificationNumbers, "medistation2021/dispenser/alert");
 
