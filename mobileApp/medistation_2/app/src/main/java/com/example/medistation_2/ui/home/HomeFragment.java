@@ -3,11 +3,9 @@ package com.example.medistation_2.ui.home;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,8 +17,6 @@ import androidx.fragment.app.Fragment;
 import com.example.medistation_2.R;
 import com.example.medistation_2.helperFunctions.JsonHelper;
 import com.example.medistation_2.helperFunctions.MQTT;
-import com.example.medistation_2.helperFunctions.dbHelper;
-import com.example.medistation_2.ui.profile.ProfileFragment;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,16 +33,18 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONException;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = HomeFragment.class.getSimpleName();
-    ;
     private MqttAndroidClient client;
 
     @Override
@@ -63,13 +61,15 @@ public class HomeFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
-        initializeMQTT(view);
+        initializeMQTT();
         dispenserRefillTime();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            nextPillTime(view);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void initializeMQTT(View view) {
+    public void initializeMQTT() {
         String clientId = MqttClient.generateClientId();
         client = new MqttAndroidClient(requireContext().getApplicationContext(), "tcp://broker.hivemq.com:1883", clientId);
         try {
@@ -77,9 +77,9 @@ public class HomeFragment extends Fragment {
             token.setActionCallback(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-                    MQTTSubscribe("medistation2021/wifi-status/send", view);
-                    MQTTSubscribe("medistation2021/health-status/send", view);
-                    MQTTSubscribe("medistation2021/battery/send", view);
+                    MQTTSubscribe("medistation2021/wifi-status/send");
+                    MQTTSubscribe("medistation2021/health-status/send");
+                    MQTTSubscribe("medistation2021/battery/send");
                     MQTT.MQTTSendData(client, "battery", "", requireContext().getString(R.string.batteryRequest));
                 }
 
@@ -93,7 +93,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    public void MQTTSubscribe(String topic, View view) {
+    public void MQTTSubscribe(String topic) {
         int qos = 1;
         try {
             IMqttToken subToken = client.subscribe(topic, qos);
@@ -143,9 +143,9 @@ public class HomeFragment extends Fragment {
         if (device.equals("wristband")) {
             switch (signalStrength) {
                 case 1:
-                    wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_1);
+                    wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_4);
                     break;
-                case 2:
+                /*case 2:
                     wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_2);
                     break;
                 case 3:
@@ -153,7 +153,7 @@ public class HomeFragment extends Fragment {
                     break;
                 case 4:
                     wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_4);
-                    break;
+                    break;*/
                 default:
                     wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_0);
                     break;
@@ -163,7 +163,7 @@ public class HomeFragment extends Fragment {
                 case 1:
                     dispenserWifiStatus.setImageResource(R.drawable.wifi_signal_1);
                     break;
-                case 2:
+                /*case 2:
                     dispenserWifiStatus.setImageResource(R.drawable.wifi_signal_2);
                     break;
                 case 3:
@@ -171,7 +171,7 @@ public class HomeFragment extends Fragment {
                     break;
                 case 4:
                     dispenserWifiStatus.setImageResource(R.drawable.wifi_signal_4);
-                    break;
+                    break;*/
                 default:
                     dispenserWifiStatus.setImageResource(R.drawable.wifi_signal_0);
                     break;
@@ -215,7 +215,7 @@ public class HomeFragment extends Fragment {
                             }
                         }
                         int lowestCurrentAmount = Collections.min(currentAmount);
-                        TextView refillText = (TextView) requireActivity().findViewById(R.id.homeRefillText);
+                        TextView refillText = requireActivity().findViewById(R.id.homeRefillText);
                         refillText.setText("Refill in " + lowestCurrentAmount + " day(s)");
                     });
                 }
@@ -229,4 +229,124 @@ public class HomeFragment extends Fragment {
         rootDbRef.addListenerForSingleValueEvent(valueEventListener);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void nextPillTime (View view) {
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference rootDbRef = database.getReference();
+
+        Calendar rightNow = Calendar.getInstance();
+        Date currentDate = new Date();
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("kk:mm:ss");
+        String currentTime = dateFormatter.format(currentDate);
+        int currentDayOfTheWeek = rightNow.get(Calendar.DAY_OF_WEEK) - 2;
+        Long currentTimeInMin = totalWeekMinute((long) currentDayOfTheWeek,Long.parseLong(currentTime.substring(0,2)),Long.parseLong(currentTime.substring(3,5)));
+
+        rootDbRef.child("medications").get().addOnCompleteListener(task -> {
+            List<Object> allMedications;
+            allMedications = (List<Object>) Objects.requireNonNull(task.getResult()).getValue();
+            Long bestTime = Long.MAX_VALUE;
+            for (int i = 0; i< Objects.requireNonNull(allMedications).size(); i++){
+                HashMap <String,Object> medicine = (HashMap<String, Object>) allMedications.get(i);
+                Long nextDoseInMinute = findNextDose(medicine,currentDayOfTheWeek,currentTime);
+                if (Math.abs(nextDoseInMinute - currentTimeInMin) < bestTime) {
+                    bestTime = Math.abs(nextDoseInMinute - currentTimeInMin);
+                }
+            }
+            displayNextPillTime (bestTime,currentTime,view);
+
+        });
+    }
+    public Long totalWeekMinute (Long dayOfTheWeek, Long hour, Long minute) {
+        return dayOfTheWeek *24*60 + hour* 60 + minute;
+    }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public Long findNextDose (HashMap <String, Object> medicine, int dayOfTheWeek, String currentTime){
+        long currentHour = Long.parseLong(currentTime.substring(0,2));
+        long currentMinute = Long.parseLong(currentTime.substring(3,5));
+        int day = dayOfTheWeek;
+        int daysArrayindex = 0;
+        boolean foundDayOfTheWeek = false;
+        ArrayList<Long> daysArray = (ArrayList<Long>) medicine.get("days");
+        HashMap<String,Object> individualDose;
+        do {
+            for (int i = 0; i < Objects.requireNonNull(daysArray).size(); i++) {
+                if (daysArray.get(i).equals((long) day % 7)) {
+                    foundDayOfTheWeek = true;
+                    daysArrayindex = i;
+                }
+            }
+            if (foundDayOfTheWeek) {
+                ArrayList<Map<String,Object>> allDoses;
+                allDoses = (ArrayList<Map <String,Object>>) medicine.get("dose");
+                day = day % 7;
+                if (day == dayOfTheWeek) {
+                    for (int i = 0; i< Objects.requireNonNull(allDoses).size(); i++){
+                        individualDose = (HashMap<String, Object>) allDoses.get(i);
+                        long hour = (long) individualDose.get("hour");
+                        long minute = (long) individualDose.get("minute");
+                        if(hour > currentHour || (hour == currentHour && minute >= currentMinute)){
+                            return totalWeekMinute((long) day,hour,minute);
+                        }
+                    }
+                    if (daysArrayindex == daysArray.size() - 1 ) {
+                        individualDose = (HashMap<String, Object>) allDoses.get(0);
+                        Long hour = (Long) individualDose.get("hour");
+                        Long minute = (Long) individualDose.get("minute");
+                        return totalWeekMinute(daysArray.get(0),hour,minute);
+                    }
+                    else {
+                        individualDose = (HashMap<String, Object>) allDoses.get(0);
+                        Long hour = (Long) individualDose.get("hour");
+                        Long minute = (Long) individualDose.get("minute");
+                        return totalWeekMinute(daysArray.get(daysArrayindex+1),hour,minute);
+                    }
+                }
+                assert allDoses != null;
+                individualDose = (HashMap<String, Object>) allDoses.get(0);
+                Long hour = (Long) individualDose.get("hour");
+                Long minute = (Long) individualDose.get("minute");
+                return totalWeekMinute((long) day,hour,minute);
+            }
+            day = day + 1;
+        } while (true);
+    }
+    public void displayNextPillTime (Long bestTime, String currentTime, View view){
+        long bestTimeTemp = bestTime;
+        Long nextPillDayCount = (long) Math.floor(bestTime/24/60);
+        bestTimeTemp = bestTime % (24*60);
+        Long nextPillHourCount = (long) Math.floor(bestTimeTemp/60);
+        long nextPillMinuteCount = bestTime - nextPillDayCount*60*24 - nextPillHourCount*60;
+        if (!nextPillDayCount.equals( (long) 0 )) {
+            ((TextView) view.findViewById(R.id.nextPillFromNow)).setText("In " + nextPillDayCount + " Days " + nextPillHourCount + " Hours " + nextPillMinuteCount + " Minutes");
+        }
+        else if (!nextPillHourCount.equals((long) 0)){
+            ((TextView) view.findViewById(R.id.nextPillFromNow)).setText("In " + nextPillHourCount + " Hours " + nextPillMinuteCount + " Minutes");
+        }
+        else {
+            ((TextView) view.findViewById(R.id.nextPillFromNow)).setText("In " + nextPillMinuteCount + " Minutes");
+        }
+
+        long nextPillMinute = nextPillMinuteCount + Long.parseLong(currentTime.substring(3,5));
+        long minuteCarryover = (long) 0;
+        if (nextPillMinute >= 60){
+            nextPillMinute = nextPillMinute - 60;
+            minuteCarryover++;
+        }
+        Long nextPillHour =  nextPillHourCount + Long.parseLong(currentTime.substring(0,2)) + minuteCarryover;
+        while (nextPillHour>=24){
+            nextPillHour = nextPillHour - 24;
+        }
+        String nextPillHourDisplay = "";
+        String nextPillMinuteDisplay = "";
+        if (nextPillHour < 10)
+            nextPillHourDisplay = "0"+nextPillHour;
+        else
+            nextPillHourDisplay = String.valueOf(nextPillHour);
+        if (nextPillMinute < 10)
+            nextPillMinuteDisplay = "0" + nextPillMinute;
+        else
+            nextPillMinuteDisplay = String.valueOf(nextPillMinute);
+        ((TextView) view.findViewById(R.id.nextPillTime)).setText("Next pill at " + nextPillHourDisplay + ":" +nextPillMinuteDisplay);
+    }
 }

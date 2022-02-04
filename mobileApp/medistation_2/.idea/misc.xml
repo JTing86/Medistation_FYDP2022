@@ -43,7 +43,7 @@
         <entry key="..\:/Users/PC/StudioProjects/Medistation_FYDP2022/mobileApp/medistation_2/app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.14074074074074075" />
         <entry key="..\:/Users/PC/StudioProjects/Medistation_FYDP2022/mobileApp/medistation_2/app/src/main/res/drawable/ic_search.xml" value="0.14074074074074075" />
         <entry key="..\:/Users/PC/StudioProjects/Medistation_FYDP2022/mobileApp/medistation_2/app/src/main/res/layout/activity_symptom_add.xml" value="0.18153153153153154" />
-        <entry key="..\:/Users/PC/StudioProjects/Medistation_FYDP2022/mobileApp/medistation_2/app/src/main/res/layout/fragment_analysis.xml" value="0.25" />
+        <entry key="..\:/Users/PC/StudioProjects/Medistation_FYDP2022/mobileApp/medistation_2/app/src/main/res/layout/fragment_analysis.xml" value="0.33" />
         <entry key="..\:/Users/PC/StudioProjects/Medistation_FYDP2022/mobileApp/medistation_2/app/src/main/res/layout/fragment_dashboard.xml" value="0.18063063063063062" />
         <entry key="..\:/Users/PC/StudioProjects/Medistation_FYDP2022/mobileApp/medistation_2/app/src/main/res/layout/fragment_devices.xml" value="0.3216216216216216" />
         <entry key="..\:/Users/PC/StudioProjects/Medistation_FYDP2022/mobileApp/medistation_2/app/src/main/res/layout/fragment_dispenser_setting.xml" value="0.3216216216216216" />
@@ -62,5 +62,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.33" />
+      </ProjectState>
+    </option>
   </component>
 </project>
