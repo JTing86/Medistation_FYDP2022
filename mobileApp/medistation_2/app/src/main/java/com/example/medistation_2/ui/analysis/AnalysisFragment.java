@@ -252,7 +252,7 @@ public class AnalysisFragment extends Fragment {
         List<Entry> lineEntriesSet2 = null;
         switch (item1) {
             case "Heart Rate":
-                lineEntriesSet1 = getDataSet(heartRateDate);
+                lineEntriesSet1 = getDataSet(heartRateValue);
                 break;
             case "Temperature":
                 lineEntriesSet1 = getDataSet(temperatureValue);
