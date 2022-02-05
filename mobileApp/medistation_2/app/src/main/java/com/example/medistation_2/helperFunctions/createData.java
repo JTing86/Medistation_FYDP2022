@@ -55,4 +55,10 @@ public class createData {
             dbHelper.addToDB("heartRate/"+ i,singleDayHeartRate);
         }
     }
+    public static void sleepQuality (int numberOfDays) {
+        timeData(numberOfDays);
+        Random random = new Random();
+
+        int numberOfSleep =
+    }
 }

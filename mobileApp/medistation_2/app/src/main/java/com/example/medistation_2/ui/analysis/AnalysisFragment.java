@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,9 +85,9 @@ public class AnalysisFragment extends Fragment {
         Spinner graphTimeRange = view.findViewById(R.id.analysisGraphTimeRange);
         Button generateGraph = view.findViewById(R.id.analysisGenerateGraph);
         generateGraph.setOnClickListener(v -> {
-            String rightItemSelected = ((Spinner) view.findViewById(R.id.analysisUserInfoRightDropDown)).getSelectedItem().toString();
-            String leftItemSelected = ((Spinner) view.findViewById(R.id.analysisUserInfoLeftDropDown)).getSelectedItem().toString();
-            String timeRange = ((Spinner) view.findViewById(R.id.analysisGraphTimeRange)).getSelectedItem().toString();
+            String rightItemSelected = userInfoLeftMenu.getSelectedItem().toString();
+            String leftItemSelected = userInfoRightMenu.getSelectedItem().toString();
+            String timeRange = graphTimeRange.getSelectedItem().toString();
             clearFunction();
             if (!rightItemSelected.equals("Patient Info") && !leftItemSelected.equals("Patient Info") && !timeRange.equals("Time Range")) {
                 int graphRange = 0;
@@ -168,13 +167,13 @@ public class AnalysisFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void createTemperatureData(View view, String item1, String item2, boolean createGraph, int timeRange) {
         if (createGraph && item1.equals("Temperature")) {
-            createGraph(view, item1, item2,timeRange);
+            createGraph(item1, item2,timeRange);
         } else {
             rootDbRef.child("temp").get().addOnCompleteListener(task -> {
                 HashMap<String, Object> temperatureData;
                 ArrayList<Long> tempDateTemp;
                 ArrayList<Long> tempValueTemp;
-                temperatureData = (HashMap<String, Object>) task.getResult().getValue();
+                temperatureData = (HashMap<String, Object>) Objects.requireNonNull(task.getResult()).getValue();
                 tempDateTemp = (ArrayList<Long>) temperatureData.get("date");
                 tempValueTemp = (ArrayList<Long>) temperatureData.get("value");
                 for (int i = 0; i < Objects.requireNonNull(tempDateTemp).size(); i++) {
@@ -185,7 +184,7 @@ public class AnalysisFragment extends Fragment {
                     }
                 }
                 if (createGraph) {
-                    createGraph(view, item1, item2,timeRange);
+                    createGraph(item1, item2,timeRange);
                 } else {
                     switch (item2) {
                         case "Heart Rate":
@@ -206,7 +205,7 @@ public class AnalysisFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void createHeartRateData(View view, String item1, String item2, boolean createGraph, int timeRange) {
         if (createGraph && item1.equals("Heart Rate")) {
-            createGraph(view, item1, item2,timeRange);
+            createGraph(item1, item2,timeRange);
         } else {
             rootDbRef.child("heartRate").get().addOnCompleteListener(task -> {
                 ArrayList<Map<String,Object>> allHeartData = (ArrayList<Map<String, Object>>) task.getResult().getValue();
@@ -225,7 +224,7 @@ public class AnalysisFragment extends Fragment {
                     }
                 }
                 if (createGraph) {
-                    createGraph(view, item1, item2, timeRange);
+                    createGraph(item1, item2, timeRange);
                 } else {
                     switch (item2) {
                         case "Heart Rate":
@@ -247,7 +246,7 @@ public class AnalysisFragment extends Fragment {
 
     }
 
-    private void createGraph(View view, String item1, String item2, int timeRange) {
+    private void createGraph(String item1, String item2, int timeRange) {
         List<Entry> lineEntriesSet1 = null;
         List<Entry> lineEntriesSet2 = null;
         switch (item1) {
