@@ -242,8 +242,36 @@ public class AnalysisFragment extends Fragment {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void createSleepQualityDate(View view, String item1, String item2, boolean createGraph, int timeRange) {
+        if (createGraph && item1.equals("Sleep Quality")) {
+            createGraph(item1, item2,timeRange);
+        } else {
 
+            if (createGraph) {
+                createGraph(item1, item2, timeRange);
+            } else {
+                rootDbRef.child("sleep").get().addOnCompleteListener(task -> {
+                    ArrayList<Map<String,Object>> allSleepQuality = (ArrayList<Map<String, Object>>) task.getResult().getValue();
+
+                    if (createGraph) {
+                        createGraph(item1, item2, timeRange);
+                    } else {
+                        switch (item2) {
+                            case "Heart Rate":
+                                createHeartRateData(view, item1, item2, true, timeRange);
+                                break;
+                            case "Temperature":
+                                createTemperatureData(view, item1, item2, true, timeRange);
+                                break;
+                            case "Sleep Quality":
+                                createSleepQualityDate(view, item1, item2, true, timeRange);
+                                break;
+                        }
+                    }
+                });
+            }
+        }
     }
 
     private void createGraph(String item1, String item2, int timeRange) {
