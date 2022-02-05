@@ -8,6 +8,7 @@ import androidx.annotation.RequiresApi;
 
 import com.example.medistation_2.ui.analysis.AnalysisFragment;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -58,7 +59,26 @@ public class createData {
     public static void sleepQuality (int numberOfDays) {
         timeData(numberOfDays);
         Random random = new Random();
-
-        int numberOfSleep =
+        HashMap <String, Object> singleDaySleepQuality = new HashMap<>();
+        for (int j = 0; j<numberOfDays;j++){
+            long startOfDay = timeData.get(j) + random.nextInt(4*3600);
+            long numberOfSleep = random.nextInt(3)+1;
+            ArrayList<Long> startTime = new ArrayList<>();
+            ArrayList<Long> endTime = new ArrayList<>();
+            ArrayList<Long> sleepQualityList = new ArrayList<>();
+            for (int i =0; i< numberOfSleep; i++){
+                long sleepQuality = random.nextInt(3);
+                long startOfSleep  = random.nextInt(86400)+startOfDay;
+                long sleepDuration = random.nextInt(8*3600);
+                startOfDay = startOfSleep +sleepDuration;
+                startTime.add(startOfSleep);
+                endTime.add(sleepDuration + startOfSleep);
+                sleepQualityList.add(sleepQuality);
+            }
+            singleDaySleepQuality.put ("start",startTime);
+            singleDaySleepQuality.put("end",endTime);
+            singleDaySleepQuality.put("quality",sleepQualityList);
+            dbHelper.addToDB("sleep/"+ j,singleDaySleepQuality);
+        }
     }
 }

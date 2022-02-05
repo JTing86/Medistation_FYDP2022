@@ -141,40 +141,16 @@ public class HomeFragment extends Fragment {
         ImageView wristbandWifiStatus = requireActivity().findViewById(R.id.homeWristbandWifiSignal);
         ImageView dispenserWifiStatus = requireActivity().findViewById(R.id.homeDispenserWifiSignal);
         if (device.equals("wristband")) {
-            switch (signalStrength) {
-                case 1:
-                    wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_4);
-                    break;
-                /*case 2:
-                    wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_2);
-                    break;
-                case 3:
-                    wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_3);
-                    break;
-                case 4:
-                    wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_4);
-                    break;*/
-                default:
-                    wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_0);
-                    break;
+            if (signalStrength == 1) {
+                wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_4);
+            } else {
+                wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_0);
             }
         } else if (device.equals("dispenser")) {
-            switch (signalStrength) {
-                case 1:
-                    dispenserWifiStatus.setImageResource(R.drawable.wifi_signal_1);
-                    break;
-                /*case 2:
-                    dispenserWifiStatus.setImageResource(R.drawable.wifi_signal_2);
-                    break;
-                case 3:
-                    dispenserWifiStatus.setImageResource(R.drawable.wifi_signal_3);
-                    break;
-                case 4:
-                    dispenserWifiStatus.setImageResource(R.drawable.wifi_signal_4);
-                    break;*/
-                default:
-                    dispenserWifiStatus.setImageResource(R.drawable.wifi_signal_0);
-                    break;
+            if (signalStrength == 1) {
+                dispenserWifiStatus.setImageResource(R.drawable.wifi_signal_1);
+            } else {
+                dispenserWifiStatus.setImageResource(R.drawable.wifi_signal_0);
             }
         }
     }
@@ -245,7 +221,7 @@ public class HomeFragment extends Fragment {
         rootDbRef.child("medications").get().addOnCompleteListener(task -> {
             List<Object> allMedications;
             allMedications = (List<Object>) Objects.requireNonNull(task.getResult()).getValue();
-            Long bestTime = Long.MAX_VALUE;
+            long bestTime = Long.MAX_VALUE;
             for (int i = 0; i< Objects.requireNonNull(allMedications).size(); i++){
                 HashMap <String,Object> medicine = (HashMap<String, Object>) allMedications.get(i);
                 Long nextDoseInMinute = findNextDose(medicine,currentDayOfTheWeek,currentTime);
@@ -265,7 +241,7 @@ public class HomeFragment extends Fragment {
         long currentHour = Long.parseLong(currentTime.substring(0,2));
         long currentMinute = Long.parseLong(currentTime.substring(3,5));
         int day = dayOfTheWeek;
-        int daysArrayindex = 0;
+        int daysArrayIndex = 0;
         boolean foundDayOfTheWeek = false;
         ArrayList<Long> daysArray = (ArrayList<Long>) medicine.get("days");
         HashMap<String,Object> individualDose;
@@ -273,7 +249,7 @@ public class HomeFragment extends Fragment {
             for (int i = 0; i < Objects.requireNonNull(daysArray).size(); i++) {
                 if (daysArray.get(i).equals((long) day % 7)) {
                     foundDayOfTheWeek = true;
-                    daysArrayindex = i;
+                    daysArrayIndex = i;
                 }
             }
             if (foundDayOfTheWeek) {
@@ -289,7 +265,7 @@ public class HomeFragment extends Fragment {
                             return totalWeekMinute((long) day,hour,minute);
                         }
                     }
-                    if (daysArrayindex == daysArray.size() - 1 ) {
+                    if (daysArrayIndex == daysArray.size() - 1 ) {
                         individualDose = (HashMap<String, Object>) allDoses.get(0);
                         Long hour = (Long) individualDose.get("hour");
                         Long minute = (Long) individualDose.get("minute");
@@ -299,7 +275,7 @@ public class HomeFragment extends Fragment {
                         individualDose = (HashMap<String, Object>) allDoses.get(0);
                         Long hour = (Long) individualDose.get("hour");
                         Long minute = (Long) individualDose.get("minute");
-                        return totalWeekMinute(daysArray.get(daysArrayindex+1),hour,minute);
+                        return totalWeekMinute(daysArray.get(daysArrayIndex+1),hour,minute);
                     }
                 }
                 assert allDoses != null;
@@ -312,7 +288,7 @@ public class HomeFragment extends Fragment {
         } while (true);
     }
     public void displayNextPillTime (Long bestTime, String currentTime, View view){
-        long bestTimeTemp = bestTime;
+        long bestTimeTemp;
         Long nextPillDayCount = (long) Math.floor(bestTime/24/60);
         bestTimeTemp = bestTime % (24*60);
         Long nextPillHourCount = (long) Math.floor(bestTimeTemp/60);
@@ -337,8 +313,8 @@ public class HomeFragment extends Fragment {
         while (nextPillHour>=24){
             nextPillHour = nextPillHour - 24;
         }
-        String nextPillHourDisplay = "";
-        String nextPillMinuteDisplay = "";
+        String nextPillHourDisplay;
+        String nextPillMinuteDisplay;
         if (nextPillHour < 10)
             nextPillHourDisplay = "0"+nextPillHour;
         else
