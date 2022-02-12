@@ -116,10 +116,8 @@ public class AnalysisFragment extends Fragment {
             }
         });
 
-        String[] timeRange = new String[]{"Time Range", "Past 7 Days", "Past Month"};
         String[] userInfo = new String[]{"Patient Info", "Heart Rate", "Temperature", "Sleep Quality"};
         List<String> userInfoList = new ArrayList<>(Arrays.asList(userInfo));
-        List<String> timeRangeList = new ArrayList<>(Arrays.asList(timeRange));
         //Create severity drop down menu
         ArrayAdapter<String> userInfoMenuArrayAdapter = new ArrayAdapter<String>(requireActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, userInfoList) {
             @Override
@@ -384,16 +382,15 @@ class CustomMPLineChartMarkerView extends MarkerView {
 
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
-        AnalysisFragment analysisFragmentHelper = new AnalysisFragment();
         if (e instanceof CandleEntry) {
             CandleEntry ce = (CandleEntry) e;
             dataLabel.setText(Utils.formatNumber(ce.getHigh(), 0, true));
         } else {
             ArrayList<Long> dateList;
-            if (analysisFragmentHelper.temperatureDate.isEmpty()) {
-                dateList = analysisFragmentHelper.heartRateDate;
+            if (AnalysisFragment.temperatureDate.isEmpty()) {
+                dateList = AnalysisFragment.heartRateDate;
             } else
-                dateList = analysisFragmentHelper.temperatureDate;
+                dateList = AnalysisFragment.temperatureDate;
 
             Long date = dateList.get((int) e.getX());
             String dateInString = dbHelper.fromEpochTime(date * 1000);

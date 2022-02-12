@@ -68,9 +68,7 @@ public class wristbandSettingFragment extends Fragment {
         }
 
         Button profileUserInfoSaveButton = view.findViewById(R.id.wristbandSymptomSaveButton);
-        profileUserInfoSaveButton.setOnClickListener(v -> {
-            saveButtonPressed(view);
-        });
+        profileUserInfoSaveButton.setOnClickListener(v -> saveButtonPressed());
     }
 
     public void setupDropDownMenu(View view) {
@@ -134,17 +132,17 @@ public class wristbandSettingFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void saveButtonPressed(View view) {
-        String wbNotifBatLevel = ((Spinner) requireActivity().findViewById(R.id.wristbandBatteryNotificationDropDown)).getSelectedItem().toString();
+    public void saveButtonPressed() {
+        String wristbandNotifBatLevel = ((Spinner) requireActivity().findViewById(R.id.wristbandBatteryNotificationDropDown)).getSelectedItem().toString();
         String button1 = ((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton1DropDownMenu)).getSelectedItem().toString();
         String button2 = ((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton2DropDownMenu)).getSelectedItem().toString();
         String button3 = ((Spinner) requireActivity().findViewById(R.id.wristbandSymptomButton3DropDownMenu)).getSelectedItem().toString();
         //Wristband Battery Notification Level
-        if (wbNotifBatLevel.equals("Never")) {
+        if (wristbandNotifBatLevel.equals("Never")) {
             dbHelper.addToDB("wristband/alertLevel",0);
             MQTT.MQTTSendData(client, "threshold", 0,requireContext().getString(R.string.batteryThreshold));
-        } else if (!wbNotifBatLevel.equals("Battery Level")) {
-            int batteryLevel = Integer.parseInt(wbNotifBatLevel.substring(0, wbNotifBatLevel.length() - 1));
+        } else if (!wristbandNotifBatLevel.equals("Battery Level")) {
+            int batteryLevel = Integer.parseInt(wristbandNotifBatLevel.substring(0, wristbandNotifBatLevel.length() - 1));
             dbHelper.addToDB("wristband/alertLevel",batteryLevel);
             MQTT.MQTTSendData(client, "threshold", batteryLevel, requireContext().getString(R.string.batteryThreshold));
         }
