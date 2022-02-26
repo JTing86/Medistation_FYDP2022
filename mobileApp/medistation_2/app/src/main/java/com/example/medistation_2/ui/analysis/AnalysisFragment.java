@@ -100,6 +100,7 @@ public class AnalysisFragment extends Fragment {
         Spinner userInfoRightMenu = view.findViewById(R.id.analysisUserInfoRightDropDown);
         Button generateGraph = view.findViewById(R.id.analysisGenerateGraph);
         generateGraph.setOnClickListener(v -> {
+            findCurrentTime(30);
             clearFunction();
             String rightItemSelected = userInfoLeftMenu.getSelectedItem().toString();
             String leftItemSelected = userInfoRightMenu.getSelectedItem().toString();
@@ -196,7 +197,7 @@ public class AnalysisFragment extends Fragment {
                     long dailyHeartRateAverage = 0;
                     if (currentTimeStamp < currentDayUpperBound && currentTimeStamp >= currentLowerBound) {
                         for (int j = 0; j < Objects.requireNonNull(dailyHeartRateValue).size(); j++) {
-                            dailyHeartRateAverage = dailyHeartRateValue.get(i) + dailyHeartRateAverage;
+                            dailyHeartRateAverage = dailyHeartRateValue.get(j) + dailyHeartRateAverage;
                         }
                         dailyHeartRateAverage = dailyHeartRateAverage / dailyHeartRateValue.size();
                         heartRateValue.add(dailyHeartRateAverage);
@@ -308,7 +309,7 @@ public class AnalysisFragment extends Fragment {
         LineData lineData = new LineData(allDataSets);
         lineChart.getDescription().setTextSize(12);
         lineChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
-        lineChart.animateXY(1000, 1000);
+        lineChart.animateXY(10, 10);
         lineChart.getXAxis().setGranularityEnabled(true);
         lineChart.getXAxis().setGranularity(5);
         lineChart.getXAxis().setLabelCount(lineDataSet1.getEntryCount());

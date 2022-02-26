@@ -3,7 +3,6 @@ package com.example.medistation_2.ui.profile;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -183,7 +182,7 @@ public class ProfileFragment extends Fragment {
             emergencyNumber.setText(String.valueOf(Objects.requireNonNull(task.getResult()).getValue()));
         });
         //past medication display section
-        String[] rowNumber = {"1", "2", "3", "4", "5", "6"};
+        String[] rowNumber = {"0", "1", "2", "3", "4", "5"};
         for (String s : rowNumber) {
             rootDbRef.child("pastMedications/" + s).get().addOnCompleteListener(task -> {
                 int medNameRID = view.getResources().getIdentifier("profileRow" + s + "Med", "id", requireActivity().getPackageName());
@@ -220,7 +219,7 @@ public class ProfileFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void addPastMedication(View view) throws JSONException {
         String timeTrailingZero = " 00:00:00.000";
-        String[] rowNumber = {"1", "2", "3", "4", "5", "6"};
+        String[] rowNumber = {"0", "1", "2", "3", "4", "5"};
         for (String s : rowNumber) {
             HashMap<String, Object> pastMedications = new HashMap<>();
             int medNameRID = view.getResources().getIdentifier("profileRow" + s + "Med", "id", requireActivity().getPackageName());
@@ -269,61 +268,34 @@ public class ProfileFragment extends Fragment {
             Date currentTime = Calendar.getInstance().getTime();
             SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
             String formattedDate = df.format(currentTime) + " " + symptomHour + ":" + symptomMinute + ":00.000";
-            Long time = dbHelper.toEpochTime(formattedDate);
-            checkIfSymptomExist(rootDbRef, "symptomRecord", symptomName, time, severity);
+            Long time = dbHelper.toEpochTime(formattedDate)/1000;
+            int finalSeverity = severity;
 
+            ValueEventListener valueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.child("symptom/"+symptomName).exists()) {
+                        rootDbRef.child("symptom/"+symptomName).get().addOnCompleteListener(task -> {
+                            long numOfOccurrence = Objects.requireNonNull(task.getResult().getChildrenCount());
+                            Map<String, Object> occurrence = new HashMap<>();
+                            occurrence.put("date", time);
+                            occurrence.put("severity", finalSeverity);
+                            dbHelper.addToDB("symptom/"+symptomName+"/"+numOfOccurrence,occurrence);
+                        });
+                    } else {
+                        Map<String, Object> occurrence = new HashMap<>();
+                        occurrence.put("date", time);
+                        occurrence.put("severity", finalSeverity);
+                        dbHelper.addToDB("symptom/"+symptomName+"/0",occurrence);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            };
+            rootDbRef.addListenerForSingleValueEvent(valueEventListener);
         }
     }
 
-    public void checkIfSymptomExist(DatabaseReference rootDbRef, String path, String symptomName, Long time, int severity) {
-        ArrayList<String> symptomRecords = new ArrayList<>();
-        ValueEventListener valueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(path).exists()) {
-                    rootDbRef.child(path).get().addOnCompleteListener(task -> {
-                        ArrayList<String> symptomRecords;
-                        symptomRecords = (ArrayList<String>) Objects.requireNonNull(task.getResult()).getValue();
-                        assert symptomRecords != null;
-                        if (symptomRecords.contains(symptomName)) {
-                            Log.d(TAG, "Contain symptom");
-                            int symptomLocation = symptomRecords.indexOf(symptomName);
-                            rootDbRef.child("symptom/" + symptomLocation + "/occurrence").get().addOnCompleteListener(numOfOccurrence -> {
-                                long occurrenceCount = Objects.requireNonNull(numOfOccurrence.getResult()).getChildrenCount();
-                                Map<String, Object> occurrence = new HashMap<>();
-                                occurrence.put("date", time);
-                                occurrence.put("severity", severity);
-                                dbHelper.addToDB("symptom/" + symptomLocation + "/occurrence/" + occurrenceCount, occurrence);
-                            });
-                        } else {
-                            symptomRecords.add(symptomName);
-                            dbHelper.addToDBStrArray("symptomRecord", symptomRecords);
-                            rootDbRef.child(path).get().addOnCompleteListener(numOfSymptom -> {
-                                long symptomCount = Objects.requireNonNull(numOfSymptom.getResult()).getChildrenCount();
-                                symptomCount = symptomCount - 1;
-                                Map<String, Object> occurrence = new HashMap<>();
-                                occurrence.put("date", time);
-                                occurrence.put("severity", severity);
-                                dbHelper.addToDB("symptom/" + symptomCount + "/name", symptomName);
-                                dbHelper.addToDB("symptom/" + symptomCount + "/occurrence/0", occurrence);
-                            });
-                        }
-                    });
-                } else {
-                    symptomRecords.add(symptomName);
-                    dbHelper.addToDBStrArray("symptomRecord", symptomRecords);
-                    Map<String, Object> occurrence = new HashMap<>();
-                    occurrence.put("date", time);
-                    occurrence.put("severity", severity);
-                    dbHelper.addToDB("symptom/0/name", symptomName);
-                    dbHelper.addToDB("symptom/0/occurrence/0", occurrence);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        };
-        rootDbRef.addListenerForSingleValueEvent(valueEventListener);
-    }
 }

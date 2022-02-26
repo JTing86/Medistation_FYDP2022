@@ -1,14 +1,9 @@
 package com.example.medistation_2.helperFunctions;
 
-import android.annotation.SuppressLint;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
-import com.example.medistation_2.ui.analysis.AnalysisFragment;
-
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,6 +49,7 @@ public class createData {
             singleDayHeartRate.put("date",timeData.get(i));
             singleDayHeartRate.put("value",heartRateValue);
             dbHelper.addToDB("heartRate/"+ i,singleDayHeartRate);
+            heartRateValue.clear();
         }
     }
     public static void sleepQuality (int numberOfDays) {
