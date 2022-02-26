@@ -1,30 +1,19 @@
 package com.example.medistation_2.ui.devices;
 
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
-
-import android.app.Activity;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.medistation_2.R;
-import com.example.medistation_2.helperFunctions.dbHelper;
-import com.example.medistation_2.ui.profile.ProfileFragment;
-import com.example.medistation_2.ui.profile.ProfileViewModel;
 
 public class DevicesFragment extends Fragment {
-    private static final String TAG = DevicesFragment.class.getSimpleName();
 
     public static DevicesFragment newInstance() {
         return new DevicesFragment();

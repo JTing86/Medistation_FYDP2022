@@ -100,6 +100,7 @@ public class AnalysisFragment extends Fragment {
         Spinner userInfoRightMenu = view.findViewById(R.id.analysisUserInfoRightDropDown);
         Button generateGraph = view.findViewById(R.id.analysisGenerateGraph);
         generateGraph.setOnClickListener(v -> {
+            findCurrentTime(30);
             clearFunction();
             String rightItemSelected = userInfoLeftMenu.getSelectedItem().toString();
             String leftItemSelected = userInfoRightMenu.getSelectedItem().toString();
@@ -116,10 +117,8 @@ public class AnalysisFragment extends Fragment {
             }
         });
 
-        String[] timeRange = new String[]{"Time Range", "Past 7 Days", "Past Month"};
         String[] userInfo = new String[]{"Patient Info", "Heart Rate", "Temperature", "Sleep Quality"};
         List<String> userInfoList = new ArrayList<>(Arrays.asList(userInfo));
-        List<String> timeRangeList = new ArrayList<>(Arrays.asList(timeRange));
         //Create severity drop down menu
         ArrayAdapter<String> userInfoMenuArrayAdapter = new ArrayAdapter<String>(requireActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, userInfoList) {
             @Override
@@ -198,7 +197,7 @@ public class AnalysisFragment extends Fragment {
                     long dailyHeartRateAverage = 0;
                     if (currentTimeStamp < currentDayUpperBound && currentTimeStamp >= currentLowerBound) {
                         for (int j = 0; j < Objects.requireNonNull(dailyHeartRateValue).size(); j++) {
-                            dailyHeartRateAverage = dailyHeartRateValue.get(i) + dailyHeartRateAverage;
+                            dailyHeartRateAverage = dailyHeartRateValue.get(j) + dailyHeartRateAverage;
                         }
                         dailyHeartRateAverage = dailyHeartRateAverage / dailyHeartRateValue.size();
                         heartRateValue.add(dailyHeartRateAverage);
@@ -310,7 +309,7 @@ public class AnalysisFragment extends Fragment {
         LineData lineData = new LineData(allDataSets);
         lineChart.getDescription().setTextSize(12);
         lineChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
-        lineChart.animateXY(1000, 1000);
+        lineChart.animateXY(10, 10);
         lineChart.getXAxis().setGranularityEnabled(true);
         lineChart.getXAxis().setGranularity(5);
         lineChart.getXAxis().setLabelCount(lineDataSet1.getEntryCount());
@@ -384,16 +383,15 @@ class CustomMPLineChartMarkerView extends MarkerView {
 
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
-        AnalysisFragment analysisFragmentHelper = new AnalysisFragment();
         if (e instanceof CandleEntry) {
             CandleEntry ce = (CandleEntry) e;
             dataLabel.setText(Utils.formatNumber(ce.getHigh(), 0, true));
         } else {
             ArrayList<Long> dateList;
-            if (analysisFragmentHelper.temperatureDate.isEmpty()) {
-                dateList = analysisFragmentHelper.heartRateDate;
+            if (AnalysisFragment.temperatureDate.isEmpty()) {
+                dateList = AnalysisFragment.heartRateDate;
             } else
-                dateList = analysisFragmentHelper.temperatureDate;
+                dateList = AnalysisFragment.temperatureDate;
 
             Long date = dateList.get((int) e.getX());
             String dateInString = dbHelper.fromEpochTime(date * 1000);
