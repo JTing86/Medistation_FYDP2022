@@ -80,7 +80,8 @@ public class HomeFragment extends Fragment {
                     MQTTSubscribe("medistation2021/wifi-status/send");
                     MQTTSubscribe("medistation2021/health-status/send");
                     MQTTSubscribe("medistation2021/battery/send");
-                    MQTT.MQTTSendData(client, "battery", "", requireContext().getString(R.string.batteryRequest));
+                    //MQTT.MQTTSendData(client, "battery", "", requireContext().getString(R.string.batteryRequest));
+                    MQTT.MQTTSendData(client, "health", "", requireContext().getString(R.string.healthStatusRequest));
                 }
 
                 @Override
