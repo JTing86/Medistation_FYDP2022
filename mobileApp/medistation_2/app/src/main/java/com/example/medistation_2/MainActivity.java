@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void messageArrived(String topic, MqttMessage message) throws JSONException {
+                public void messageArrived(String topic, MqttMessage message) {
                     if (topic.equals("medistation2021/battery/send")) {
                         pushNotification("Battery Level: " + new String(message.getPayload()), "Low Wristband Battery");
                         //TODO: add function
