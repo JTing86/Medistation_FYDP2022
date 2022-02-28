@@ -26,44 +26,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pill4DosageTable" />
 
-        <TextView
-            android:id="@+id/pill5IntakeTimes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/medication_schedule_dosage_per_day"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.162"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pill5DayOfTheWeek" />
-
-        <Button
-            android:id="@+id/pill5SaveButton"
-            android:layout_width="57dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/medication_schedule_add"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.382"
-            app:layout_constraintStart_toEndOf="@+id/pill5DosageInput"
-            app:layout_constraintTop_toBottomOf="@+id/pill5DayOfTheWeek" />
-
-        <EditText
-            android:id="@+id/pill5DosageInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:autofillHints="null"
-            android:background="@color/white"
-            android:hint="@string/medication_dosage_amount"
-            android:inputType="number"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.108"
-            app:layout_constraintStart_toEndOf="@+id/pill5IntakeTimes"
-            app:layout_constraintTop_toBottomOf="@+id/pill5DayOfTheWeek" />
-
         <TableRow
             android:id="@+id/pill5DayOfTheWeek"
             android:layout_width="wrap_content"
@@ -179,44 +141,6 @@
             app:layout_constraintHorizontal_bias="0.049"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pill3DosageTable" />
-
-        <TextView
-            android:id="@+id/pill4IntakeTimes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/medication_schedule_dosage_per_day"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.162"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pill4DayOfTheWeek" />
-
-        <Button
-            android:id="@+id/pill4SaveButton"
-            android:layout_width="57dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/medication_schedule_add"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.382"
-            app:layout_constraintStart_toEndOf="@+id/pill4DosageInput"
-            app:layout_constraintTop_toBottomOf="@+id/pill4DayOfTheWeek" />
-
-        <EditText
-            android:id="@+id/pill4DosageInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:autofillHints="null"
-            android:background="@color/white"
-            android:hint="@string/medication_dosage_amount"
-            android:inputType="number"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.108"
-            app:layout_constraintStart_toEndOf="@+id/pill4IntakeTimes"
-            app:layout_constraintTop_toBottomOf="@+id/pill4DayOfTheWeek" />
 
         <TableRow
             android:id="@+id/pill4DayOfTheWeek"
@@ -334,44 +258,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pill2DosageTable" />
 
-        <TextView
-            android:id="@+id/pill3IntakeTimes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/medication_schedule_dosage_per_day"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.162"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pill3DayOfTheWeek" />
-
-        <Button
-            android:id="@+id/pill3SaveButton"
-            android:layout_width="57dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/medication_schedule_add"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.382"
-            app:layout_constraintStart_toEndOf="@+id/pill3DosageInput"
-            app:layout_constraintTop_toBottomOf="@+id/pill3DayOfTheWeek" />
-
-        <EditText
-            android:id="@+id/pill3DosageInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:autofillHints="null"
-            android:background="@color/white"
-            android:hint="@string/medication_dosage_amount"
-            android:inputType="number"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.108"
-            app:layout_constraintStart_toEndOf="@+id/pill3IntakeTimes"
-            app:layout_constraintTop_toBottomOf="@+id/pill3DayOfTheWeek" />
-
         <TableRow
             android:id="@+id/pill3DayOfTheWeek"
             android:layout_width="wrap_content"
@@ -487,44 +373,6 @@
             app:layout_constraintHorizontal_bias="0.049"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pill1DosageTable" />
-
-        <TextView
-            android:id="@+id/pill2IntakeTimes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/medication_schedule_dosage_per_day"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.162"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pill2DayOfTheWeek" />
-
-        <Button
-            android:id="@+id/pill2SaveButton"
-            android:layout_width="57dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/medication_schedule_add"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.382"
-            app:layout_constraintStart_toEndOf="@+id/pill2DosageInput"
-            app:layout_constraintTop_toBottomOf="@+id/pill2DayOfTheWeek" />
-
-        <EditText
-            android:id="@+id/pill2DosageInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:autofillHints="null"
-            android:background="@color/white"
-            android:hint="@string/medication_dosage_amount"
-            android:inputType="number"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.108"
-            app:layout_constraintStart_toEndOf="@+id/pill2IntakeTimes"
-            app:layout_constraintTop_toBottomOf="@+id/pill2DayOfTheWeek" />
 
 
         <TableRow
@@ -759,50 +607,12 @@
 
         </TableRow>
 
-        <TextView
-            android:id="@+id/pill1IntakeTimes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/medication_schedule_dosage_per_day"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.162"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pill1DayOfTheWeek" />
-
-        <EditText
-            android:id="@+id/pill1DosageInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:autofillHints="null"
-            android:background="@color/white"
-            android:hint="@string/medication_dosage_amount"
-            android:inputType="number"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.108"
-            app:layout_constraintStart_toEndOf="@+id/pill1IntakeTimes"
-            app:layout_constraintTop_toBottomOf="@+id/pill1DayOfTheWeek" />
-
-
-        <Button
-            android:id="@+id/pill1SaveButton"
-            android:layout_width="57dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/medication_schedule_add"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.382"
-            app:layout_constraintStart_toEndOf="@+id/pill1DosageInput"
-            app:layout_constraintTop_toBottomOf="@+id/pill1DayOfTheWeek" />
 
         <TableLayout
             android:id="@+id/pill1DosageTable"
             android:layout_width="349dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="8dp"
             android:stretchColumns="*"
             app:layout_constraintEnd_toEndOf="@+id/pill1DayOfTheWeek"
             app:layout_constraintHorizontal_bias="1.0"
@@ -815,7 +625,7 @@
             android:id="@+id/pill2DosageTable"
             android:layout_width="349dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="8dp"
             android:stretchColumns="*"
             app:layout_constraintEnd_toEndOf="@+id/pill2DayOfTheWeek"
             app:layout_constraintHorizontal_bias="1.0"
@@ -826,10 +636,10 @@
             android:id="@+id/pill3DosageTable"
             android:layout_width="349dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="8dp"
             android:stretchColumns="*"
             app:layout_constraintEnd_toEndOf="@+id/pill2DayOfTheWeek"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/pill3DayOfTheWeek"
             app:layout_constraintTop_toBottomOf="@+id/pill3DayOfTheWeek" />
 
@@ -837,7 +647,7 @@
             android:id="@+id/pill4DosageTable"
             android:layout_width="349dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="8dp"
             android:stretchColumns="*"
             app:layout_constraintEnd_toEndOf="@+id/pill2DayOfTheWeek"
             app:layout_constraintHorizontal_bias="0.0"
@@ -848,10 +658,10 @@
             android:id="@+id/pill5DosageTable"
             android:layout_width="349dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="8dp"
             android:stretchColumns="*"
             app:layout_constraintEnd_toEndOf="@+id/pill2DayOfTheWeek"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/pill5DayOfTheWeek"
             app:layout_constraintTop_toBottomOf="@+id/pill5DayOfTheWeek" />
 

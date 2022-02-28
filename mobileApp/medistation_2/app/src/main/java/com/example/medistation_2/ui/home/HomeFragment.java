@@ -3,6 +3,7 @@ package com.example.medistation_2.ui.home;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -216,16 +217,21 @@ public class HomeFragment extends Fragment {
         Date currentDate = new Date();
         SimpleDateFormat dateFormatter = new SimpleDateFormat("kk:mm:ss");
         String currentTime = dateFormatter.format(currentDate);
-        int currentDayOfTheWeek = rightNow.get(Calendar.DAY_OF_WEEK) - 2;
+        int currentDayOfTheWeek = rightNow.get(Calendar.DAY_OF_WEEK) - 2 ;
+        if (currentDayOfTheWeek == -1) {
+            currentDayOfTheWeek = 6;
+        }
+        Log.d(TAG,String.valueOf(currentDayOfTheWeek));
         Long currentTimeInMin = totalWeekMinute((long) currentDayOfTheWeek,Long.parseLong(currentTime.substring(0,2)),Long.parseLong(currentTime.substring(3,5)));
 
+        int finalCurrentDayOfTheWeek = currentDayOfTheWeek;
         rootDbRef.child("medications").get().addOnCompleteListener(task -> {
-            List<Object> allMedications;
-            allMedications = (List<Object>) Objects.requireNonNull(task.getResult()).getValue();
+            List<Object> allMedications = (List<Object>) Objects.requireNonNull(task.getResult()).getValue();
             long bestTime = Long.MAX_VALUE;
             for (int i = 0; i< Objects.requireNonNull(allMedications).size(); i++){
                 HashMap <String,Object> medicine = (HashMap<String, Object>) allMedications.get(i);
-                Long nextDoseInMinute = findNextDose(medicine,currentDayOfTheWeek,currentTime);
+                Log.d(TAG,String.valueOf(medicine));
+                Long nextDoseInMinute = findNextDose(medicine, finalCurrentDayOfTheWeek,currentTime);
                 if (Math.abs(nextDoseInMinute - currentTimeInMin) < bestTime) {
                     bestTime = Math.abs(nextDoseInMinute - currentTimeInMin);
                 }
