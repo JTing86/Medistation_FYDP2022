@@ -11,6 +11,9 @@
 
 #define BATTERY_PIN 35
 
+#define I2C_SDA 7
+#define I2C_SCL 8
+
 #define DEBOUNCE_DELAY 20 //ms
 
 String sendRequest(String type, String base_url, String path, String payload = "", int port = 443, String header = "");
@@ -75,11 +78,15 @@ const String twilio_sms_path = "/2010-04-01/Accounts/" + twilio_id + "/Messages"
 const String twilio_token = "QUMxMTk2OGMyOWEwMjIxMzZiOGMyYTM2NDVlZWRiZWMwMDpiMTMxZGEwNDk0MmZmMDAxZWY0NmIwODc0MDM3YzQ2OA==";
 String user_phone;
 
+TwoWire I2C = TwoWire(0);
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
 
-  while(!sensor.begin(Wire, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
+  I2C.begin(I2C_SDA, I2C_SCL, I2C_SPEED_FAST);
+
+  while(!sensor.begin(I2C, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
   {
     Serial.println("MAX30105 was not found. Please check wiring/power. ");
     
@@ -358,24 +365,24 @@ bool isInteger(String str) {
   return true;
 }
 
-bool getIndex(String path, String limited_resp, String& index) {
+String getIndex(String path) {
+  String resp = sendRequest("GET",  database_url, path + ".json?orderBy\"$key\"&limitToLast=1");
+  
   // try parsing for the index
-  if(limited_resp == "null") {
-    index = "-1";
-    return false;
+  if(resp == "null") {
+    return "-1";
   }
   
-  index = tryParseFirstNumber(limited_resp);
+  String index = tryParseFirstNumber(resp);
 
   // if parsing didn't work, do a count
   if(!isInteger(index)) {
     String resp = sendRequest("GET",  database_url, path + ".json?shallow=true");
     deserializeJson(doc, resp);
-    index = String(doc.size()-1);
-    return false;
+    index =  String(doc.size()-1);
   }
 
-  return true;
+  return index;
 }
 
 void buttonPressedCallback(uint8_t pinIn)
@@ -403,9 +410,8 @@ void buttonReleasedCallback(uint8_t pinIn)
 }
 
 void pushSymptom(String symptom, unsigned long timestamp, uint8_t level) {
-  String resp = sendRequest("GET",  database_url, "/symptom/" + symptom + ".json?orderBy\"$key\"&limitToLast=1");
-  String index = "";
-  getIndex("/symptom/" + symptom, resp, index);
+//  String resp = sendRequest("GET",  database_url, "/symptom/" + symptom + ".json?orderBy\"$key\"&limitToLast=1");
+  String index = getIndex("/symptom/" + symptom);
   index = String(index.toInt()+1);
 
   doc.clear();
@@ -422,9 +428,8 @@ void pushSymptom(String symptom, unsigned long timestamp, uint8_t level) {
 }
 
 void bulkPushSymptom(String symptom, unsigned long timestamp[], uint8_t level, uint8_t size) {
-  String resp = sendRequest("GET",  database_url, "/symptom/" + symptom + ".json?orderBy\"$key\"&limitToLast=1");
-  String index_str = "";
-  getIndex("/symptom/" + symptom, resp, index_str);
+//  String resp = sendRequest("GET",  database_url, "/symptom/" + symptom + ".json?orderBy\"$key\"&limitToLast=1");
+  String index_str = getIndex("/symptom/" + symptom);
   unsigned int index = index_str.toInt()+1;
 
   doc.clear();
@@ -442,9 +447,8 @@ void bulkPushSymptom(String symptom, unsigned long timestamp[], uint8_t level, u
 }
 
 void pushTemp(float temp, unsigned long timestamp) {
-  String resp = sendRequest("GET",  database_url, "/temp/date.json?orderBy\"$key\"&limitToLast=1");
-  String index = "";
-  getIndex("/temp/date", resp, index);
+//  String resp = sendRequest("GET",  database_url, "/temp/date.json?orderBy\"$key\"&limitToLast=1");
+  String index = getIndex("/temp/date");
   index = String(index.toInt()+1);
   // get time in epoch seconds
   long time = timestamp;
@@ -466,56 +470,24 @@ void pushTemp(float temp, unsigned long timestamp) {
 }
 
 void pushBPM(uint8_t samples[], uint8_t timestamp) {
-  // getting the index - hacky
-  String resp = sendRequest("GET",  database_url, "/heartRate.json?orderBy\"$key\"&limitToLast=1");
-  String curr_index = "";
-  bool resp_valid = getIndex("/heartRate", resp, curr_index);
-  curr_index = String(curr_index.toInt()+1);
+//  String resp = sendRequest("GET",  database_url, "/heartRate.json?orderBy\"$key\"&limitToLast=1");
+  String index = getIndex("/heartRate");
+  index = String(index.toInt()+1);
 
-  deserializeJson(doc, resp);
-  JsonArray values;
-  JsonObject root_obj;
-  if (resp_valid) {
-    root_obj = doc[curr_index];
-  }
-  else {
-    JsonArray entries = doc.as<JsonArray>();
-    root_obj = entries[entries.size()-1];
-  }
-
-  values = root_obj["value"];
-  uint8_t init_size = values.size();
+  doc.clear();
+  JsonObject heart_rate = doc.createNestedObject(index);
+  JsonArray values = heart_rate.createNestedArray("value");
   
-  if(root_obj["date"] == sample_time[0]) {
-    // Samples previously weren't finished, updating previous record
-    for(uint8_t i = init_size; i < bpm_index+1; i++) {
-      values.add(samples[i]);
-    }
-
-    String payload;
-    serializeJson(root_obj, payload);
-    sendRequest("PUT", database_url, "/heartRate/" + curr_index + ".json", payload);
-    doc.clear();
+  for(uint8_t i = 0; i < BPM_SAMPLE_FREQ; i++) {
+    values.add(samples[i]);
   }
-  else {
-    // new record needed
-    String index = String(curr_index.toInt() + 1);
 
-    doc.clear();
-    JsonObject heart_rate = doc.createNestedObject(index);
-    values = heart_rate.createNestedArray("value");
-    
-    for(uint8_t i = 0; i < BPM_SAMPLE_FREQ; i++) {
-      values.add(samples[i]);
-    }
+  heart_rate["date"] = timestamp;
 
-    heart_rate["date"] = timestamp;
-
-    String payload;
-    serializeJson(doc, payload);
-    sendRequest("PATCH", database_url, "/heartRate.json", payload);
-    doc.clear();
-  }
+  String payload;
+  serializeJson(doc, payload);
+  sendRequest("PATCH", database_url, "/heartRate.json", payload);
+  doc.clear();
 }
 
 // tries to push all ready samples for BPM and temperature to the DB if there is wifi
