@@ -9,6 +9,7 @@
 #include "MAX30105.h"
 #include "heartRate.h"
 #include <TimeLib.h>
+#include "REST.h"
 
 #define BATTERY_PIN 35
 
@@ -16,8 +17,6 @@
 #define I2C_SCL 33
 
 #define DEBOUNCE_DELAY 20 //ms
-
-String sendRequest(String type, String base_url, String path, String payload = "", int port = 443, String header = "");
 
 const uint8_t MAX_DAYS_NO_WIFI = 2;
 const uint8_t BPM_SAMPLE_FREQ = 24; // samples per day
@@ -38,8 +37,7 @@ const String time_now = "/UnixTime/tounix?date=now";
 const String day_url = "worldclockapi.com";
 const String day_path = "/api/json/est/now";
 
-
-WiFiClientSecure secureClient;
+REST rest;
 WiFiClient espClient;
 PubSubClient client(espClient);
 
@@ -121,10 +119,10 @@ void setup() {
   bpm_timer = millis();
   temp_timer = bpm_timer;
 
-  user_phone = tryParseFirstNumber(sendRequest("GET", database_url, "/phone.json"));
+  user_phone = tryParseFirstNumber(rest.sendRequest("GET", database_url, "/phone.json"));
 
   // get the name of the symptoms recorded by the buttons
-  String resp = sendRequest("GET", database_url, "/wristband/button.json");
+  String resp = rest.sendRequest("GET", database_url, "/wristband/button.json");
   deserializeJson(doc, resp);
   JsonArray symptoms = doc.as<JsonArray>();
 
@@ -179,57 +177,6 @@ void parseDate(String timestamp, uint8_t& hour, uint8_t& minute) {
   hour = timestamp.substring(i + 1, i + 3).toInt();
   i = timestamp.indexOf(':');
   minute = timestamp.substring(i + 1, i + 3).toInt();
-}
-
-// sends HTTP request
-// port is 443 for HTTPS, 80 for HTTP
-String sendRequest(String type, String base_url, String path, String payload, int port, String header) {
-  secureClient.setInsecure();//skip verification
-  if (!secureClient.connect(base_url.c_str(), 443)){
-    Serial.println("Connection failed!");
-    return "Error";
-  }
-  else {
-    Serial.println("Connected to server!");
-    // Make a HTTP request:
-    
-    secureClient.println(type + " https://" + base_url + path + " HTTP/1.0");
-    secureClient.println("Host: " + base_url);
-    secureClient.println("Connection: close");
-
-    if (header != "") {
-      secureClient.println(header);
-    }
-    
-    if (type != "GET") {
-      secureClient.print("Content-Length: ");
-      secureClient.println(payload.length());
-    }
-    
-    secureClient.println();
-
-    if (type != "GET") {
-      secureClient.println(payload);
-    }
-
-    while (secureClient.connected()) {
-      String line = secureClient.readStringUntil('\n');
-      if (line == "\r") {
-        Serial.println("headers received");
-        break;
-      }
-    }
-    // if there are incoming bytes available
-    // from the server, read them and print them:
-    String response;
-    while (secureClient.available()) {
-      response += (char)secureClient.read();
-    }
-    
-    secureClient.stop();
-
-    return response;
-  }
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -368,7 +315,7 @@ bool isInteger(String str) {
 }
 
 String getIndex(String path) {
-  String resp = sendRequest("GET",  database_url, path + ".json?orderBy\"$key\"&limitToLast=1");
+  String resp = rest.sendRequest("GET",  database_url, path + ".json?orderBy\"$key\"&limitToLast=1");
   
   // try parsing for the index
   if(resp == "null") {
@@ -379,7 +326,7 @@ String getIndex(String path) {
 
   // if parsing didn't work, do a count
   if(!isInteger(index)) {
-    String resp = sendRequest("GET",  database_url, path + ".json?shallow=true");
+    String resp = rest.sendRequest("GET",  database_url, path + ".json?shallow=true");
     deserializeJson(doc, resp);
     index =  String(doc.size()-1);
   }
@@ -398,7 +345,7 @@ void buttonReleasedCallback(uint8_t pinIn)
   uint8_t index = pinIn - 25;
   
   // get time of occurrence
-  unsigned long timestamp = convertLong(sendRequest("GET", time_url, time_now));
+  unsigned long timestamp = convertLong(rest.sendRequest("GET", time_url, time_now));
 
   if(WiFi.status() == WL_CONNECTED) {
     pushSymptom(symptom_name[index], timestamp, 1);
@@ -424,7 +371,7 @@ void pushSymptom(String symptom, unsigned long timestamp, uint8_t level) {
 
   String payload;
   serializeJson(doc, payload);
-  sendRequest("PATCH",  database_url, "/symptom/" + symptom + ".json", payload);
+  rest.sendRequest("PATCH",  database_url, "/symptom/" + symptom + ".json", payload);
 
   doc.clear();
 }
@@ -443,7 +390,7 @@ void bulkPushSymptom(String symptom, unsigned long timestamp[], uint8_t level, u
 
   String payload;
   serializeJson(doc, payload);
-  sendRequest("PATCH",  database_url, "/symptom/" + symptom + ".json", payload);
+  rest.sendRequest("PATCH",  database_url, "/symptom/" + symptom + ".json", payload);
 
   doc.clear();
 }
@@ -460,13 +407,13 @@ void pushTemp(float temp, unsigned long timestamp) {
   doc[index] = time;
   String payload;
   serializeJson(doc, payload);
-  sendRequest("PATCH", database_url, "/temp/date.json", payload);
+  rest.sendRequest("PATCH", database_url, "/temp/date.json", payload);
 
   // update the value
   doc[index] = temp;
   payload;
   serializeJson(doc, payload);
-  sendRequest("PATCH", database_url, "/temp/value.json", payload);
+  rest.sendRequest("PATCH", database_url, "/temp/value.json", payload);
   
   doc.clear();  
 }
@@ -488,7 +435,7 @@ void pushBPM(uint8_t samples[], uint8_t timestamp) {
 
   String payload;
   serializeJson(doc, payload);
-  sendRequest("PATCH", database_url, "/heartRate.json", payload);
+  rest.sendRequest("PATCH", database_url, "/heartRate.json", payload);
   doc.clear();
 }
 
@@ -497,7 +444,7 @@ void pushSleepQuality(uint8_t quality, unsigned long start_time, unsigned long e
   String day_index = getIndex("/sleep");
   int sleep_index = getIndex("/sleep/" + day_index).toInt() + 1;
 
-  String resp = sendRequest("GET", database_url, "/sleep/" + day_index + ".json");
+  String resp = rest.sendRequest("GET", database_url, "/sleep/" + day_index + ".json");
   deserializeJson(doc, resp);
   JsonArray start = doc["start"];
 
@@ -512,7 +459,7 @@ void pushSleepQuality(uint8_t quality, unsigned long start_time, unsigned long e
     String payload;
     serializeJson(doc, payload);
 
-    sendRequest("PUT", database_url, "/sleep/" + day_index + ".json", payload);
+    rest.sendRequest("PUT", database_url, "/sleep/" + day_index + ".json", payload);
   }
   else {
     day_index = String(day_index.toInt() + 1);
@@ -531,7 +478,7 @@ void pushSleepQuality(uint8_t quality, unsigned long start_time, unsigned long e
     String payload;
     serializeJson(doc, payload);
 
-    sendRequest("PATCH", database_url, "/sleep.json", payload);
+    rest.sendRequest("PATCH", database_url, "/sleep.json", payload);
   }
 
   doc.clear();
@@ -577,7 +524,7 @@ void loop() {
     Serial.println("hello");
     // store the time of the first sample for the date tag in the DB
     if(bpm_index == 0) {
-      sample_time[days_no_wifi] = convertLong(sendRequest("GET", time_url, time_now));
+      sample_time[days_no_wifi] = convertLong(rest.sendRequest("GET", time_url, time_now));
     }
 
     // measure BPM
@@ -618,7 +565,7 @@ void loop() {
     String header = "Authorization: Basic " + twilio_token + "\n" + "Content-Type: application/x-www-form-urlencoded";
     String msg = "Wristband battery is low. Charge now";
     String payload = "Body=" + msg + "&From=%2B19106657562&To=%2B1";
-    sendRequest("POST", twilio_url, twilio_sms_path, payload + user_phone, 443, header);
+    rest.sendRequest("POST", twilio_url, twilio_sms_path, payload + user_phone, 443, header);
     batt_alert_sent = true;
   }
   else if (batt_alert_sent) {

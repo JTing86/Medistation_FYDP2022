@@ -6,6 +6,7 @@
 #include <ArduinoJson.h>
 #include <climits>
 #include <Tone32.h>
+#include "REST.h"
 
 #define I2C_SDA 4
 #define I2C_SCL 5
@@ -28,8 +29,6 @@ const int MAX_DAILY_DOSES = 3;
 const uint8_t MOTOR_PINS[4] = {26, 13, 32, 33};
 
 // API constants
-String sendRequest(String type, String base_url, String path, String payload = "", int port = 443, String header = "");
-
 const char* broker = "broker.hivemq.com";
 
 const String database_url = "medistation-e235d-default-rtdb.firebaseio.com";
@@ -49,7 +48,7 @@ String user_phone;
 String caretaker_phone;
 String alert_msg = "User has not taken their pills in time";
 
-WiFiClientSecure secureClient;
+REST rest;
 WiFiClient espClient;
 PubSubClient client(espClient);
 
@@ -174,57 +173,6 @@ String parseFirstNumber(String str) {
   return str.substring(start+1, end);
 }
 
-// sends HTTP request
-// port is 443 for HTTPS, 80 for HTTP
-String sendRequest(String type, String base_url, String path, String payload, int port, String header) {
-  secureClient.setInsecure();//skip verification
-  if (!secureClient.connect(base_url.c_str(), 443)){
-    Serial.println("Connection failed!");
-    return "Error";
-  }
-  else {
-    Serial.println("Connected to server!");
-    // Make a HTTP request:
-    
-    secureClient.println(type + " https://" + base_url + path + " HTTP/1.0");
-    secureClient.println("Host: " + base_url);
-    secureClient.println("Connection: close");
-
-    if (header != "") {
-      secureClient.println(header);
-    }
-    
-    if (type != "GET") {
-      secureClient.print("Content-Length: ");
-      secureClient.println(payload.length());
-    }
-    
-    secureClient.println();
-
-    if (type != "GET") {
-      secureClient.println(payload);
-    }
-
-    while (secureClient.connected()) {
-      String line = secureClient.readStringUntil('\n');
-      if (line == "\r") {
-        Serial.println("headers received");
-        break;
-      }
-    }
-    // if there are incoming bytes available
-    // from the server, read them and print them:
-    String response;
-    while (secureClient.available()) {
-      response += (char)secureClient.read();
-    }
-    
-    secureClient.stop();
-
-    return response;
-  }
-}
-
 void callback(char* topic, byte* payload, unsigned int length) {
   if(strcmp(topic, "medistation2021/dispenser/alert") == 0) {
     // update pill low threshold
@@ -236,7 +184,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   else if(strcmp(topic, "medistation2021/pill/schedule") == 0) {
     // update schedule by checking database
-    String resp = sendRequest("GET", database_url, "/medications.json");
+    String resp = rest.sendRequest("GET", database_url, "/medications.json");
     deserializeJson(doc, resp);
     JsonArray medicationsArr = doc.as<JsonArray>();
     
@@ -386,18 +334,18 @@ void setup() {
     pinMode(MOTOR_PINS[i], OUTPUT);
   }
   
-//  WiFiManager wifi_manager;
-//  //creates access point named medistation-AP, with password medistation
-//  wifi_manager.autoConnect("medistation-AP", "medistation");
-//
-//  Serial.println("connecting");
-//  while(WiFi.status() != WL_CONNECTED);
-//
-//  Serial.println("Connected, IP address: ");
-//  Serial.println(WiFi.localIP());
-//
-//  client.setServer(broker, 1883);
-//  client.setCallback(callback);
+  WiFiManager wifi_manager;
+  //creates access point named medistation-AP, with password medistation
+  wifi_manager.autoConnect("medistation-AP", "medistation");
+
+  Serial.println("connecting");
+  while(WiFi.status() != WL_CONNECTED);
+
+  Serial.println("Connected, IP address: ");
+  Serial.println(WiFi.localIP());
+
+  client.setServer(broker, 1883);
+  client.setCallback(callback);
 
   // Initialize GPIO expander to have ports as outputs
   Wire.begin(I2C_SDA, I2C_SCL, 400000);
@@ -422,109 +370,107 @@ void setup() {
   Wire.write(0);  // value to send
   Wire.endTransmission();
 
-  moveMotor();
+  //initiliaze schedule to intial state
+  for(int pill = 0; pill < MAX_PILLS; pill++) {
+    for(int dose = 0; dose < MAX_DAILY_DOSES; dose++) {
+      schedules[pill][dose] = {0,LONG_MAX};
+    }
+  }
 
-//  //initiliaze schedule to intial state
-//  for(int pill = 0; pill < MAX_PILLS; pill++) {
-//    for(int dose = 0; dose < MAX_DAILY_DOSES; dose++) {
-//      schedules[pill][dose] = {0,LONG_MAX};
-//    }
-//  }
-//
-//  // get day of the week and current time
-//  String resp = sendRequest("GET", day_url, day_path, "", 80);
-//  deserializeJson(doc, resp);
-//  const char* weekday_str = doc["dayOfTheWeek"];
-//  weekday = getWeekday(weekday_str);
-//
-//  const char* timestamp = doc["currentDateTime"];
-//  uint8_t hour;
-//  uint8_t minute;
-//  parseDate(String(timestamp), hour, minute);
-//  schedule_time = millis();
-//  millisecs_to_midnight = (24*60 - (hour*60 + minute))*60*1000;
-//
-//  // schedule stuff
-//  resp = sendRequest("GET", database_url, "/medications.json");
-//  deserializeJson(doc, resp);
-//  JsonArray medicationsArr = doc.as<JsonArray>();
-//  
-//  loadSchedules(medicationsArr, hour, minute);
-//  printSchedule();
-//
-//  getNextPill();
-//
-//  // load pill thresholds and current number of pills
-//  initializeNumPills(medicationsArr, pill_threshold, num_pills);
-//
-//  // get the phone numbers
-//  user_phone = parseFirstNumber(sendRequest("GET", database_url, "/phone.json"));
-//  caretaker_phone = parseFirstNumber(sendRequest("GET", database_url, "/caretaker/phone.json"));  
+  // get day of the week and current time
+  String resp = rest.sendRequest("GET", day_url, day_path, "", 80);
+  deserializeJson(doc, resp);
+  const char* weekday_str = doc["dayOfTheWeek"];
+  weekday = getWeekday(weekday_str);
+
+  const char* timestamp = doc["currentDateTime"];
+  uint8_t hour;
+  uint8_t minute;
+  parseDate(String(timestamp), hour, minute);
+  schedule_time = millis();
+  millisecs_to_midnight = (24*60 - (hour*60 + minute))*60*1000;
+
+  // schedule stuff
+  resp = rest.sendRequest("GET", database_url, "/medications.json");
+  deserializeJson(doc, resp);
+  JsonArray medicationsArr = doc.as<JsonArray>();
+  
+  loadSchedules(medicationsArr, hour, minute);
+  printSchedule();
+
+  getNextPill();
+
+  // load pill thresholds and current number of pills
+  initializeNumPills(medicationsArr, pill_threshold, num_pills);
+
+  // get the phone numbers
+  user_phone = parseFirstNumber(rest.sendRequest("GET", database_url, "/phone.json"));
+  caretaker_phone = parseFirstNumber(rest.sendRequest("GET", database_url, "/caretaker/phone.json"));  
 }
 
 void loop() {
-//  if(!client.connected()) { 
-//    reconnect();
-//  }
-//  client.loop();
-//
-//  if (millis() - schedule_time >= next_pill.time) {
-//    // dispense that shit
-//    for(uint8_t i = 0; i < next_pill.quantity; i++) {
-//      if(next_pill_index == 4) {
-//        moveMotor();
-//      }
-//      else if(next_pill_index <= 1) {
-//        moveMotorExpander(GPIO_EXPAND_A, 4*next_pill_index+1);
-//      }
-//      else {
-//        moveMotorExpander(GPIO_EXPAND_B, 4*(next_pill_index-2)+1);
-//      }
-//    }
-//
-//    weight = getWeight();
-//    buzz();
-//    remind_time = millis();
-//    check_weight_time = remind_time;
-//    should_remind = true;
-//    
-//    // update next pill
-//    schedules[next_pill_index][0].quantity = 0;
-//    schedules[next_pill_index][0].time = LONG_MAX;
-//    qsort(schedules[next_pill_index], sizeof schedules[next_pill_index] / sizeof (*schedules[next_pill_index]), sizeof (*schedules[next_pill_index]), sortSchedulesAsc);
-//    
-//    getNextPill();
-//  }
-//
-//  // new day started
-//  if (millis() - schedule_time >= millisecs_to_midnight) {
-//    weekday = (weekday + 1)%7;
-//    String resp = sendRequest("GET", database_url, "/medications.json");
-//    deserializeJson(doc, resp);
-//    JsonArray medicationsArr = doc.as<JsonArray>();
-//    
-//    loadSchedules(medicationsArr, 0, 0);
-//    schedule_time = millis();
-//  }
-//
-//  // send another reminder
-//  if (should_remind && millis() - remind_time >= reminder_freq) {
-//    buzz();
-//    reminder_counter++;
-//    remind_time = millis();
-//  }
-//
-//  // check if they have taken the pills by checling the weight
-//  if (millis() - check_weight_time >= check_weight_freq && getWeight() < 0.5*weight) {
-//    should_remind = false;
-//    reminder_counter = 0;
-//  }
-//
-//  // they didn't take the pills in time - send an alert
-//  if (reminder_counter >= alert_threshold) {
-//    String header = "Authorization: Basic " + twilio_token + "\n" + "Content-Type: application/x-www-form-urlencoded";
-//    String payload = "Body=" + alert_msg + "&From=%2B19106657562&To=%2B1";
-//    sendRequest("POST", twilio_url, twilio_sms_path, payload + user_phone, 443, header);
-//    sendRequest("POST", twilio_url, twilio_sms_path, payload + caretaker_phone, 443, header);
-//  }
+  if(!client.connected()) { 
+    reconnect();
+  }
+  client.loop();
+
+  if (millis() - schedule_time >= next_pill.time) {
+    // dispense that shit
+    for(uint8_t i = 0; i < next_pill.quantity; i++) {
+      if(next_pill_index == 4) {
+        moveMotor();
+      }
+      else if(next_pill_index <= 1) {
+        moveMotorExpander(GPIO_EXPAND_A, 4*next_pill_index+1);
+      }
+      else {
+        moveMotorExpander(GPIO_EXPAND_B, 4*(next_pill_index-2)+1);
+      }
+    }
+
+    weight = getWeight();
+    buzz();
+    remind_time = millis();
+    check_weight_time = remind_time;
+    should_remind = true;
+    
+    // update next pill
+    schedules[next_pill_index][0].quantity = 0;
+    schedules[next_pill_index][0].time = LONG_MAX;
+    qsort(schedules[next_pill_index], sizeof schedules[next_pill_index] / sizeof (*schedules[next_pill_index]), sizeof (*schedules[next_pill_index]), sortSchedulesAsc);
+    
+    getNextPill();
+  }
+
+  // new day started
+  if (millis() - schedule_time >= millisecs_to_midnight) {
+    weekday = (weekday + 1)%7;
+    String resp = rest.sendRequest("GET", database_url, "/medications.json");
+    deserializeJson(doc, resp);
+    JsonArray medicationsArr = doc.as<JsonArray>();
+    
+    loadSchedules(medicationsArr, 0, 0);
+    schedule_time = millis();
+  }
+
+  // send another reminder
+  if (should_remind && millis() - remind_time >= reminder_freq) {
+    buzz();
+    reminder_counter++;
+    remind_time = millis();
+  }
+
+  // check if they have taken the pills by checling the weight
+  if (millis() - check_weight_time >= check_weight_freq && getWeight() < 0.5*weight) {
+    should_remind = false;
+    reminder_counter = 0;
+  }
+
+  // they didn't take the pills in time - send an alert
+  if (reminder_counter >= alert_threshold) {
+    String header = "Authorization: Basic " + twilio_token + "\n" + "Content-Type: application/x-www-form-urlencoded";
+    String payload = "Body=" + alert_msg + "&From=%2B19106657562&To=%2B1";
+    rest.sendRequest("POST", twilio_url, twilio_sms_path, payload + user_phone, 443, header);
+    rest.sendRequest("POST", twilio_url, twilio_sms_path, payload + caretaker_phone, 443, header);
+  }
 }
