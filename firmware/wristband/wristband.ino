@@ -8,11 +8,12 @@
 #include <InputDebounce.h>
 #include "MAX30105.h"
 #include "heartRate.h"
+#include <TimeLib.h>
 
 #define BATTERY_PIN 35
 
-#define I2C_SDA 7
-#define I2C_SCL 8
+#define I2C_SDA 4
+#define I2C_SCL 33
 
 #define DEBOUNCE_DELAY 20 //ms
 
@@ -32,7 +33,7 @@ const char* broker = "broker.hivemq.com";
 const String database_url = "medistation-e235d-default-rtdb.firebaseio.com";
 
 const String time_url = "showcase.api.linx.twenty57.net";
-const String now = "/UnixTime/tounix?date=now";
+const String time_now = "/UnixTime/tounix?date=now";
 
 const String day_url = "worldclockapi.com";
 const String day_path = "/api/json/est/now";
@@ -61,8 +62,6 @@ uint8_t bpm_vals[MAX_DAYS_NO_WIFI][BPM_SAMPLE_FREQ];
 uint8_t days_no_wifi = 0;
 unsigned long sample_time[MAX_DAYS_NO_WIFI];
 
-uint8_t weekday = 0;
-
 uint8_t batt_threshold = 0;
 bool batt_alert_sent = false;
 
@@ -83,6 +82,9 @@ TwoWire I2C = TwoWire(0);
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
+
+  pinMode(7,INPUT);
+  pinMode(8,INPUT);
 
   I2C.begin(I2C_SDA, I2C_SCL, I2C_SPEED_FAST);
 
@@ -396,7 +398,7 @@ void buttonReleasedCallback(uint8_t pinIn)
   uint8_t index = pinIn - 25;
   
   // get time of occurrence
-  unsigned long timestamp = convertLong(sendRequest("GET", time_url, now));
+  unsigned long timestamp = convertLong(sendRequest("GET", time_url, time_now));
 
   if(WiFi.status() == WL_CONNECTED) {
     pushSymptom(symptom_name[index], timestamp, 1);
@@ -490,6 +492,51 @@ void pushBPM(uint8_t samples[], uint8_t timestamp) {
   doc.clear();
 }
 
+void pushSleepQuality(uint8_t quality, unsigned long start_time, unsigned long end_time) {
+  //convertLong(sendRequest("GET", time_url, now));
+  String day_index = getIndex("/sleep");
+  int sleep_index = getIndex("/sleep/" + day_index).toInt() + 1;
+
+  String resp = sendRequest("GET", database_url, "/sleep/" + day_index + ".json");
+  deserializeJson(doc, resp);
+  JsonArray start = doc["start"];
+
+  if(sleep_index > 1 && day(start_time) == day(start[start.size()-1])){
+    JsonArray end = doc["end"];
+    JsonArray quality = doc["quality"];
+
+    quality[sleep_index] = quality;
+    start[sleep_index] = start_time;
+    end[sleep_index] = end_time;
+
+    String payload;
+    serializeJson(doc, payload);
+
+    sendRequest("PUT", database_url, "/sleep/" + day_index + ".json", payload);
+  }
+  else {
+    day_index = String(day_index.toInt() + 1);
+    sleep_index = 0;
+    doc.clear();
+
+    JsonObject root = doc.createNestedObject(day_index);
+    JsonArray end = root.createNestedArray("end");
+    JsonArray startArr = root.createNestedArray("start");
+    JsonArray quality = root.createNestedArray("quality");
+
+    quality[sleep_index] = quality;
+    startArr[sleep_index] = start_time;
+    end[sleep_index] = end_time;
+
+    String payload;
+    serializeJson(doc, payload);
+
+    sendRequest("PATCH", database_url, "/sleep.json", payload);
+  }
+
+  doc.clear();
+}
+
 // tries to push all ready samples for BPM and temperature to the DB if there is wifi
 // if there is no wifi, samples are put into the next column
 // passes in global parameters for better clarity
@@ -530,7 +577,7 @@ void loop() {
     Serial.println("hello");
     // store the time of the first sample for the date tag in the DB
     if(bpm_index == 0) {
-      sample_time[days_no_wifi] = convertLong(sendRequest("GET", time_url, now));
+      sample_time[days_no_wifi] = convertLong(sendRequest("GET", time_url, time_now));
     }
 
     // measure BPM
@@ -579,8 +626,8 @@ void loop() {
     batt_alert_sent = false;
   }
 
-  unsigned long now = millis();
+  unsigned long current_time = millis();
   for(uint8_t i = 0; i < NUM_BUTTONS; i++) {
-    symptom_button[i].process(now);
+    symptom_button[i].process(current_time);
   }
 }
