@@ -10,6 +10,7 @@
 #include "heartRate.h"
 #include <TimeLib.h>
 #include "REST.h"
+#include "sleepQuality.h"
 
 #define BATTERY_PIN 35
 
@@ -85,24 +86,24 @@ void setup() {
   pinMode(8,INPUT);
 
   I2C.begin(I2C_SDA, I2C_SCL, I2C_SPEED_FAST);
-
-  while(!sensor.begin(I2C, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
-  {
-    Serial.println("MAX30105 was not found. Please check wiring/power. ");
-    
-  }
-
-  sensor.setup();
-  sensor.setPulseAmplitudeRed(0x0A);
-  sensor.setPulseAmplitudeGreen(0);
-
-  sensor.enableDIETEMPRDY(); //Enable the temp ready interrupt. This is required.
+//
+//  while(!sensor.begin(I2C, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
+//  {
+//    Serial.println("MAX30105 was not found. Please check wiring/power. ");
+//
+//  }
+//
+//  sensor.setup();
+//  sensor.setPulseAmplitudeRed(0x0A);
+//  sensor.setPulseAmplitudeGreen(0);
+//
+//  sensor.enableDIETEMPRDY(); //Enable the temp ready interrupt. This is required.
 
   Serial.println("start");
 
 //  pinMode(BATTERY_PIN, INPUT);
   analogReadResolution(11);
-  
+
   WiFiManager wifiManager;
   //creates access point named medistation-AP, with password medistation
   wifiManager.autoConnect("medistation-AP", "medistation");
@@ -217,7 +218,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     // don't need to try to push with WiFi because if we got this message, we must have WiFi
     // Only need to push first column since there will only be one column with WiFi
     pushBPM(bpm_vals[0], sample_time[0]);
-    pushTemp(temperature[0], sample_time[0]); 
+    pushTemp(temperature[0], sample_time[0]);
 
   }
   else if(strcmp(topic, "medistation2021/wristband/buttons") == 0) {
@@ -257,7 +258,7 @@ void reconnect() {
 float measureBatt() {
   int batt_read = analogRead(BATTERY_PIN);
   float voltage = (4.0/3.0)*3.3*((float)batt_read/2047.0); // 11 bit ADC
-  
+
   return (100.0/(4.2-3.3)*(voltage-3.3)); // equation of line. Transform from volatage to percentage
 }
 
@@ -269,14 +270,14 @@ uint8_t getHeartRate() {
 
   byte bpm;
   byte avg_bpm = 0;
-  
+
   while(sample_index < WINDOW_SIZE) {
     long irValue = sensor.getIR();
-    
+
     if(checkForBeat(irValue)) {
       if(last_beat > 0) {
         bpm = 60 / ((millis() - last_beat) / 1000.0);
-    
+
         if(bpm < 255 && bpm > 20) {
           samples[sample_index++] = (byte)bpm;
           avg_bpm += bpm / WINDOW_SIZE;
@@ -295,7 +296,7 @@ String tryParseFirstNumber(String str) {
   if(start == -1) {
     return "";
   }
-  
+
   uint8_t end = str.indexOf('"', start + 1);
   if(end == -1) {
     return "";
@@ -316,12 +317,12 @@ bool isInteger(String str) {
 
 String getIndex(String path) {
   String resp = rest.sendRequest("GET",  database_url, path + ".json?orderBy\"$key\"&limitToLast=1");
-  
+
   // try parsing for the index
   if(resp == "null") {
     return "-1";
   }
-  
+
   String index = tryParseFirstNumber(resp);
 
   // if parsing didn't work, do a count
@@ -343,7 +344,7 @@ void buttonReleasedCallback(uint8_t pinIn)
 {
   // hacky but works for now
   uint8_t index = pinIn - 25;
-  
+
   // get time of occurrence
   unsigned long timestamp = convertLong(rest.sendRequest("GET", time_url, time_now));
 
@@ -414,8 +415,8 @@ void pushTemp(float temp, unsigned long timestamp) {
   payload;
   serializeJson(doc, payload);
   rest.sendRequest("PATCH", database_url, "/temp/value.json", payload);
-  
-  doc.clear();  
+
+  doc.clear();
 }
 
 void pushBPM(uint8_t samples[], uint8_t timestamp) {
@@ -426,7 +427,7 @@ void pushBPM(uint8_t samples[], uint8_t timestamp) {
   doc.clear();
   JsonObject heart_rate = doc.createNestedObject(index);
   JsonArray values = heart_rate.createNestedArray("value");
-  
+
   for(uint8_t i = 0; i < BPM_SAMPLE_FREQ; i++) {
     values.add(samples[i]);
   }
@@ -506,7 +507,7 @@ void tryPushAll(unsigned long times[], uint8_t& wifi_counter) {
       bpm_vals[0][sample] = bpm_vals[wifi_counter][sample];
     }
     temperature[0] = temperature[wifi_counter];
-    
+
     wifi_counter = 0;
   }
   else {
@@ -514,7 +515,7 @@ void tryPushAll(unsigned long times[], uint8_t& wifi_counter) {
   }
 }
 
-void loop() {  
+void loop() {
   if(!client.connected()) {
     reconnect();
   }
