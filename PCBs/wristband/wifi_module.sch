@@ -1,0 +1,114 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 2 2
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L wifi:ESP32 U?
+U 1 1 6145AB1B
+P 3050 2550
+F 0 "U?" H 3050 3125 50  0000 C CNN
+F 1 "ESP32" H 3050 3034 50  0000 C CNN
+F 2 "" H 2850 2600 50  0001 C CNN
+F 3 "" H 2850 2600 50  0001 C CNN
+	1    3050 2550
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 6145B087
+P 2550 2100
+F 0 "#PWR?" H 2550 1950 50  0001 C CNN
+F 1 "+3.3V" H 2565 2273 50  0000 C CNN
+F 2 "" H 2550 2100 50  0001 C CNN
+F 3 "" H 2550 2100 50  0001 C CNN
+	1    2550 2100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 6145B687
+P 2550 2850
+F 0 "#PWR?" H 2550 2600 50  0001 C CNN
+F 1 "GND" H 2555 2677 50  0000 C CNN
+F 2 "" H 2550 2850 50  0001 C CNN
+F 3 "" H 2550 2850 50  0001 C CNN
+	1    2550 2850
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 6145B8CE
+P 2200 2350
+F 0 "#PWR?" H 2200 2100 50  0001 C CNN
+F 1 "GND" H 2205 2177 50  0000 C CNN
+F 2 "" H 2200 2350 50  0001 C CNN
+F 3 "" H 2200 2350 50  0001 C CNN
+	1    2200 2350
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 6145BCB2
+P 3950 2700
+F 0 "#PWR?" H 3950 2550 50  0001 C CNN
+F 1 "+3.3V" H 3965 2873 50  0000 C CNN
+F 2 "" H 3950 2700 50  0001 C CNN
+F 3 "" H 3950 2700 50  0001 C CNN
+	1    3950 2700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3950 2700 3950 2800
+Wire Wire Line
+	3950 2800 3450 2800
+Wire Wire Line
+	2550 2100 2550 2250
+Wire Wire Line
+	2550 2400 2650 2400
+Wire Wire Line
+	2550 2850 2550 2750
+Wire Wire Line
+	2550 2750 2650 2750
+$Comp
+L Device:CP1_Small C?
+U 1 1 6145D0B1
+P 2350 2250
+F 0 "C?" V 2122 2250 50  0000 C CNN
+F 1 "0.1 uF" V 2213 2250 50  0000 C CNN
+F 2 "" H 2350 2250 50  0001 C CNN
+F 3 "~" H 2350 2250 50  0001 C CNN
+	1    2350 2250
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	2250 2250 2200 2250
+Wire Wire Line
+	2200 2250 2200 2350
+Wire Wire Line
+	2450 2250 2550 2250
+Connection ~ 2550 2250
+Wire Wire Line
+	2550 2250 2550 2400
+NoConn ~ 3450 2950
+NoConn ~ 3450 2350
+NoConn ~ 3450 2200
+Text HLabel 3550 2500 2    50   BiDi ~ 0
+ESP_1
+Text HLabel 3550 2650 2    50   BiDi ~ 0
+ESP_2
+Wire Wire Line
+	3550 2500 3450 2500
+Wire Wire Line
+	3550 2650 3450 2650
+$EndSCHEMATC

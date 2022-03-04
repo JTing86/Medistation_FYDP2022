@@ -1,0 +1,12 @@
+(fp_lib_table
+  (lib (name force_sensor)(type KiCad)(uri ${KIPRJMOD}/components/force_sensor/footprints.pretty)(options "")(descr ""))
+  (lib (name SSOP5)(type KiCad)(uri ${KIPRJMOD}/components/footprints/SSOP5/footprints.pretty)(options "")(descr ""))
+  (lib (name esp8266)(type KiCad)(uri ${KIPRJMOD}/components/footprints/ESP8266/esp8266.pretty)(options "")(descr ""))
+  (lib (name CT6EP502)(type KiCad)(uri ${KIPRJMOD}/components/footprints/CT6EP502/CT6EP502.pretty)(options "")(descr ""))
+  (lib (name TLV_DIODE)(type KiCad)(uri ${KIPRJMOD}/components/footprints/SMAJ5.0A/TLV_DIODE.pretty)(options "")(descr ""))
+  (lib (name microUSB)(type KiCad)(uri ${KIPRJMOD}/components/footprints/10118194-0001LF/microUSB.pretty)(options "")(descr ""))
+  (lib (name battery_holder)(type KiCad)(uri ${KIPRJMOD}/components/footprints/battery_holder/battery_holder.pretty)(options "")(descr ""))
+  (lib (name jst_2_PIN)(type KiCad)(uri ${KIPRJMOD}/components/footprints/B2B-ZR-LF-SN/B2B-ZR-LF-SN.pretty)(options "")(descr ""))
+  (lib (name JST_4_PIN)(type KiCad)(uri ${KIPRJMOD}/components/footprints/B4B-PH-SM4-TBT-LF-SN/B4B-PH-SM4-TBT-LF-SN.pretty)(options "")(descr ""))
+  (lib (name toggle)(type KiCad)(uri ${KIPRJMOD}/components/footprints/switch/toggle.pretty)(options "")(descr ""))
+)
