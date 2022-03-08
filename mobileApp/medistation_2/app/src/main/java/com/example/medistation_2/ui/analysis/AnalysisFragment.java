@@ -379,6 +379,7 @@ class CustomMPLineChartMarkerView extends MarkerView {
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
         if (e instanceof CandleEntry) {

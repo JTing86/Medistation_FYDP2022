@@ -3,11 +3,11 @@ package com.example.medistation_2.ui.home;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -62,6 +62,8 @@ public class HomeFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        final Handler handler = new Handler();
+        handler.postDelayed(initializeMQTT(),5000);
         initializeMQTT();
         dispenserRefillTime();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -70,7 +72,7 @@ public class HomeFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void initializeMQTT() {
+    public Runnable initializeMQTT() {
         String clientId = MqttClient.generateClientId();
         client = new MqttAndroidClient(requireContext().getApplicationContext(), "tcp://broker.hivemq.com:1883", clientId);
         try {
@@ -78,11 +80,15 @@ public class HomeFragment extends Fragment {
             token.setActionCallback(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-                    MQTTSubscribe("medistation2021/wifi-status/send");
                     MQTTSubscribe("medistation2021/health-status/send");
                     MQTTSubscribe("medistation2021/battery/send");
-                    //MQTT.MQTTSendData(client, "battery", "", requireContext().getString(R.string.batteryRequest));
-                    MQTT.MQTTSendData(client, "health", "", requireContext().getString(R.string.healthStatusRequest));
+                    final Handler handler = new Handler();
+                    handler.postDelayed(() -> {
+                        Log.d(TAG,"Send MQTT");
+                        MQTT.MQTTSendData(client, "battery", "", requireContext().getString(R.string.batteryRequest));
+                        MQTT.MQTTSendData(client, "health", "", requireContext().getString(R.string.healthStatusRequest));
+                    }, 5000);
+
                 }
 
                 @Override
@@ -93,6 +99,7 @@ public class HomeFragment extends Fragment {
         } catch (MqttException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     public void MQTTSubscribe(String topic) {
@@ -119,9 +126,7 @@ public class HomeFragment extends Fragment {
 
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws JSONException {
-                    if (topic.equals(requireContext().getString(R.string.wifiStatusSend))) {
-                        wifiStatusDisplay(message);
-                    } else if (topic.equals(requireContext().getString(R.string.healthStatusSend))) {
+                    if (topic.equals(requireContext().getString(R.string.healthStatusSend))) {
                         healthStatusDisplay(message);
                     } else if (topic.equals(requireContext().getString((R.string.batterySend)))) {
                         int batteryLevel = Integer.parseInt(String.valueOf(JsonHelper.intDecoder("percentage", new String(message.getPayload()))));
@@ -137,25 +142,6 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    public void wifiStatusDisplay(MqttMessage message) throws JSONException {
-        int signalStrength = JsonHelper.intDecoder("quality", new String(message.getPayload()));
-        String device = JsonHelper.stringDecoder("device", new String(message.getPayload()));
-        ImageView wristbandWifiStatus = requireActivity().findViewById(R.id.homeWristbandWifiSignal);
-        ImageView dispenserWifiStatus = requireActivity().findViewById(R.id.homeDispenserWifiSignal);
-        if (device.equals("wristband")) {
-            if (signalStrength == 1) {
-                wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_4);
-            } else {
-                wristbandWifiStatus.setImageResource(R.drawable.wifi_signal_0);
-            }
-        } else if (device.equals("dispenser")) {
-            if (signalStrength == 1) {
-                dispenserWifiStatus.setImageResource(R.drawable.wifi_signal_1);
-            } else {
-                dispenserWifiStatus.setImageResource(R.drawable.wifi_signal_0);
-            }
-        }
-    }
 
     public void healthStatusDisplay( MqttMessage message) throws JSONException {
         TextView heartRateValue = requireActivity().findViewById(R.id.homeHeartRateValue);
@@ -221,7 +207,6 @@ public class HomeFragment extends Fragment {
         if (currentDayOfTheWeek == -1) {
             currentDayOfTheWeek = 6;
         }
-        Log.d(TAG,String.valueOf(currentDayOfTheWeek));
         Long currentTimeInMin = totalWeekMinute((long) currentDayOfTheWeek,Long.parseLong(currentTime.substring(0,2)),Long.parseLong(currentTime.substring(3,5)));
 
         int finalCurrentDayOfTheWeek = currentDayOfTheWeek;
@@ -230,7 +215,6 @@ public class HomeFragment extends Fragment {
             long bestTime = Long.MAX_VALUE;
             for (int i = 0; i< Objects.requireNonNull(allMedications).size(); i++){
                 HashMap <String,Object> medicine = (HashMap<String, Object>) allMedications.get(i);
-                Log.d(TAG,String.valueOf(medicine));
                 Long nextDoseInMinute = findNextDose(medicine, finalCurrentDayOfTheWeek,currentTime);
                 if (Math.abs(nextDoseInMinute - currentTimeInMin) < bestTime) {
                     bestTime = Math.abs(nextDoseInMinute - currentTimeInMin);

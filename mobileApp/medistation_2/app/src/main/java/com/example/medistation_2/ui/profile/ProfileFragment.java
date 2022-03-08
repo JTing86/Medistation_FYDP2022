@@ -308,7 +308,7 @@ public class ProfileFragment extends Fragment {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.child("symptom/"+symptomName).exists()) {
                         rootDbRef.child("symptom/"+symptomName).get().addOnCompleteListener(task -> {
-                            long numOfOccurrence = Objects.requireNonNull(task.getResult().getChildrenCount());
+                            long numOfOccurrence = Objects.requireNonNull(task.getResult()).getChildrenCount();
                             Map<String, Object> occurrence = new HashMap<>();
                             occurrence.put("date", time);
                             occurrence.put("severity", finalSeverity);
