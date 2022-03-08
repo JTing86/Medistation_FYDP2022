@@ -32,7 +32,7 @@ public class DevicesFragment extends Fragment {
             FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
             transaction.setReorderingAllowed(true);
             transaction.addToBackStack(null);
-            transaction.replace(((ViewGroup)getView().getParent()).getId(), new wristbandSettingFragment(), null);
+            transaction.replace(((ViewGroup) requireView().getParent()).getId(), new wristbandSettingFragment(), null);
             transaction.commit();
 
         });

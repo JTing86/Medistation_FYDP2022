@@ -10,6 +10,7 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,7 +27,6 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.example.medistation_2.R;
-import com.example.medistation_2.helperFunctions.createData;
 import com.example.medistation_2.helperFunctions.dbHelper;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
@@ -80,9 +80,6 @@ public class AnalysisFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        createData.heartRate(30);
-        createData.temperatureData(30);
-        createData.sleepQuality(30);
         temperatureValue = new ArrayList<>();
         temperatureDate = new ArrayList<>();
         heartRateDate = new ArrayList<>();
@@ -192,6 +189,7 @@ public class AnalysisFragment extends Fragment {
                 ArrayList<Map<String, Object>> allHeartData = (ArrayList<Map<String, Object>>) task.getResult().getValue();
                 for (int i = 0; i < Objects.requireNonNull(allHeartData).size(); i++) {
                     HashMap<String, Object> dailyHeartRateData = (HashMap<String, Object>) allHeartData.get(i);
+                    Log.d(TAG,String.valueOf(i));
                     ArrayList<Long> dailyHeartRateValue = (ArrayList<Long>) dailyHeartRateData.get("value");
                     long currentTimeStamp = (long) dailyHeartRateData.get("date");
                     long dailyHeartRateAverage = 0;
@@ -381,6 +379,7 @@ class CustomMPLineChartMarkerView extends MarkerView {
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
         if (e instanceof CandleEntry) {
