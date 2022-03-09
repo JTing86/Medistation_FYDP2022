@@ -18,6 +18,7 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.example.medistation_2.R;
+import com.example.medistation_2.helperFunctions.MQTT;
 import com.example.medistation_2.helperFunctions.dbHelper;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,6 +26,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
@@ -39,6 +45,7 @@ import java.util.Objects;
 
 public class ProfileFragment extends Fragment {
     private static final String TAG = ProfileFragment.class.getSimpleName();
+    private MqttAndroidClient client;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -49,6 +56,7 @@ public class ProfileFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        initializeMQTT();
         //Initialize buttons
         Button profileUserInfoSaveButton = view.findViewById(R.id.profileSaveButton);
         Button profilePastMedicationSaveButton = view.findViewById(R.id.profilePastMedicationButton);
@@ -71,6 +79,25 @@ public class ProfileFragment extends Fragment {
         setupDropDownMenu(view);
         //save symptom to database
         profileSymptomSaveButton.setOnClickListener(v -> saveSymptoms(view));
+    }
+    public void initializeMQTT() {
+        String clientId = MqttClient.generateClientId();
+        client = new MqttAndroidClient(requireContext().getApplicationContext(), "tcp://broker.hivemq.com:1883", clientId);
+        try {
+            IMqttToken token = client.connect();
+            token.setActionCallback(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    // Something went wrong e.g. connection timeout or firewall problems
+                }
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setupDropDownMenu(View view) {
@@ -236,12 +263,17 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void saveUserInfo(View view) {
         dbHelper.addToDB("name", ((EditText) view.findViewById(R.id.profileNameInput)).getText().toString());
         dbHelper.addToDB("email", ((EditText) view.findViewById(R.id.profileEmailInput)).getText().toString());
         dbHelper.addToDB("phone", ((EditText) view.findViewById(R.id.profilePhoneInput)).getText().toString());
         dbHelper.addToDB("caretaker/name", ((EditText) view.findViewById(R.id.profileEmergencyNameInput)).getText().toString());
         dbHelper.addToDB("caretaker/phone", Integer.parseInt(((EditText) view.findViewById(R.id.profileEmergencyNumberInput)).getText().toString()));
+        ArrayList<String> phoneNumber = new ArrayList<>();
+        phoneNumber.add(((EditText) view.findViewById(R.id.profilePhoneInput)).getText().toString());
+        phoneNumber.add(((EditText) view.findViewById(R.id.profileEmergencyNumberInput)).getText().toString());
+        MQTT.MQTTSendStrListData(client,"phone",phoneNumber,"medistation2021/phone");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -276,7 +308,7 @@ public class ProfileFragment extends Fragment {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.child("symptom/"+symptomName).exists()) {
                         rootDbRef.child("symptom/"+symptomName).get().addOnCompleteListener(task -> {
-                            long numOfOccurrence = Objects.requireNonNull(task.getResult().getChildrenCount());
+                            long numOfOccurrence = Objects.requireNonNull(task.getResult()).getChildrenCount();
                             Map<String, Object> occurrence = new HashMap<>();
                             occurrence.put("date", time);
                             occurrence.put("severity", finalSeverity);

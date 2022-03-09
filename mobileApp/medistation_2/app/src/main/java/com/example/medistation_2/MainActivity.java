@@ -7,10 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,20 +20,16 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.medistation_2.databinding.ActivityMainBinding;
-import com.example.medistation_2.helperFunctions.JsonHelper;
-import com.example.medistation_2.ui.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
-import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.json.JSONException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -154,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) {
                     if (topic.equals("medistation2021/battery/send")) {
-                        pushNotification("Battery Level: " + new String(message.getPayload()), "Low Wristband Battery");
+                        //pushNotification("Battery Level: " + new String(message.getPayload()), "Low Wristband Battery");
                         //TODO: add function
                     } else if (topic.equals("medistation2021/pill/status")) {
                         //TODO: add function

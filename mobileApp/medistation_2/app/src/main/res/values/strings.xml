@@ -41,7 +41,7 @@
     <string name="medication_number_of_weeks"># of weeks</string>
     //MQTT Topics
     <string name="batteryRequest">medistation2021/battery/request</string>
-    <string name="batteryThreshold">medistaion2021/battery/threshold </string>
+    <string name="batteryThreshold">medistation2021/battery/threshold </string>
     <string name="batterySend">medistation2021/battery/send</string>
     <string name="wifiStatusSend">medistation2021/wifi-status/send</string>
     <string name="wifiStatusRequest">medistation2021/wifi-status/request</string>
