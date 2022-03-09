@@ -15,7 +15,7 @@
 #define BATTERY_PIN 35
 
 #define I2C_SDA 4
-#define I2C_SCL 33
+#define I2C_SCL 21
 
 #define DEBOUNCE_DELAY 20 //ms
 
@@ -134,7 +134,7 @@ void setup() {
     symptom_button[i].setup(BUTTON_PIN[i], DEBOUNCE_DELAY, InputDebounce::PIM_EXT_PULL_UP_RES);
     button_counter[i] = 0;
   }
-
+  SleepQuality_Init(I2C);
   Serial.println(measureBatt());
 }
 
@@ -288,7 +288,7 @@ uint8_t getHeartRate() {
     }
   }
 
-  return avg_bpm;
+  return bpm ;
 }
 
 String tryParseFirstNumber(String str) {
@@ -562,20 +562,29 @@ void loop() {
   }
 
   // battery is low - send an alert
-  if(measureBatt() <= batt_threshold) {
-    String header = "Authorization: Basic " + twilio_token + "\n" + "Content-Type: application/x-www-form-urlencoded";
-    String msg = "Wristband battery is low. Charge now";
-    String payload = "Body=" + msg + "&From=%2B19106657562&To=%2B1";
-    rest.sendRequest("POST", twilio_url, twilio_sms_path, payload + user_phone, 443, header);
-    batt_alert_sent = true;
-  }
-  else if (batt_alert_sent) {
-    // getting here would mean they've charged it since
-    batt_alert_sent = false;
-  }
+//  if(measureBatt() <= batt_threshold) {
+//    String header = "Authorization: Basic " + twilio_token + "\n" + "Content-Type: application/x-www-form-urlencoded";
+//    String msg = "Wristband battery is low. Charge now";
+//    String payload = "Body=" + msg + "&From=%2B19106657562&To=%2B1";
+//    rest.sendRequest("POST", twilio_url, twilio_sms_path, payload + user_phone, 443, header);
+//    batt_alert_sent = true;
+//  }
+//  else if (batt_alert_sent) {
+//    // getting here would mean they've charged it since
+//    batt_alert_sent = false;
+//  }
+
+  int sleepStatus = SleepQuality_Analyzer(0.5); //o for active, 1 for sleep
+
+  Serial.print(minute());
+  Serial.print(":");
+  Serial.print(second());
+  Serial.print("---");
+  Serial.println(sleepStatus);
 
   unsigned long current_time = millis();
   for(uint8_t i = 0; i < NUM_BUTTONS; i++) {
     symptom_button[i].process(current_time);
   }
+
 }
