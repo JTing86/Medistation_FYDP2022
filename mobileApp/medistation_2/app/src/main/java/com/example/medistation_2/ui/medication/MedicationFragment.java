@@ -51,6 +51,7 @@ public class MedicationFragment extends Fragment {
 
     private static final String TAG = MedicationFragment.class.getSimpleName();
     public MqttAndroidClient client;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -71,40 +72,42 @@ public class MedicationFragment extends Fragment {
             token.setActionCallback(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.d(TAG,"MQTT successfully connected in dispenser setting fragment");
+                    Log.d(TAG, "MQTT successfully connected in dispenser setting fragment");
                 }
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.d(TAG,"MQTT client in dispenser setting fragment did not connect successfully");
+                    Log.d(TAG, "MQTT client in dispenser setting fragment did not connect successfully");
                 }
             });
         } catch (MqttException e) {
             e.printStackTrace();
         }
 
-        dosageTableCreator(view,R.id.pill1DosageTable,"1");
-        dosageTableCreator(view,R.id.pill2DosageTable,"2");
-        dosageTableCreator(view,R.id.pill3DosageTable,"3");
-        dosageTableCreator(view,R.id.pill4DosageTable,"4");
-        dosageTableCreator(view,R.id.pill5DosageTable,"5");
+        dosageTableCreator(view, R.id.pill1DosageTable, "1");
+        dosageTableCreator(view, R.id.pill2DosageTable, "2");
+        dosageTableCreator(view, R.id.pill3DosageTable, "3");
+        dosageTableCreator(view, R.id.pill4DosageTable, "4");
+        dosageTableCreator(view, R.id.pill5DosageTable, "5");
 
 
         Button scheduleSaveButton = view.findViewById(R.id.scheduleSaveButton);
         scheduleSaveButton.setOnClickListener(v -> {
-            if(!((EditText) view.findViewById(R.id.pill1NameInput)).getText().equals(" "))
+            if (!((EditText) view.findViewById(R.id.pill1NameInput)).getText().equals(" "))
                 savePillScheduleToDatabase(view, "1");
-            if(!((EditText) view.findViewById(R.id.pill2NameInput)).getText().equals(" "))
+            if (!((EditText) view.findViewById(R.id.pill2NameInput)).getText().equals(" "))
                 savePillScheduleToDatabase(view, "2");
-            if(!((EditText) view.findViewById(R.id.pill3NameInput)).getText().toString().equals(" "))
+            if (!((EditText) view.findViewById(R.id.pill3NameInput)).getText().toString().equals(" "))
                 savePillScheduleToDatabase(view, "3");
-            if(!((EditText) view.findViewById(R.id.pill4NameInput)).getText().equals(" "))
+            if (!((EditText) view.findViewById(R.id.pill4NameInput)).getText().equals(" "))
                 savePillScheduleToDatabase(view, "4");
-            if(!(((EditText) view.findViewById(R.id.pill5NameInput)).getText().toString().length() ==0))
+            if (!(((EditText) view.findViewById(R.id.pill5NameInput)).getText().toString().length() == 0))
                 savePillScheduleToDatabase(view, "5");
+            MQTT.MQTTSendData(client, "", "", "medistation2021/pill/schedule");
         });
 
     }
+
     public void initializeDropDownList(Spinner numberOfPillsDropDownList, Spinner hourDropDownList, Spinner minuteDropDownList) {
         numberOfPillsDropDownList.setGravity(Gravity.CENTER);
         hourDropDownList.setGravity(Gravity.CENTER);
@@ -208,20 +211,20 @@ public class MedicationFragment extends Fragment {
         //save the dosage schedule for single day to database
         dbHelper.deleteNode("medications/" + (Integer.parseInt(pillNumber) - 1) + "/dose");
         Map<String, Object> totalDosagePerPill = new HashMap<>();
-        List <String> totalDailyDosage = new ArrayList<>();
+        List<String> totalDailyDosage = new ArrayList<>();
         for (int i = 1; i <= 3; i++) {
             String numberOfPills = ((Spinner) requireActivity().findViewById(Integer.decode(pillNumber + i + "1"))).getSelectedItem().toString();
             String hour = ((Spinner) requireActivity().findViewById(Integer.decode(pillNumber + i + "2"))).getSelectedItem().toString();
             String minute = ((Spinner) requireActivity().findViewById(Integer.decode(pillNumber + i + "3"))).getSelectedItem().toString();
             if (!(numberOfPills.equals("Dosage") || hour.equals("Hour") || minute.equals("Min"))) {
-                totalDailyDosage.add(hour+minute+numberOfPills);
+                totalDailyDosage.add(hour + minute + numberOfPills);
             }
         }
         Collections.sort(totalDailyDosage);
-        for (int i =0; i<totalDailyDosage.size();i++) {
+        for (int i = 0; i < totalDailyDosage.size(); i++) {
             Map<String, Object> singleDosage = new HashMap<>();
-            String hour = String.valueOf(totalDailyDosage.get(i)).substring(0,2);
-            String minute = String.valueOf(totalDailyDosage.get(i)).substring(2,4);
+            String hour = String.valueOf(totalDailyDosage.get(i)).substring(0, 2);
+            String minute = String.valueOf(totalDailyDosage.get(i)).substring(2, 4);
             String numberOfPills = String.valueOf(totalDailyDosage.get(i)).substring(4);
             singleDosage.put("quantity", Integer.parseInt(numberOfPills));
             singleDosage.put("hour", Integer.parseInt(hour));
@@ -232,7 +235,7 @@ public class MedicationFragment extends Fragment {
         //save the pill name to database
         int pillNameUserInputID = view.getResources().getIdentifier(("pill" + pillNumber + "NameInput"), "id", requireActivity().getPackageName());
         String pillNameUserInput = ((EditText) requireActivity().findViewById(pillNameUserInputID)).getText().toString();
-        pillNameUserInput = pillNameUserInput.replace(" ","");
+        pillNameUserInput = pillNameUserInput.replace(" ", "");
         if (!(pillNameUserInput.equals("Pill Name"))) {
             dbHelper.addToDB("medications/" + (Integer.parseInt(pillNumber) - 1) + "/name", pillNameUserInput);
         }
@@ -276,82 +279,85 @@ public class MedicationFragment extends Fragment {
             ValueEventListener valueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.child("medications/" + (pillNumber-1)).exists()) {
+                    if (dataSnapshot.child("medications/" + (pillNumber - 1)).exists()) {
                         if (dataSnapshot.child("medications/" + (pillNumber - 1) + "/name").exists()) {
                             rootDbRef.child("medications/" + (pillNumber - 1) + "/name").get().addOnCompleteListener(task -> {
                                 String pillName = (String) Objects.requireNonNull((task.getResult().getValue()));
                                 int pillNameUserInputID = view.getResources().getIdentifier(("pill" + pillNumber + "NameInput"), "id", requireActivity().getPackageName());
-                                ((EditText) requireActivity().findViewById(pillNameUserInputID)).setText(pillName);
-                            });
-                        }
-                        if (dataSnapshot.child("medications/"+(pillNumber-1)+"/days").exists()){
-                            rootDbRef.child("medications/" + (pillNumber - 1) + "/days").get().addOnCompleteListener(task -> {
-                                List <Long> days = (List <Long>) Objects.requireNonNull(task.getResult().getValue());
-                                for (int j = 0; j < days.size();j++){
-                                    String daysOfTheWeek = "";
-                                    switch (String.valueOf(days.get(j))) {
-                                        case "0":
-                                            daysOfTheWeek = "Mon";
-                                            break;
-                                        case "1":
-                                            daysOfTheWeek = "Tues";
-                                            break;
-                                        case "2":
-                                            daysOfTheWeek = "Wed";
-                                            break;
-                                        case "3":
-                                            daysOfTheWeek = "Thurs";
-                                            break;
-                                        case "4":
-                                            daysOfTheWeek = "Fri";
-                                            break;
-                                        case "5":
-                                            daysOfTheWeek = "Sat";
-                                            break;
-                                        case "6":
-                                            daysOfTheWeek = "Sun";
-                                            break;
-                                    }
-                                    int dayOfTheWeekToggle = view.getResources().getIdentifier(("pill" + pillNumber + daysOfTheWeek+ "Toggle"), "id", requireActivity().getPackageName());
-                                    ((ToggleButton) requireActivity().findViewById(dayOfTheWeekToggle)).setChecked(true);
+                                TextView pillNameInput = ((TextView) requireActivity().findViewById(pillNameUserInputID));
+                                pillNameInput.setText(pillName);
+                        });
+                    }
+                    if (dataSnapshot.child("medications/" + (pillNumber - 1) + "/days").exists()) {
+                        rootDbRef.child("medications/" + (pillNumber - 1) + "/days").get().addOnCompleteListener(task -> {
+                            List<Long> days = (List<Long>) Objects.requireNonNull(task.getResult().getValue());
+                            for (int j = 0; j < days.size(); j++) {
+                                String daysOfTheWeek = "";
+                                switch (String.valueOf(days.get(j))) {
+                                    case "0":
+                                        daysOfTheWeek = "Mon";
+                                        break;
+                                    case "1":
+                                        daysOfTheWeek = "Tues";
+                                        break;
+                                    case "2":
+                                        daysOfTheWeek = "Wed";
+                                        break;
+                                    case "3":
+                                        daysOfTheWeek = "Thurs";
+                                        break;
+                                    case "4":
+                                        daysOfTheWeek = "Fri";
+                                        break;
+                                    case "5":
+                                        daysOfTheWeek = "Sat";
+                                        break;
+                                    case "6":
+                                        daysOfTheWeek = "Sun";
+                                        break;
                                 }
-                            });
-                        }
-                        if (dataSnapshot.child("medications/"+(pillNumber-1)+"/dose").exists()){
-                            rootDbRef.child("medications/" + (pillNumber - 1) + "/dose").get().addOnCompleteListener(task -> {
-                                List <HashMap<String,Long>> dose = (List<HashMap<String, Long>>) Objects.requireNonNull(task.getResult().getValue());
-                                for (int k = 0; k < dose.size();k++){
-                                    HashMap<String,Long> singleDose = dose.get(k);
-                                    Long hour = singleDose.get("hour");
-                                    Long minute = singleDose.get("minute");
-                                    Long quantity = singleDose.get("quantity");
-                                    int quantityDropDownList = view.getResources().getIdentifier((pillNumber + String.valueOf(k+1)+ 1), "id", requireActivity().getPackageName());
-                                    int hourDropDownList = view.getResources().getIdentifier((pillNumber + String.valueOf(k+1)+ 2), "id", requireActivity().getPackageName());
-                                    int minuteDropDownList = view.getResources().getIdentifier((pillNumber + String.valueOf(k+1)+ 3), "id", requireActivity().getPackageName());
-                                    ((Spinner) requireActivity().findViewById(quantityDropDownList)).setSelection((int) (quantity+0));
-                                    ((Spinner) requireActivity().findViewById(hourDropDownList)).setSelection((int) (hour+1));
-                                    ((Spinner) requireActivity().findViewById(minuteDropDownList)).setSelection((int) (minute+1));
+                                int dayOfTheWeekToggle = view.getResources().getIdentifier(("pill" + pillNumber + daysOfTheWeek + "Toggle"), "id", requireActivity().getPackageName());
+                                ((ToggleButton) requireActivity().findViewById(dayOfTheWeekToggle)).setChecked(true);
+                            }
+                        });
+                    }
+                    if (dataSnapshot.child("medications/" + (pillNumber - 1) + "/dose").exists()) {
+                        rootDbRef.child("medications/" + (pillNumber - 1) + "/dose").get().addOnCompleteListener(task -> {
+                            List<HashMap<String, Long>> dose = (List<HashMap<String, Long>>) Objects.requireNonNull(task.getResult().getValue());
+                            for (int k = 0; k < dose.size(); k++) {
+                                HashMap<String, Long> singleDose = dose.get(k);
+                                Long hour = singleDose.get("hour");
+                                Long minute = singleDose.get("minute");
+                                Long quantity = singleDose.get("quantity");
+                                int quantityDropDownList = view.getResources().getIdentifier((pillNumber + String.valueOf(k + 1) + 1), "id", requireActivity().getPackageName());
+                                int hourDropDownList = view.getResources().getIdentifier((pillNumber + String.valueOf(k + 1) + 2), "id", requireActivity().getPackageName());
+                                int minuteDropDownList = view.getResources().getIdentifier((pillNumber + String.valueOf(k + 1) + 3), "id", requireActivity().getPackageName());
+                                ((Spinner) requireActivity().findViewById(quantityDropDownList)).setSelection((int) (quantity + 0));
+                                ((Spinner) requireActivity().findViewById(hourDropDownList)).setSelection((int) (hour + 1));
+                                ((Spinner) requireActivity().findViewById(minuteDropDownList)).setSelection((int) (minute + 1));
 
-                                }
-                            });
-                        }
+                            }
+                        });
                     }
                 }
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                }
-            };
-            rootDbRef.addListenerForSingleValueEvent(valueEventListener);
-        }
+            }
+            @Override
+            public void onCancelled (@NonNull DatabaseError databaseError){
+            }
+        } ;
+        rootDbRef.addListenerForSingleValueEvent(valueEventListener);
     }
+
+}
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void informDispenser(boolean [] schedule){
+    public void informDispenser(boolean[] schedule) {
         ArrayList<Integer> scheduleChange = new ArrayList<>();
-        for (int i =0; i< schedule.length;i++){
-            if(schedule[i]){
+        for (int i = 0; i < schedule.length; i++) {
+            if (schedule[i]) {
                 scheduleChange.add(i);
             }
         }
-        MQTT.MQTTSendData(client,"pillNumber","","medistation2021/pill/schedule");
+        MQTT.MQTTSendData(client, "pillNumber", "", "medistation2021/pill/schedule");
     }
 }
