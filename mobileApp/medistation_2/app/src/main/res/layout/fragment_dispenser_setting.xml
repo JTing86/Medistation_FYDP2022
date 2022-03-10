@@ -82,11 +82,11 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:singleLine="false"
-        android:text="Enter amount of pills refilled"
+        android:text="Enter current number of pills in each container"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.087"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/dispenserCalibrationTitle"
         app:layout_constraintTop_toBottomOf="@+id/dispenserCalibrationTitle"
         app:layout_constraintVertical_bias="0.0" />
 
@@ -99,10 +99,10 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.062"
+        app:layout_constraintHorizontal_bias="0.069"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dispenserSettingTitle"
-        app:layout_constraintVertical_bias="0.479" />
+        app:layout_constraintVertical_bias="0.466" />
 
     <Spinner
         android:id="@+id/dispenserContainer5DropDownMenu"

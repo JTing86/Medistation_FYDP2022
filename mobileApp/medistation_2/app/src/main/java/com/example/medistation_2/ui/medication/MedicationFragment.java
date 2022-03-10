@@ -63,7 +63,6 @@ public class MedicationFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
-        initializePillName(view);
 
         String clientId = MqttClient.generateClientId();
         client = new MqttAndroidClient(requireContext().getApplicationContext(), "tcp://broker.hivemq.com:1883", clientId);
@@ -90,7 +89,6 @@ public class MedicationFragment extends Fragment {
         dosageTableCreator(view, R.id.pill4DosageTable, "4");
         dosageTableCreator(view, R.id.pill5DosageTable, "5");
 
-
         Button scheduleSaveButton = view.findViewById(R.id.scheduleSaveButton);
         scheduleSaveButton.setOnClickListener(v -> {
             if (!((EditText) view.findViewById(R.id.pill1NameInput)).getText().equals(" "))
@@ -105,7 +103,7 @@ public class MedicationFragment extends Fragment {
                 savePillScheduleToDatabase(view, "5");
             MQTT.MQTTSendData(client, "", "", "medistation2021/pill/schedule");
         });
-
+        initializeUserInfo(view);
     }
 
     public void initializeDropDownList(Spinner numberOfPillsDropDownList, Spinner hourDropDownList, Spinner minuteDropDownList) {
@@ -119,7 +117,7 @@ public class MedicationFragment extends Fragment {
         String[] minute = new String[]{
                 "Min",
                 "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23",
-                "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "45", "46", "47", "48",
+                "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43","44", "45", "46", "47", "48",
                 "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"};
         List<String> dosageList = new ArrayList<>(Arrays.asList(dosage));
         List<String> hourList = new ArrayList<>(Arrays.asList(hour));
@@ -271,24 +269,37 @@ public class MedicationFragment extends Fragment {
         }
     }
 
-    public void initializePillName(View view) {
+    public void initializeUserInfo(View view) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference rootDbRef = database.getReference();
-        for (int i = 1; i <= 6; i++) {
-            int pillNumber = i;
-            ValueEventListener valueEventListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.child("medications/" + (pillNumber - 1)).exists()) {
-                        if (dataSnapshot.child("medications/" + (pillNumber - 1) + "/name").exists()) {
-                            rootDbRef.child("medications/" + (pillNumber - 1) + "/name").get().addOnCompleteListener(task -> {
-                                String pillName = (String) Objects.requireNonNull((task.getResult().getValue()));
-                                int pillNameUserInputID = view.getResources().getIdentifier(("pill" + pillNumber + "NameInput"), "id", requireActivity().getPackageName());
-                                TextView pillNameInput = ((TextView) requireActivity().findViewById(pillNameUserInputID));
-                                pillNameInput.setText(pillName);
+
+        ValueEventListener pillNameValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (int pillNumber = 1; pillNumber <= 5; pillNumber++) {
+                    if (dataSnapshot.child("medications/" + (pillNumber - 1) + "/name").exists()) {
+                        int finalPillNumber = pillNumber;
+                        rootDbRef.child("medications/" + (pillNumber - 1) + "/name").get().addOnCompleteListener(task -> {
+                            String pillName = (String) Objects.requireNonNull((task.getResult().getValue()));
+                            int pillNameUserInputID = view.getResources().getIdentifier(("pill" + finalPillNumber + "NameInput"), "id", requireActivity().getPackageName());
+                            ((EditText) requireActivity().findViewById(pillNameUserInputID)).setText(pillName);
                         });
                     }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        };
+        rootDbRef.addListenerForSingleValueEvent(pillNameValueEventListener);
+
+        ValueEventListener DayOfTheWeekValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (int pillNumber = 1; pillNumber <= 5; pillNumber++) {
                     if (dataSnapshot.child("medications/" + (pillNumber - 1) + "/days").exists()) {
+                        int finalPillNumber = pillNumber;
                         rootDbRef.child("medications/" + (pillNumber - 1) + "/days").get().addOnCompleteListener(task -> {
                             List<Long> days = (List<Long>) Objects.requireNonNull(task.getResult().getValue());
                             for (int j = 0; j < days.size(); j++) {
@@ -316,12 +327,26 @@ public class MedicationFragment extends Fragment {
                                         daysOfTheWeek = "Sun";
                                         break;
                                 }
-                                int dayOfTheWeekToggle = view.getResources().getIdentifier(("pill" + pillNumber + daysOfTheWeek + "Toggle"), "id", requireActivity().getPackageName());
+                                int dayOfTheWeekToggle = view.getResources().getIdentifier(("pill" + finalPillNumber + daysOfTheWeek + "Toggle"), "id", requireActivity().getPackageName());
                                 ((ToggleButton) requireActivity().findViewById(dayOfTheWeekToggle)).setChecked(true);
                             }
                         });
                     }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        };
+        rootDbRef.addListenerForSingleValueEvent(DayOfTheWeekValueEventListener);
+
+        ValueEventListener timeOfTheDayValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (int pillNumber = 1; pillNumber <= 5; pillNumber++) {
                     if (dataSnapshot.child("medications/" + (pillNumber - 1) + "/dose").exists()) {
+                        int finalPillNumber = pillNumber;
                         rootDbRef.child("medications/" + (pillNumber - 1) + "/dose").get().addOnCompleteListener(task -> {
                             List<HashMap<String, Long>> dose = (List<HashMap<String, Long>>) Objects.requireNonNull(task.getResult().getValue());
                             for (int k = 0; k < dose.size(); k++) {
@@ -329,35 +354,22 @@ public class MedicationFragment extends Fragment {
                                 Long hour = singleDose.get("hour");
                                 Long minute = singleDose.get("minute");
                                 Long quantity = singleDose.get("quantity");
-                                int quantityDropDownList = view.getResources().getIdentifier((pillNumber + String.valueOf(k + 1) + 1), "id", requireActivity().getPackageName());
-                                int hourDropDownList = view.getResources().getIdentifier((pillNumber + String.valueOf(k + 1) + 2), "id", requireActivity().getPackageName());
-                                int minuteDropDownList = view.getResources().getIdentifier((pillNumber + String.valueOf(k + 1) + 3), "id", requireActivity().getPackageName());
+                                int quantityDropDownList = view.getResources().getIdentifier((finalPillNumber + String.valueOf(k + 1) + 1), "id", requireActivity().getPackageName());
+                                int hourDropDownList = view.getResources().getIdentifier((finalPillNumber + String.valueOf(k + 1) + 2), "id", requireActivity().getPackageName());
+                                int minuteDropDownList = view.getResources().getIdentifier((finalPillNumber + String.valueOf(k + 1) + 3), "id", requireActivity().getPackageName());
                                 ((Spinner) requireActivity().findViewById(quantityDropDownList)).setSelection((int) (quantity + 0));
                                 ((Spinner) requireActivity().findViewById(hourDropDownList)).setSelection((int) (hour + 1));
                                 ((Spinner) requireActivity().findViewById(minuteDropDownList)).setSelection((int) (minute + 1));
-
                             }
                         });
                     }
                 }
             }
+
             @Override
-            public void onCancelled (@NonNull DatabaseError databaseError){
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
-        } ;
-        rootDbRef.addListenerForSingleValueEvent(valueEventListener);
-    }
-
-}
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void informDispenser(boolean[] schedule) {
-        ArrayList<Integer> scheduleChange = new ArrayList<>();
-        for (int i = 0; i < schedule.length; i++) {
-            if (schedule[i]) {
-                scheduleChange.add(i);
-            }
-        }
-        MQTT.MQTTSendData(client, "pillNumber", "", "medistation2021/pill/schedule");
+        };
+        rootDbRef.addListenerForSingleValueEvent(timeOfTheDayValueEventListener);
     }
 }

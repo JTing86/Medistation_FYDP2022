@@ -681,16 +681,16 @@
             android:id="@+id/pill1NameInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
             android:autofillHints="null"
             android:background="@color/white"
             android:hint="Pill Name"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@+id/pill1Name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.05"
             app:layout_constraintStart_toEndOf="@+id/pill1Name"
             app:layout_constraintTop_toTopOf="@+id/pill1Name"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.0" />
 
         <EditText
             android:id="@+id/pill2NameInput"
