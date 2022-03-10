@@ -78,6 +78,11 @@ public class MedicationFragment extends Fragment {
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Log.d(TAG, "MQTT client in dispenser setting fragment did not connect successfully");
                 }
+
+                public void setConnectionTimeout(int connectionTimeoutSec) {
+
+                }
+
             });
         } catch (MqttException e) {
             e.printStackTrace();
