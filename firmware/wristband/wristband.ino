@@ -689,4 +689,7 @@ void loop() {
     symptom_button[i].process(current_time);
   }
 
+  Sensor_Update();
+  int sleepStatus = Demo_SleepQuality_Analyzer(0.5);
+
 }
