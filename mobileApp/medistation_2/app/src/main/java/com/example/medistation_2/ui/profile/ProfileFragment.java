@@ -269,7 +269,7 @@ public class ProfileFragment extends Fragment {
         dbHelper.addToDB("email", ((EditText) view.findViewById(R.id.profileEmailInput)).getText().toString());
         dbHelper.addToDB("phone", ((EditText) view.findViewById(R.id.profilePhoneInput)).getText().toString());
         dbHelper.addToDB("caretaker/name", ((EditText) view.findViewById(R.id.profileEmergencyNameInput)).getText().toString());
-        dbHelper.addToDB("caretaker/phone", Integer.parseInt(((EditText) view.findViewById(R.id.profileEmergencyNumberInput)).getText().toString()));
+        dbHelper.addToDB("caretaker/phone", (((EditText) view.findViewById(R.id.profileEmergencyNumberInput)).getText().toString()));
         ArrayList<String> phoneNumber = new ArrayList<>();
         phoneNumber.add(((EditText) view.findViewById(R.id.profilePhoneInput)).getText().toString());
         phoneNumber.add(((EditText) view.findViewById(R.id.profileEmergencyNumberInput)).getText().toString());

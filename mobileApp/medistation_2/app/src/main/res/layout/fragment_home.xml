@@ -16,7 +16,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.79">
+        app:layout_constraintVertical_bias="0.784">
 
         <View
             android:id="@+id/homeDispenserBackground"
@@ -94,12 +94,12 @@
             android:layout_height="37dp"
             android:layout_marginStart="24dp"
             android:layout_marginLeft="24dp"
+            android:contentDescription="Battery"
             android:src="@drawable/vertical_battery_icon"
             app:layout_constraintBottom_toBottomOf="@+id/homeRefillText"
             app:layout_constraintStart_toStartOf="@+id/homeWristbandBackground"
             app:layout_constraintTop_toTopOf="@+id/homeRefillText"
-            app:layout_constraintVertical_bias="0.437"
-            android:contentDescription="Battery" />
+            app:layout_constraintVertical_bias="0.437" />
 
         <TextView
             android:id="@+id/homeWristbandBatteryLevel"
@@ -206,6 +206,39 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <Spinner
+            android:id="@+id/homePillNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.046"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/homeDispenserBackground"
+            app:layout_constraintVertical_bias="0.348" />
+
+        <Spinner
+            android:id="@+id/homeQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/homePillNumber"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.056"
+            app:layout_constraintStart_toEndOf="@+id/homePillNumber"
+            app:layout_constraintTop_toTopOf="@+id/homePillNumber"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <Button
+            android:id="@+id/homeDispenseButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="Dispense"
+            app:layout_constraintBottom_toBottomOf="@+id/homeQuantity"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/homeQuantity"
+            app:layout_constraintVertical_bias="0.416" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
