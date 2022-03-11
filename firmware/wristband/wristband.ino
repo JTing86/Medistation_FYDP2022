@@ -11,6 +11,7 @@
 #include <TimeLib.h>
 #include "REST.h"
 #include "sleepQuality.h"
+#include "MPU6050.h"
 
 #define BATTERY_PIN 35
 
@@ -43,6 +44,7 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 
 MAX30105 sensor;
+MPU6050 mpu6050(Wire);
 
 DynamicJsonDocument doc(2048);
 
