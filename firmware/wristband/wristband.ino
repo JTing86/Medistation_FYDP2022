@@ -581,7 +581,7 @@ void loop() {
 //    batt_alert_sent = false;
 //  }
 //  Sensor_Update();
-  int sleepStatus = Demo_SleepQuality_Analyzer(0.5); //o for active, 1 for sleep
+ // int sleepStatus = Demo_SleepQuality_Analyzer(0.5); //o for active, 1 for sleep
 Sensor_printRPY();
 //  Serial.print(minute());
 //  Serial.print(":");

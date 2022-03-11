@@ -38,7 +38,7 @@ void SleepQuality_Init(TwoWire &port);
 
 int Demo_SleepQuality_Analyzer(float sensitivity);
 int SleepQuality_Analyzer(float sensitivity); //0 for poor sleep, 1 for okay sleep, 2 for deep sleep
-float DEMO_Movement_Analyzer(void);
+int DEMO_Movement_Analyzer(void);
 int Movement_Analyzer(void);
 uint8_t HeartRate_Analyzer(void);
 

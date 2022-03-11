@@ -89,6 +89,7 @@ const unsigned long interval = SAMPLE_FREQ*1000; // convert to ms
 ACCL_t acclData;
 GYRO_t gyroData;
 float avg_init = 1;
+float avg_accum = 0;
 int c = 0;
 unsigned long currentMillis;
 const int ledPin =  13;
@@ -97,7 +98,7 @@ int ledState = LOW;
 MPU6050 mpu6050(Wire);
 
 //char timestamp[20]; // declare a character variable that contains timestamp
-uint8_t mode;
+uint8_t mode = MODE_ACTIVE;
 // sleep quality algo //////////////////////////////////////////////////////////
 void Sensor_Init(TwoWire *wire)
 {
@@ -122,12 +123,14 @@ void SleepQuality_Init(TwoWire &port)
     sample_count = 0;
     cycle_count = 0;
     deep_sleep_count = 0;
+    avg_accum = 0;
 
     interval_count = 0;
     previousMillis = 0;
     currentMillis = 0;
+    movement_factor = 0;
     error_range_factor = ALLOWED_ERR_SEC;
-    mode = MODE_ACTIVE;
+    // mode = MODE_ACTIVE;
 
     Sensor_Init(i2c_port);
     Sensor_begin();
@@ -157,15 +160,16 @@ void Sensor_printRPY(void)
 {
     Serial.print(mpu6050.getGyroAngleX());
     Serial.print("/");Serial.print(mpu6050.getGyroAngleY());
-    Serial.print("/");Serial.println(mpu6050.getGyroAngleZ());
+    Serial.print("/");Serial.print(mpu6050.getGyroAngleZ());
+    Serial.print("/");Serial.println(mode);
 }
 
 int Demo_SleepQuality_Analyzer(float sensitivity)
 {
+    // Sensor_Update();
     sensitivity_factor = sensitivity;
 
     if (false)
-    // if (deep_sleep_count = 4)
     {
         deep_sleep_count = 0;
         mode = MODE_DEEP_SLEEP;
@@ -176,8 +180,8 @@ int Demo_SleepQuality_Analyzer(float sensitivity)
         { // reach here per 15 seconds, is movement factor remains zero
 
             cycle_count = 0;
-            sample_count = 0;
-            if (mode == MODE_ACTIVE && movement_factor == 0) // for three 5sec periods, no obvious movement compare to initial data
+            // sample_count = 0;
+            if (mode == MODE_ACTIVE && movement_factor < 1) // for three 5sec periods, no obvious movement compare to initial data
             {
                 mode = MODE_SLEEP;
             }
@@ -185,37 +189,41 @@ int Demo_SleepQuality_Analyzer(float sensitivity)
             {
                 mode = MODE_ACTIVE;
             }
-            else if (mode == MODE_SLEEP && movement_factor == 0){
+            else if (mode == MODE_SLEEP && movement_factor < 1 ){
                 deep_sleep_count +=1;
             }
-            else if (mode == MODE_DEEP_SLEEP && movement_factor == 0){
-                deep_sleep_count +=1;
-            }
-            Serial.print("---mode: --(1 for sleep)--");
+            // else if (mode == MODE_DEEP_SLEEP && movement_factor == 0){
+            //     deep_sleep_count +=1;
+            // }
+
+
+            Serial.print("-------------------------mode: --(1 for sleep)--");
             Serial.println(mode);
             movement_factor = 0;
         }
         else
         {
-            if (sample_count == 10) // collect 10 data in 5 seconds
-            { //reach here per 5 seconds
+            if (sample_count == 6) // collect 6 data in 3 seconds
+            { //reach here per 3 seconds
                 sample_count = 0;//reset sample count
                 cycle_count += 1;
 
 
                 //second_count += 1; //increment data record by 1 minute
                 //error_range_factor = ALLOWED_ERR_MIN;
-                movement_factor += Movement_Analyzer();// temp,needs to add heartrate sensor
+                movement_factor += DEMO_Movement_Analyzer();// temp,needs to add heartrate sensor
+                //movement_factor +=0;
                 //float avg_init = abs(initGX)+abs(initGY)+abs(initGZ);
                 float avg_accum = abs(avg_gyroData.roll) + abs(avg_gyroData.pitch) + abs(avg_gyroData.yaw);
-                // float error_factor = (abs(avg_init - avg_accum)) / abs(avg_init);
-                //
-                // Serial.print("---error factor: ----");
-                // Serial.println(error_factor);
+                //float error_factor = (abs(avg_init - avg_accum)) / abs(avg_init);
+
+                   Serial.print("---movement indicator: ----");
+                    Serial.print(movement_factor);
                 // Serial.print("---movement abs(avg_init): ----");
-                // Serial.println(abs(avg_init));
+                // Serial.print(abs(avg_init));
                 // Serial.print("---movement avg_accum: ----");
                 // Serial.println(avg_accum);
+                // //Sensor_printRPY();
                 Serial.print("---movement abs(avg_init - avg_accum): ----");
                 Serial.println(abs(avg_init - avg_accum));
 
@@ -246,12 +254,13 @@ int Demo_SleepQuality_Analyzer(float sensitivity)
                     //acclData = ACCL_ReadData();
 
                     sample_count += 1;
+
                     avg_gyroData.roll = (avg_gyroData.roll+gyroData.roll)/sample_count;
                     avg_gyroData.pitch = (avg_gyroData.pitch+gyroData.pitch)/sample_count;
                     avg_gyroData.yaw = (avg_gyroData.yaw+gyroData.yaw)/sample_count;
 
-                    Serial.print("--");
-                    Serial.print(sample_count);
+                    // Serial.print("--");
+                    // Serial.print(sample_count);
                     // Serial.print("---gyroData roll: ----");
                     // Serial.print(gyroData.roll);
                     // Serial.print("---gyroData roll avg: ----");
@@ -275,15 +284,15 @@ int Demo_SleepQuality_Analyzer(float sensitivity)
         }
     }
 }
-float DEMO_Movement_Analyzer(void) //output how much the average varies from the initial value
+int DEMO_Movement_Analyzer(void) //output how much the average varies from the initial value
 {
 
     //float avg_init = initGX+initGY+initGZ;
-    float avg_accum = avg_gyroData.roll + avg_gyroData.pitch + avg_gyroData.yaw;
-    float diff = avg_init - avg_accum;
+    avg_accum = abs(avg_gyroData.roll) + abs(avg_gyroData.pitch) + abs(avg_gyroData.yaw);
+    float diff = abs(avg_init - avg_accum);
 
 
-    if (diff < 4) // relatively stable
+    if (diff < 2) // relatively stable
     {
         return 0;
     }
