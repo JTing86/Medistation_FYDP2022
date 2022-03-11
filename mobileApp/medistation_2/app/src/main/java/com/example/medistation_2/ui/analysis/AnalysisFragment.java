@@ -1,6 +1,5 @@
 package com.example.medistation_2.ui.analysis;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -10,6 +9,7 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -38,16 +39,17 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.Utils;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,14 +60,18 @@ public class AnalysisFragment extends Fragment {
     private static final String TAG = AnalysisFragment.class.getSimpleName();
     LineChart lineChart;
     private ArrayList<Long> temperatureValue;
-    public static ArrayList<Long> temperatureDate;
     private ArrayList<Long> heartRateValue;
-    public static ArrayList<Long> heartRateDate;
+    public static ArrayList<Long> dateList;
     private ArrayList<Double> sleepQualityValue;
-    private long currentDayUpperBound;
-    private long currentLowerBound;
+    private static long currentUpperBound;
+    private static long currentLowerBound;
+    private ArrayList<Double> symptomSeverityList;
+    public static ArrayList<String> symptomDateList;
+    public static ArrayList<Integer> numberOfOccurrence;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference rootDbRef = database.getReference();
+    public static boolean [] whichData;
+    HashMap<String, ArrayList<Long>> severity_map;
 
     public static AnalysisFragment newInstance() {
         return new AnalysisFragment();
@@ -80,44 +86,81 @@ public class AnalysisFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        DatePicker dateSelect = view.findViewById(R.id.graphStartDate);
+        LocalDate today = LocalDate.now();
+        dateSelect.updateDate(today.getYear(),today.getMonthValue()-2,today.getDayOfMonth());
         temperatureValue = new ArrayList<>();
-        temperatureDate = new ArrayList<>();
-        heartRateDate = new ArrayList<>();
+        dateList = new ArrayList<>();
         heartRateValue = new ArrayList<>();
         sleepQualityValue = new ArrayList<>();
+        symptomSeverityList = new ArrayList<Double>(30);
+        symptomDateList = new ArrayList<String>(30);
         lineChart = view.findViewById(R.id.analysisGraph);
+        whichData = new boolean[4];
+        numberOfOccurrence = new ArrayList<>();
+        //createData.symptomData("Diarrhea",60);
         setupDropDownMenu(view);
+
 
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void setupDropDownMenu(View view) {
         //set up drop down list
-        Spinner userInfoLeftMenu = view.findViewById(R.id.analysisUserInfoLeftDropDown);
-        Spinner userInfoRightMenu = view.findViewById(R.id.analysisUserInfoRightDropDown);
+        Spinner dataSelection = view.findViewById(R.id.dataSelectionMenu);
         Button generateGraph = view.findViewById(R.id.analysisGenerateGraph);
+        for (int i = 0; i < 4;i++){
+            whichData[i] = false;
+        }
         generateGraph.setOnClickListener(v -> {
-            findCurrentTime(30);
+            findCurrentTime(view);
             clearFunction();
-            String rightItemSelected = userInfoLeftMenu.getSelectedItem().toString();
-            String leftItemSelected = userInfoRightMenu.getSelectedItem().toString();
-            switch (leftItemSelected) {
-                case "Heart Rate":
-                    createHeartRateData(view, leftItemSelected, rightItemSelected, false);
-                    break;
-                case "Temperature":
-                    createTemperatureData(view, leftItemSelected, rightItemSelected, false);
-                    break;
-                case "Sleep Quality":
-                    createSleepQualityData(view, leftItemSelected, rightItemSelected, false);
-                    break;
+            String ItemSelected = dataSelection.getSelectedItem().toString();
+            if (ItemSelected != "Patient Info") {
+                switch (ItemSelected) {
+                    case "Heart Rate":
+                        createHeartRateData();
+                        whichData[0]= true;
+                        break;
+                    case "Temperature":
+                        createTemperatureData();
+                        whichData[1]= true;
+                        break;
+                    case "Sleep Quality":
+                        createSleepQualityData();
+                        whichData[2]= true;
+                        break;
+                    default:
+                        try {
+                            whichData[3]= true;
+                            createSymptomData(ItemSelected, view);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                }
             }
         });
+        String[] data = new String[]{"Patient Info", "Heart Rate", "Temperature", "Sleep Quality"};
+        List<String> dataList = new ArrayList<>(Arrays.asList(data));
+        Query myTopPostsQuery = rootDbRef.child("symptom/");
+        myTopPostsQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    dataList.add(postSnapshot.getKey());
+                }
+            }
 
-        String[] userInfo = new String[]{"Patient Info", "Heart Rate", "Temperature", "Sleep Quality"};
-        List<String> userInfoList = new ArrayList<>(Arrays.asList(userInfo));
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        });
         //Create severity drop down menu
-        ArrayAdapter<String> userInfoMenuArrayAdapter = new ArrayAdapter<String>(requireActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, userInfoList) {
+        ArrayAdapter<String> dataListArrayAdapter = new ArrayAdapter<String>(requireActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, dataList) {
             @Override
             public boolean isEnabled(int position) {
                 // Disable the first item from Spinner
@@ -136,140 +179,83 @@ public class AnalysisFragment extends Fragment {
                 return view;
             }
         };
-        userInfoMenuArrayAdapter.setDropDownViewResource(R.layout.drop_down_menu_spinner);
-        userInfoLeftMenu.setAdapter(userInfoMenuArrayAdapter);
-        userInfoRightMenu.setAdapter(userInfoMenuArrayAdapter);
+        dataListArrayAdapter.setDropDownViewResource(R.layout.drop_down_menu_spinner);
+        dataSelection.setAdapter(dataListArrayAdapter);
     }
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void createTemperatureData(View view, String item1, String item2, boolean createGraph) {
-        if (createGraph && item1.equals("Temperature")) {
-            createGraph(item1, item2);
-        } else {
-            rootDbRef.child("temp").get().addOnCompleteListener(task -> {
-                HashMap<String, Object> temperatureData;
-                ArrayList<Long> tempDateTemp;
-                ArrayList<Long> tempValueTemp;
-                temperatureData = (HashMap<String, Object>) Objects.requireNonNull(task.getResult()).getValue();
-                tempDateTemp = (ArrayList<Long>) temperatureData.get("date");
-                tempValueTemp = (ArrayList<Long>) temperatureData.get("value");
-                for (int i = 0; i < Objects.requireNonNull(tempDateTemp).size(); i++) {
-                    if (tempDateTemp.get(i) <= currentDayUpperBound && tempDateTemp.get(i) >= currentLowerBound) {
-                        temperatureDate.add(tempDateTemp.get(i));
-                        assert tempValueTemp != null;
-                        temperatureValue.add(tempValueTemp.get(i));
-                    }
+    public void createTemperatureData() {
+        rootDbRef.child("temp").get().addOnCompleteListener(task -> {
+            HashMap<String, Object> temperatureData;
+            ArrayList<Long> tempDateTemp;
+            ArrayList<Long> tempValueTemp;
+            temperatureData = (HashMap<String, Object>) Objects.requireNonNull(task.getResult()).getValue();
+            tempDateTemp = (ArrayList<Long>) temperatureData.get("date");
+            tempValueTemp = (ArrayList<Long>) temperatureData.get("value");
+            for (int i = 0; i < Objects.requireNonNull(tempDateTemp).size(); i++) {
+                if (tempDateTemp.get(i) <= currentUpperBound && tempDateTemp.get(i) >= currentLowerBound) {
+                    dateList.add(tempDateTemp.get(i));
+                    assert tempValueTemp != null;
+                    temperatureValue.add(tempValueTemp.get(i));
                 }
-                if (createGraph) {
-                    createGraph(item1, item2);
-                } else {
-                    switch (item2) {
-                        case "Heart Rate":
-                            createHeartRateData(view, item1, item2, true);
-                            break;
-                        case "Temperature":
-                            createTemperatureData(view, item1, item2, true);
-                            break;
-                        case "Sleep Quality":
-                            createSleepQualityData(view, item1, item2, true);
-                            break;
-                    }
-                }
-            });
-        }
+            }
+            createGraph("Temperature");
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void createHeartRateData(View view, String item1, String item2, boolean createGraph) {
-        if (createGraph && item1.equals("Heart Rate")) {
-            createGraph(item1, item2);
-        } else {
-            rootDbRef.child("heartRate").get().addOnCompleteListener(task -> {
-                ArrayList<Map<String, Object>> allHeartData = (ArrayList<Map<String, Object>>) task.getResult().getValue();
-                for (int i = 0; i < Objects.requireNonNull(allHeartData).size(); i++) {
-                    HashMap<String, Object> dailyHeartRateData = (HashMap<String, Object>) allHeartData.get(i);
-                    Log.d(TAG,String.valueOf(i));
-                    ArrayList<Long> dailyHeartRateValue = (ArrayList<Long>) dailyHeartRateData.get("value");
-                    long currentTimeStamp = (long) dailyHeartRateData.get("date");
-                    long dailyHeartRateAverage = 0;
-                    if (currentTimeStamp < currentDayUpperBound && currentTimeStamp >= currentLowerBound) {
-                        for (int j = 0; j < Objects.requireNonNull(dailyHeartRateValue).size(); j++) {
-                            dailyHeartRateAverage = dailyHeartRateValue.get(j) + dailyHeartRateAverage;
-                        }
-                        dailyHeartRateAverage = dailyHeartRateAverage / dailyHeartRateValue.size();
-                        heartRateValue.add(dailyHeartRateAverage);
-                        heartRateDate.add(currentTimeStamp);
+    public void createHeartRateData() {
+        rootDbRef.child("heartRate").get().addOnCompleteListener(task -> {
+            ArrayList<Map<String, Object>> allHeartData = (ArrayList<Map<String, Object>>) task.getResult().getValue();
+            for (int i = 0; i < Objects.requireNonNull(allHeartData).size(); i++) {
+                HashMap<String, Object> dailyHeartRateData = (HashMap<String, Object>) allHeartData.get(i);
+                Log.d(TAG, String.valueOf(i));
+                ArrayList<Long> dailyHeartRateValue = (ArrayList<Long>) dailyHeartRateData.get("value");
+                long currentTimeStamp = (long) dailyHeartRateData.get("date");
+                long dailyHeartRateAverage = 0;
+                if (currentTimeStamp < currentUpperBound && currentTimeStamp >= currentLowerBound) {
+                    for (int j = 0; j < Objects.requireNonNull(dailyHeartRateValue).size(); j++) {
+                        dailyHeartRateAverage = dailyHeartRateValue.get(j) + dailyHeartRateAverage;
                     }
+                    dailyHeartRateAverage = dailyHeartRateAverage / dailyHeartRateValue.size();
+                    heartRateValue.add(dailyHeartRateAverage);
+                    dateList.add(currentTimeStamp);
                 }
-                if (createGraph) {
-                    createGraph(item1, item2);
-                } else {
-                    switch (item2) {
-                        case "Heart Rate":
-                            createHeartRateData(view, item1, item2, true);
-                            break;
-                        case "Temperature":
-                            createTemperatureData(view, item1, item2, true);
-                            break;
-                        case "Sleep Quality":
-                            createSleepQualityData(view, item1, item2, true);
-                            break;
-                    }
-                }
-            });
-        }
+            }
+            createGraph("Heart Rate");
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void createSleepQualityData(View view, String item1, String item2, boolean createGraph) {
-        if (createGraph && item1.equals("Sleep Quality")) {
-            createGraph(item1, item2);
-        } else {
-            rootDbRef.child("sleep").get().addOnCompleteListener(task -> {
-                ArrayList<Map<String, Object>> allSleepQuality = (ArrayList<Map<String, Object>>) task.getResult().getValue();
-                for (int i = 0; i < Objects.requireNonNull(allSleepQuality).size(); i++) {
-                    HashMap<String, Object> dailySleepQuality = (HashMap<String, Object>) allSleepQuality.get(i);
-                    ArrayList<Long> dailySleepQualityValueList = (ArrayList<Long>) dailySleepQuality.get("quality");
-                    ArrayList<Long> startTimes = (ArrayList<Long>) dailySleepQuality.get("start");
-                    ArrayList<Long> endTimes = (ArrayList<Long>) dailySleepQuality.get("end");
-                    ArrayList<Long> sleepDuration = new ArrayList<>();
-                    double sleepQuality = 0.0;
-                    long totalSleepDuration = 0;
-                    for (int j = 0; j < Objects.requireNonNull(startTimes).size(); j++) {
-                        assert endTimes != null;
-                        sleepDuration.add(endTimes.get(j) - startTimes.get(j));
-                        totalSleepDuration = Math.toIntExact(endTimes.get(j) - startTimes.get(j) + totalSleepDuration);
-                    }
-                    for (int k = 0; k < sleepDuration.size(); k++) {
-                        sleepQuality = ((double) sleepDuration.get(k) / (double) totalSleepDuration) * (double) dailySleepQualityValueList.get(k) + sleepQuality;
-                    }
-                    sleepQualityValue.add(sleepQuality);
+    public void createSleepQualityData() {
+        rootDbRef.child("sleep").get().addOnCompleteListener(task -> {
+            ArrayList<Map<String, Object>> allSleepQuality = (ArrayList<Map<String, Object>>) task.getResult().getValue();
+            for (int i = 0; i < Objects.requireNonNull(allSleepQuality).size(); i++) {
+                HashMap<String, Object> dailySleepQuality = (HashMap<String, Object>) allSleepQuality.get(i);
+                ArrayList<Long> dailySleepQualityValueList = (ArrayList<Long>) dailySleepQuality.get("quality");
+                ArrayList<Long> startTimes = (ArrayList<Long>) dailySleepQuality.get("start");
+                ArrayList<Long> endTimes = (ArrayList<Long>) dailySleepQuality.get("end");
+                ArrayList<Long> sleepDuration = new ArrayList<>();
+                double sleepQuality = 0.0;
+                long totalSleepDuration = 0;
+                for (int j = 0; j < Objects.requireNonNull(startTimes).size(); j++) {
+                    assert endTimes != null;
+                    sleepDuration.add(endTimes.get(j) - startTimes.get(j));
+                    totalSleepDuration = Math.toIntExact(endTimes.get(j) - startTimes.get(j) + totalSleepDuration);
                 }
-                if (createGraph) {
-                    createGraph(item1, item2);
-                } else {
-                    switch (item2) {
-                        case "Heart Rate":
-                            createHeartRateData(view, item1, item2, true);
-                            break;
-                        case "Temperature":
-                            createTemperatureData(view, item1, item2, true);
-                            break;
-                        case "Sleep Quality":
-                            createSleepQualityData(view, item1, item2, true);
-                            break;
-                    }
+                for (int k = 0; k < sleepDuration.size(); k++) {
+                    sleepQuality = ((double) sleepDuration.get(k) / (double) totalSleepDuration) * (double) dailySleepQualityValueList.get(k) + sleepQuality;
                 }
-            });
-        }
+                sleepQualityValue.add(sleepQuality);
+                dateList.add(startTimes.get(0));
+            }
+            createGraph("Sleep Quality");
+        });
     }
 
-
-    private void createGraph(String item1, String item2) {
+    private void createGraph(String item1) {
         List<Entry> lineEntriesSet1 = null;
-        List<Entry> lineEntriesSet2 = null;
-
         switch (item1) {
             case "Heart Rate":
                 lineEntriesSet1 = getDataSetLong(heartRateValue);
@@ -280,45 +266,26 @@ public class AnalysisFragment extends Fragment {
             case "Sleep Quality":
                 lineEntriesSet1 = getDataSetDouble(sleepQualityValue);
                 break;
-        }
-        switch (item2) {
-            case "Heart Rate":
-                lineEntriesSet2 = getDataSetLong(heartRateValue);
-                break;
-            case "Temperature":
-                lineEntriesSet2 = getDataSetLong(temperatureValue);
-                break;
-            case "Sleep Quality":
-                lineEntriesSet2 = getDataSetDouble(sleepQualityValue);
-                break;
+            default:
+                lineEntriesSet1 = getDataSetDouble(symptomSeverityList);
         }
         LineDataSet lineDataSet1 = new LineDataSet(lineEntriesSet1, item1);
-        LineDataSet lineDataSet2 = new LineDataSet(lineEntriesSet2, item2);
-
-        lineDataSet1.setAxisDependency(YAxis.AxisDependency.LEFT);
         lineDataSet1.setDrawValues(false);
-
-        lineDataSet2.setAxisDependency(YAxis.AxisDependency.RIGHT);
-        lineDataSet2.setDrawValues(false);
-        lineDataSet2.setColor(Color.RED);
-        List<ILineDataSet> allDataSets = new ArrayList<>();
-        allDataSets.add(lineDataSet1);
-        allDataSets.add(lineDataSet2);
-        LineData lineData = new LineData(allDataSets);
+        LineData lineData = new LineData(lineDataSet1);
         lineChart.getDescription().setTextSize(12);
-        lineChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
+        lineChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         lineChart.animateXY(10, 10);
+        YAxis rightYAxis = lineChart.getAxisRight();
+        rightYAxis.setEnabled(false);
         lineChart.getXAxis().setGranularityEnabled(true);
         lineChart.getXAxis().setGranularity(5);
         lineChart.getXAxis().setLabelCount(lineDataSet1.getEntryCount());
         lineChart.setData(lineData);
         lineChart.getDescription().setEnabled(false);
         lineChart.setHighlightPerTapEnabled(true);
-
         CustomMPLineChartMarkerView mv = new CustomMPLineChartMarkerView(this.getContext());
         mv.setChartView(lineChart);
         lineChart.setMarker(mv);
-
 
     }
 
@@ -343,22 +310,73 @@ public class AnalysisFragment extends Fragment {
     public void clearFunction() {
         lineChart.clear();
         temperatureValue.clear();
-        temperatureDate.clear();
-        heartRateDate.clear();
+        dateList.clear();
         heartRateValue.clear();
         sleepQualityValue.clear();
+        symptomSeverityList.clear();
+        symptomDateList.clear();
+        for (int i = 0; i < 4;i++){
+            whichData[i] = false;
+        }
+        numberOfOccurrence.clear();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void findCurrentTime(int timeRange) {
-        Date currentTime = Calendar.getInstance().getTime();
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
-        String formattedDate = df.format(currentTime) + " 00:00:00.000";
-        currentDayUpperBound = dbHelper.toEpochTime(formattedDate) / 1000;
-        currentLowerBound = currentDayUpperBound - timeRange * 86400L;
+    public void findCurrentTime(View view) {
+        DatePicker graphStartDatePicker = (DatePicker) view.findViewById(R.id.graphStartDate);
+        String year = String.valueOf(graphStartDatePicker.getYear());
+        String month = String.valueOf(graphStartDatePicker.getMonth() + 1);
+        String day = String.valueOf(graphStartDatePicker.getDayOfMonth());
+        if (month.length() == 1)
+            month = "0" + month;
+        if (day.length() == 1)
+            day = "0" + day;
+        String formattedDate = year + month + day + " 00:00:00.000";
+        currentUpperBound = dbHelper.toEpochTime(formattedDate) / 1000;
+        currentLowerBound = currentUpperBound - 30 * 86400L;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void createSymptomData(String symptomName, View view) throws InterruptedException {
+        DatePicker graphStartDatePicker = (DatePicker) view.findViewById(R.id.graphStartDate);
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference rootDbRef = database.getReference();
+
+        LocalDate date_selected = LocalDate.of(graphStartDatePicker.getYear(), graphStartDatePicker.getMonth() + 1, graphStartDatePicker.getDayOfMonth());
+
+        Thread getter_thread = new Thread(() -> rootDbRef.child("symptom/" + symptomName).get().addOnCompleteListener(task -> {
+            severity_map = (HashMap<String, ArrayList<Long>>) task.getResult().getValue();
+
+        }));
+        getter_thread.start();
+
+        new Handler().postDelayed(() -> {
+            LocalDate tmp = date_selected;
+
+            for (int i = 0; i < 30; i++) {
+                symptomDateList.add(tmp.toString());
+                if (severity_map.get(tmp.toString()) != null) {
+                    Log.d(TAG, tmp.toString());
+                    ArrayList<Long> symptomValues = severity_map.get(tmp.toString());
+                    numberOfOccurrence.add(symptomValues.size());
+                    double average = 0;
+                    for (int j = 0; j < symptomValues.size(); j++) {
+                        average = average + symptomValues.get(j);
+                    }
+                    symptomSeverityList.add((average / symptomValues.size()));
+                } else {
+                    symptomSeverityList.add((double) 0);
+                    numberOfOccurrence.add(0);
+                }
+                tmp = tmp.minusDays(-1);
+            }
+            createGraph(symptomName);
+        }, 1000); //Timer is in ms here.
+
+    }
 }
+
 
 class CustomMPLineChartMarkerView extends MarkerView {
     private static final String TAG = AnalysisFragment.class.getSimpleName();
@@ -379,23 +397,23 @@ class CustomMPLineChartMarkerView extends MarkerView {
 
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
         if (e instanceof CandleEntry) {
             CandleEntry ce = (CandleEntry) e;
             dataLabel.setText(Utils.formatNumber(ce.getHigh(), 0, true));
         } else {
-            ArrayList<Long> dateList;
-            if (AnalysisFragment.temperatureDate.isEmpty()) {
-                dateList = AnalysisFragment.heartRateDate;
-            } else
-                dateList = AnalysisFragment.temperatureDate;
+            if (AnalysisFragment.whichData[3]){
+                String date = AnalysisFragment.symptomDateList.get((int) e.getX());
+                dataLabel.setGravity(Gravity.CENTER);
+                dataLabel.setText(date+ "\n" + "Number Of Occurrence = "+ AnalysisFragment.numberOfOccurrence.get((int) e.getX()));
+            } else{
+                Long date = AnalysisFragment.dateList.get((int) e.getX());
+                String dateInString = dbHelper.fromEpochTime(date * 1000);
+                dataLabel.setGravity(Gravity.CENTER);
+                dataLabel.setText(dateInString.substring(0, 4) + "," + dateInString.substring(4, 6) + "," + dateInString.substring(6, 8) + "\n" + Utils.formatNumber(e.getY(), 0, true));
+            }
 
-            Long date = dateList.get((int) e.getX());
-            String dateInString = dbHelper.fromEpochTime(date * 1000);
-            dataLabel.setGravity(Gravity.CENTER);
-            dataLabel.setText(dateInString.substring(0, 4) + "," + dateInString.substring(4, 6) + "," + dateInString.substring(6, 8) + "\n" + Utils.formatNumber(e.getY(), 0, true));
 
         }
         super.refreshContent(e, highlight);
@@ -466,4 +484,6 @@ class CustomMPLineChartMarkerView extends MarkerView {
                 TypedValue.COMPLEX_UNIT_DIP, dpValues,
                 getResources().getDisplayMetrics());
     }
+
+
 }
