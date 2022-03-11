@@ -1,0 +1,9 @@
+(fp_lib_table
+  (lib (name button)(type KiCad)(uri ${KIPRJMOD}/components/footprints/push_button/button.pretty)(options "")(descr ""))
+  (lib (name TLV_DIODE)(type KiCad)(uri ${KIPRJMOD}/components/footprints/SMAJ5.0A/TLV_DIODE.pretty)(options "")(descr ""))
+  (lib (name SSOP5)(type KiCad)(uri ${KIPRJMOD}/components/footprints/SSOP5/footprints.pretty)(options "")(descr ""))
+  (lib (name DW01)(type KiCad)(uri ${KIPRJMOD}/components/footprints/DW01_battery_protection/DW01.pretty)(options "")(descr ""))
+  (lib (name battery)(type KiCad)(uri ${KIPRJMOD}/components/footprints/battery/battery.pretty)(options "")(descr ""))
+  (lib (name MPU6050)(type KiCad)(uri ${KIPRJMOD}/components/footprints/MPU6050/MPU6050.pretty)(options "")(descr ""))
+  (lib (name micro_usb)(type KiCad)(uri ${KIPRJMOD}/components/footprints/micro_usb/micro_usb.pretty)(options "")(descr ""))
+)

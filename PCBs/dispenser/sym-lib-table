@@ -1,0 +1,7 @@
+(sym_lib_table
+  (lib (name force_sensor)(type Legacy)(uri ${KIPRJMOD}/components/force_sensor/force_sensor.lib)(options "")(descr ""))
+  (lib (name voltage_sensor)(type Legacy)(uri ${KIPRJMOD}/components/voltage_sensor.lib)(options "")(descr ""))
+  (lib (name LDO)(type Legacy)(uri ${KIPRJMOD}/components/LDO.lib)(options "")(descr ""))
+  (lib (name wifi)(type Legacy)(uri ${KIPRJMOD}/components/wifi.lib)(options "")(descr ""))
+  (lib (name dispenser-rescue)(type Legacy)(uri ${KIPRJMOD}/dispenser-rescue.lib)(options "")(descr ""))
+)

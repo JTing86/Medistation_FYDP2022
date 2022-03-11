@@ -1,0 +1,11 @@
+(sym_lib_table
+  (lib (name accelerometer)(type Legacy)(uri ${KIPRJMOD}/components/accelerometer.lib)(options "")(descr ""))
+  (lib (name wifi)(type Legacy)(uri ${KIPRJMOD}/components/wifi.lib)(options "")(descr ""))
+  (lib (name voltage_sensor)(type Legacy)(uri ${KIPRJMOD}/components/voltage_sensor.lib)(options "")(descr ""))
+  (lib (name LDO)(type Legacy)(uri ${KIPRJMOD}/components/LDO.lib)(options "")(descr ""))
+  (lib (name health_sensor)(type Legacy)(uri ${KIPRJMOD}/components/health_sensor.lib)(options "")(descr ""))
+  (lib (name DW01_battery_protection)(type Legacy)(uri ${KIPRJMOD}/components/DW01_battery_protection.lib)(options "")(descr ""))
+  (lib (name DMG9926USD_NMOS)(type Legacy)(uri ${KIPRJMOD}/components/DMG9926USD_NMOS.lib)(options "")(descr ""))
+  (lib (name MPU6050)(type Legacy)(uri ${KIPRJMOD}/MPU6050.lib)(options "")(descr ""))
+  (lib (name KMMVX-SMT-BS-BTR)(type Legacy)(uri ${KIPRJMOD}/components/KMMVX-SMT-BS-BTR.lib)(options "")(descr ""))
+)

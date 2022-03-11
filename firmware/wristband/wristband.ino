@@ -12,6 +12,7 @@
 #include "REST.h"
 #include "sleepQuality.h"
 #include <MPU6050_tockn.h>
+#include "Date.h"
 
 #define BATTERY_PIN 35
 
@@ -26,6 +27,7 @@ const unsigned long BPM_SAMPLE_PERIOD = 24*60*60*1000/BPM_SAMPLE_FREQ; // 24 sam
 const unsigned long TEMP_SAMPLE_PERIOD = 24*60*60*1000; // 1 sample per day
 const uint8_t NUM_BUTTONS = 3;
 const uint8_t MAX_SYMPTOM_LOGS = 10;
+const unsigned long TIME_ZONE_ADJUSTMENT = 5*60*60;
 
 const uint8_t BUTTON_PIN[NUM_BUTTONS] = {25,26,27};
 
@@ -48,6 +50,7 @@ MAX30105 sensor;
 
 DynamicJsonDocument doc(2048);
 
+// BUTTON VARIABLES
 static InputDebounce symptom_button[NUM_BUTTONS];
 String symptom_name[NUM_BUTTONS];
 uint8_t button_presses[NUM_BUTTONS][MAX_SYMPTOM_LOGS];
@@ -66,10 +69,8 @@ unsigned long sample_time[MAX_DAYS_NO_WIFI];
 uint8_t batt_threshold = 0;
 bool batt_alert_sent = false;
 
-// temperautre sampling is built scalably to work with sample frequencies higher than once per day
 float temperature[MAX_DAYS_NO_WIFI];
 unsigned long sample_offset = 24*60*60/2; // ensures the temperature sample is always far from when the push happens so the sample is guranteed to be there
-
 
 // twilio stuff
 const String twilio_url = "api.twilio.com";
@@ -85,6 +86,18 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
 
+//  Date date = Date(2022, 12, 31);
+//  Serial.println(date.toString());
+//  date.addDay();
+//  Serial.println(date.toString());
+//
+//  date = Date(2022, 3, 10);
+//  Serial.println(date.toString());
+//  date.addDay();
+//  Serial.println(date.toString());
+  
+
+  // making these pins high Z
   pinMode(7,INPUT);
   pinMode(8,INPUT);
 
@@ -103,6 +116,19 @@ void setup() {
 //  sensor.setPulseAmplitudeGreen(0);
 //
 //  sensor.enableDIETEMPRDY(); //Enable the temp ready interrupt. This is required.
+  
+  // initialize health sensor
+  while(!sensor.begin(I2C, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
+  {
+    Serial.println("MAX30105 was not found. Please check wiring/power. ");
+    
+  }
+
+  sensor.setup();
+  sensor.setPulseAmplitudeRed(0x0A);
+  sensor.setPulseAmplitudeGreen(0);
+
+  sensor.enableDIETEMPRDY(); //Enable the temp ready interrupt. This is required.
 
   Serial.println("start");
 
@@ -142,7 +168,23 @@ void setup() {
   SleepQuality_Init(I2C);
 //  mpu6050.beg in();
 //  mpu6050.calcGyroOffsets(true);
+
+//  Serial.println(year(convertLong(rest.sendRequest("GET", time_url, time_now))));
+  
+  setTime(convertLong(rest.sendRequest("GET", time_url, time_now)));
+  adjustTime(-TIME_ZONE_ADJUSTMENT);
+
   Serial.println(measureBatt());
+
+//  pushSleepQuality(1, now() + TIME_ZONE_ADJUSTMENT, now() + 1000 + TIME_ZONE_ADJUSTMENT);
+
+//  bulkPushSymptom("f", 3);
+
+//  Serial.println(measureBatt());
+
+  reconnect();
+  client.publish("medistation2021/battery/send", "{\"percentage\":40}");
+
 }
 
 long convertLong(String str) {
@@ -188,7 +230,6 @@ void parseDate(String timestamp, uint8_t& hour, uint8_t& minute) {
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.println(topic);
   if(strcmp(topic, "medistation2021/battery/request") == 0) {
     // send battery level
 //    int batt_read = analogRead(BATTERY_PIN);
@@ -206,7 +247,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   else if(strcmp(topic, "medistation2021/health-status/request") == 0) {
     // send BPM and and temp and push to DB
-    Serial.println("hello");
     doc.clear();
     int temp = sensor.readTemperature();
     int bpm = (int)getHeartRate();
@@ -224,8 +264,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
     client.publish("medistation2021/health-status/send", payload.c_str());
     // don't need to try to push with WiFi because if we got this message, we must have WiFi
     // Only need to push first column since there will only be one column with WiFi
-    pushBPM(bpm_vals[0], sample_time[0]);
-    pushTemp(temperature[0], sample_time[0]);
+//    pushBPM(bpm_vals[0], sample_time[0]);
+//    pushTemp(temperature[0], sample_time[0]); 
 
   }
   else if(strcmp(topic, "medistation2021/wristband/buttons") == 0) {
@@ -237,7 +277,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
       Serial.println(symptom_name[i]);
     }
   }
-  else if(strcmp(topic, "medistation/phone")) {
+  else if(strcmp(topic, "medistation2021/phone")) {
     deserializeJson(doc, (char*)payload);
     user_phone = String((const char*)doc["phone"][0]);
   }
@@ -248,9 +288,13 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect("medistation")) {
+    if (client.connect("alskdml")) {
       Serial.println("connected");
-      client.subscribe("medistation2021/#");
+      client.subscribe("medistation2021/battery/request");
+      client.subscribe("medistation2021/battery/threshold");
+      client.subscribe("medistation2021/health-status/request");
+      client.subscribe("medistation2021/wristband/buttons");
+      client.subscribe("medistation2021/phone");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -353,10 +397,10 @@ void buttonReleasedCallback(uint8_t pinIn)
   uint8_t index = pinIn - 25;
 
   // get time of occurrence
-  unsigned long timestamp = convertLong(rest.sendRequest("GET", time_url, time_now));
+  unsigned long timestamp = now()+ TIME_ZONE_ADJUSTMENT;
 
   if(WiFi.status() == WL_CONNECTED) {
-    pushSymptom(symptom_name[index], timestamp, 1);
+    pushSymptom(symptom_name[index]);
   }
   else {
     button_times[index][button_counter[index]] = timestamp;
@@ -366,41 +410,94 @@ void buttonReleasedCallback(uint8_t pinIn)
   }
 }
 
-void pushSymptom(String symptom, unsigned long timestamp, uint8_t level) {
-//  String resp = sendRequest("GET",  database_url, "/symptom/" + symptom + ".json?orderBy\"$key\"&limitToLast=1");
-  String index = getIndex("/symptom/" + symptom);
-  index = String(index.toInt()+1);
+void pushSymptom(String symptom) {
+  String index = "";
+  Date date_key = Date(year(), month(), day());
 
-  doc.clear();
-  JsonObject root = doc.createNestedObject(index);
+  String key = date_key.toString();
 
-  root["date"] = timestamp;
-  root["severity"] = 1;
+  String resp = rest.sendRequest("GET", database_url, "/symptom/" + symptom + "/" + key + ".json");
 
-  String payload;
-  serializeJson(doc, payload);
-  rest.sendRequest("PATCH",  database_url, "/symptom/" + symptom + ".json", payload);
+  if(resp == "null") {
+    date_key.addDay();
 
-  doc.clear();
+    key = date_key.toString();
+    index = "0";
+
+    doc.clear();
+    JsonObject root = doc.createNestedObject(key);
+    root[index] = 1;
+
+    String payload;
+    serializeJson(doc, payload);
+
+    rest.sendRequest("PATCH", database_url, "/symptom/" + symptom + ".json", payload);
+  }
+  else {
+    deserializeJson(doc, resp);
+    index = String(doc.size());
+
+    doc.clear();
+    doc[index] = 1;
+
+    String payload;
+    serializeJson(doc, payload);
+
+    rest.sendRequest("PATCH", database_url, "/symptom/" + symptom + "/" + key + ".json", payload);
+  }
 }
 
-void bulkPushSymptom(String symptom, unsigned long timestamp[], uint8_t level, uint8_t size) {
+void bulkPushSymptom(String symptom, uint8_t size) {
 //  String resp = sendRequest("GET",  database_url, "/symptom/" + symptom + ".json?orderBy\"$key\"&limitToLast=1");
-  String index_str = getIndex("/symptom/" + symptom);
-  unsigned int index = index_str.toInt()+1;
+//  String index_str = getIndex("/symptom/" + symptom);
+//  unsigned int index = index_str.toInt()+1;
+  Date date_key = Date(year(), month(), day());
+  String key = date_key.toString();
 
-  doc.clear();
-  for(uint8_t i = 0; i < size; i ++) {
-    JsonObject current = doc.createNestedObject(String(index+i));
-    current["date"] = timestamp[i];
-    current["severity"] = level;
+  String resp = rest.sendRequest("GET", database_url, "/symptom/" + symptom + "/" + key + ".json");
+
+  if(resp == "null") {
+    date_key.addDay();
+
+    key = date_key.toString();
+    
+    doc.clear();
+    JsonObject root = doc.createNestedObject(key);
+    for(uint8_t i = 0; i < size; i++) {
+      root[String(i)] = 1;
+    }
+
+    String payload;
+    serializeJson(doc, payload);
+
+    rest.sendRequest("PATCH", database_url, "/symptom/" + symptom + ".json", payload);
   }
+  else {
+    deserializeJson(doc, resp);
+    uint8_t index = doc.size();
 
-  String payload;
-  serializeJson(doc, payload);
-  rest.sendRequest("PATCH",  database_url, "/symptom/" + symptom + ".json", payload);
+    doc.clear();
 
-  doc.clear();
+    for(uint8_t i = index; i < index+size; i++) {
+      doc[String(i)] = 1;
+    }
+
+    String payload;
+    serializeJson(doc, payload);
+    Serial.println(payload);
+    rest.sendRequest("PATCH", database_url, "/symptom/" + symptom + "/" + key + ".json", payload);
+  }
+//  for(uint8_t i = 0; i < size; i ++) {
+//    JsonObject current = doc.createNestedObject(String(index+i));
+//    current["date"] = timestamp[i];
+//    current["severity"] = level;
+//  }
+//
+//  String payload;
+//  serializeJson(doc, payload);
+//  rest.sendRequest("PATCH",  database_url, "/symptom/" + symptom + ".json", payload);
+//
+//  doc.clear();
 }
 
 void pushTemp(float temp, unsigned long timestamp) {
@@ -417,16 +514,19 @@ void pushTemp(float temp, unsigned long timestamp) {
   serializeJson(doc, payload);
   rest.sendRequest("PATCH", database_url, "/temp/date.json", payload);
 
+  doc.clear();
+
   // update the value
   doc[index] = temp;
-  payload;
+  payload = "";
   serializeJson(doc, payload);
+  Serial.println(payload);
   rest.sendRequest("PATCH", database_url, "/temp/value.json", payload);
 
   doc.clear();
 }
 
-void pushBPM(uint8_t samples[], uint8_t timestamp) {
+void pushBPM(uint8_t samples[], unsigned long timestamp) {
 //  String resp = sendRequest("GET",  database_url, "/heartRate.json?orderBy\"$key\"&limitToLast=1");
   String index = getIndex("/heartRate");
   index = String(index.toInt()+1);
@@ -439,10 +539,12 @@ void pushBPM(uint8_t samples[], uint8_t timestamp) {
     values.add(samples[i]);
   }
 
+  Serial.println(timestamp);
   heart_rate["date"] = timestamp;
 
   String payload;
   serializeJson(doc, payload);
+  Serial.println(payload);
   rest.sendRequest("PATCH", database_url, "/heartRate.json", payload);
   doc.clear();
 }
@@ -450,17 +552,17 @@ void pushBPM(uint8_t samples[], uint8_t timestamp) {
 void pushSleepQuality(uint8_t quality, unsigned long start_time, unsigned long end_time) {
   //convertLong(sendRequest("GET", time_url, now));
   String day_index = getIndex("/sleep");
-  int sleep_index = getIndex("/sleep/" + day_index).toInt() + 1;
+  int sleep_index = getIndex("/sleep/" + day_index + "/start").toInt() + 1;
 
   String resp = rest.sendRequest("GET", database_url, "/sleep/" + day_index + ".json");
   deserializeJson(doc, resp);
   JsonArray start = doc["start"];
 
-  if(sleep_index > 1 && day(start_time) == day(start[start.size()-1])){
+  if(sleep_index > 1 && day(start_time) == day(start[(unsigned long)start.size()-1])){
     JsonArray end = doc["end"];
     JsonArray quality = doc["quality"];
 
-    quality[sleep_index] = quality;
+    quality[sleep_index] = (int)quality;
     start[sleep_index] = start_time;
     end[sleep_index] = end_time;
 
@@ -475,13 +577,13 @@ void pushSleepQuality(uint8_t quality, unsigned long start_time, unsigned long e
     doc.clear();
 
     JsonObject root = doc.createNestedObject(day_index);
-    JsonArray end = root.createNestedArray("end");
+    JsonArray endArr = root.createNestedArray("end");
     JsonArray startArr = root.createNestedArray("start");
     JsonArray quality = root.createNestedArray("quality");
 
-    quality[sleep_index] = quality;
+    quality[sleep_index] = (int)quality;
     startArr[sleep_index] = start_time;
-    end[sleep_index] = end_time;
+    endArr[sleep_index] = end_time;
 
     String payload;
     serializeJson(doc, payload);
@@ -532,7 +634,7 @@ void loop() {
     Serial.println("hello");
     // store the time of the first sample for the date tag in the DB
     if(bpm_index == 0) {
-      sample_time[days_no_wifi] = convertLong(rest.sendRequest("GET", time_url, time_now));
+      sample_time[days_no_wifi] = now() + TIME_ZONE_ADJUSTMENT;
     }
 
     // measure BPM
@@ -553,7 +655,7 @@ void loop() {
     if(button_lost_wifi) {
       for(uint8_t i = 0; i < NUM_BUTTONS; i++) {
         if(button_counter[i] > 0) {
-          bulkPushSymptom(symptom_name[i], button_times[i], 1, button_counter[i]);
+          bulkPushSymptom(symptom_name[i], button_counter[i]);
         }
         button_counter[i] = 0;
       }
@@ -569,29 +671,18 @@ void loop() {
   }
 
   // battery is low - send an alert
-//  if(measureBatt() <= batt_threshold) {
-//    String header = "Authorization: Basic " + twilio_token + "\n" + "Content-Type: application/x-www-form-urlencoded";
-//    String msg = "Wristband battery is low. Charge now";
-//    String payload = "Body=" + msg + "&From=%2B19106657562&To=%2B1";
-//    rest.sendRequest("POST", twilio_url, twilio_sms_path, payload + user_phone, 443, header);
-//    batt_alert_sent = true;
-//  }
-//  else if (batt_alert_sent) {
-//    // getting here would mean they've charged it since
-//    batt_alert_sent = false;
-//  }
-//  Sensor_Update();
- // int sleepStatus = Demo_SleepQuality_Analyzer(0.5); //o for active, 1 for sleep
-Sensor_printRPY();
-//  Serial.print(minute());
-//  Serial.print(":");
-//  Serial.print(second());
-//  Serial.print("---");
-//  Serial.println(sleepStatus);
-  
-//    Serial.print(mpu6050.getGyroAngleX());
-//    Serial.print("/");Serial.print(mpu6050.getGyroAngleY());
-//    Serial.print("/");Serial.println(mpu6050.getGyroAngleZ());
+  if(!batt_alert_sent && measureBatt() <= batt_threshold) {
+    Serial.println("wassup");
+    String header = "Authorization: Basic " + twilio_token + "\n" + "Content-Type: application/x-www-form-urlencoded";
+    String msg = "Wristband battery is low. Charge now";
+    String payload = "Body=" + msg + "&From=%2B19106657562&To=%2B1";
+    rest.sendRequest("POST", twilio_url, twilio_sms_path, payload + user_phone, 443, header);
+    batt_alert_sent = true;
+  }
+  else if (batt_alert_sent &&  measureBatt() > batt_threshold){
+    // getting here would mean they've charged it since
+    batt_alert_sent = false;
+  }
 
   unsigned long current_time = millis();
   for(uint8_t i = 0; i < NUM_BUTTONS; i++) {
