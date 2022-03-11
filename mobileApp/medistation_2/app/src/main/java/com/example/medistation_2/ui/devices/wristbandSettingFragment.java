@@ -34,7 +34,11 @@ public class wristbandSettingFragment extends Fragment {
 
     private static final String TAG = wristbandSettingFragment.class.getSimpleName();
     private MqttAndroidClient client;
-
+    @Override
+    public void onResume(){
+        initializeMQTT();
+        super.onResume();
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,27 +54,29 @@ public class wristbandSettingFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         setupDropDownMenu(view);
-        String clientId = MqttClient.generateClientId();
-        client = new MqttAndroidClient(requireContext().getApplicationContext(), "tcp://broker.hivemq.com:1883", clientId);
-        try {
-            IMqttToken token = client.connect();
-            token.setActionCallback(new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                }
-
-                @Override
-                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                }
-            });
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
+        initializeMQTT();
 
         Button profileUserInfoSaveButton = view.findViewById(R.id.wristbandSymptomSaveButton);
         profileUserInfoSaveButton.setOnClickListener(v -> saveButtonPressed());
     }
+    public void initializeMQTT(){
+    String clientId = MqttClient.generateClientId();
+    client = new MqttAndroidClient(requireContext().getApplicationContext(), "tcp://broker.hivemq.com:1883", clientId);
+    try {
+        IMqttToken token = client.connect();
+        token.setActionCallback(new IMqttActionListener() {
+            @Override
+            public void onSuccess(IMqttToken asyncActionToken) {
+            }
 
+            @Override
+            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+            }
+        });
+    } catch (MqttException e) {
+        e.printStackTrace();
+    }
+}
     public void setupDropDownMenu(View view) {
         //set up drop down list
         Spinner batteryLevelNotification = view.findViewById(R.id.wristbandBatteryNotificationDropDown);

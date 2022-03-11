@@ -3,7 +3,6 @@ package com.example.medistation_2.ui.home;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +54,13 @@ public class HomeFragment extends Fragment {
     private MqttAndroidClient client;
     long bestTime;
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public void onResume() {
+        initializeMQTT();
+        super.onResume();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +75,6 @@ public class HomeFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        initializeMQTT();
         dispenserRefillTime();
         setupDropDownMenu(view);
         Button dispenseButton = view.findViewById(R.id.homeDispenseButton);
@@ -105,8 +110,9 @@ public class HomeFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void run() {
-                if(isVisible())
+                if (isVisible()) {
                     nextPillTime(view);
+                }
             }
         }, 0, 5000);//put here time 1000 milliseconds=1 second
     }
@@ -122,19 +128,21 @@ public class HomeFragment extends Fragment {
                 public void onSuccess(IMqttToken asyncActionToken) {
                     MQTTSubscribe("medistation2021/health-status/send");
                     MQTTSubscribe("medistation2021/battery/send");
-                    new CountDownTimer(5000, 1000) {
-                        public void onTick(long millisUntilFinished) {
-                        }
-
-                        public void onFinish() {
-                            if(isVisible()) {
+                    MQTTSubscribe("medistation2021/wifi-status/send/wristband");
+                    MQTTSubscribe("medistation2021/wifi-status/send/dispenser");
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            if (isVisible()) {
                                 MQTT.MQTTSendData(client, "battery", "", requireContext().getString(R.string.batteryRequest));
                                 MQTT.MQTTSendData(client, "health", "", requireContext().getString(R.string.healthStatusRequest));
+                                MQTT.MQTTSendData(client,"","",requireContext().getString(R.string.wifiStatusRequestDispenser));
+                                MQTT.MQTTSendData(client,"","",requireContext().getString(R.string.wifiStatusRequestWristband));
+                                Log.d(TAG,"Sent MQTT Command");
                             }
                         }
-                    }.start();
+                    }, 2000);
                 }
-
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     // Something went wrong e.g. connection timeout or firewall problems
@@ -146,7 +154,7 @@ public class HomeFragment extends Fragment {
     }
 
     public void MQTTSubscribe(String topic) {
-        int qos = 1;
+        int qos = 0;
         try {
             IMqttToken subToken = client.subscribe(topic, qos);
             subToken.setActionCallback(new IMqttActionListener() {
@@ -175,6 +183,16 @@ public class HomeFragment extends Fragment {
                         int batteryLevel = Integer.parseInt(String.valueOf(JsonHelper.intDecoder("percentage", new String(message.getPayload()))));
                         TextView wristbandBatteryLevel = (TextView) requireActivity().findViewById(R.id.homeWristbandBatteryLevel);
                         wristbandBatteryLevel.setText(batteryLevel + "%");
+                    }
+                    else if (topic.equals("medistation2021/wifi-status/send/wristband")){
+                        TextView wristbandWifiLevel = (TextView) requireActivity().findViewById(R.id.wristbandConnection);
+                        wristbandWifiLevel.setTextColor(Color.GREEN);
+                        wristbandWifiLevel.setText("Connected");
+                    }
+                    else if (topic.equals("medistation2021/wifi-status/send/dispenser")){
+                        TextView dispenserWifiLevel = (TextView) requireActivity().findViewById(R.id.dispenserConnection);
+                        dispenserWifiLevel.setTextColor(Color.GREEN);
+                        dispenserWifiLevel.setText("Connected");
                     }
                 }
 
@@ -223,7 +241,7 @@ public class HomeFragment extends Fragment {
                         }
                         int lowestCurrentAmount = Collections.min(currentAmount);
                         TextView refillText = requireActivity().findViewById(R.id.homeRefillText);
-                        if (isVisible()){
+                        if (isVisible()) {
                             refillText.setText("Refill in " + lowestCurrentAmount + " day(s)");
                         }
 
@@ -263,12 +281,11 @@ public class HomeFragment extends Fragment {
                 HashMap<String, Object> medicine = (HashMap<String, Object>) allMedications.get(i);
                 Long nextDoseInMinute = findNextDose(medicine, finalCurrentDayOfTheWeek, currentTime);
                 long timeDifference = (nextDoseInMinute - currentTimeInMin);
-                if(timeDifference<0){
-                    timeDifference  = timeDifference + totalWeekMinute(6L,23L,59L);
+                if (timeDifference < 0) {
+                    timeDifference = timeDifference + totalWeekMinute(6L, 23L, 59L);
                 }
                 if (timeDifference < bestTime) {
                     bestTime = timeDifference;
-                    Log.d(TAG, String.valueOf(bestTime));
                 }
             }
             displayNextPillTime(bestTime, currentTime, view);

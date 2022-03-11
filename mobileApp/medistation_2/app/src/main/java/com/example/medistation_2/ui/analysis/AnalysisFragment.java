@@ -98,7 +98,6 @@ public class AnalysisFragment extends Fragment {
         lineChart = view.findViewById(R.id.analysisGraph);
         whichData = new boolean[4];
         numberOfOccurrence = new ArrayList<>();
-        //createData.symptomData("Diarrhea",60);
         setupDropDownMenu(view);
 
 
@@ -156,7 +155,7 @@ public class AnalysisFragment extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
                 // Getting Post failed, log a message
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                // ...
+
             }
         });
         //Create severity drop down menu

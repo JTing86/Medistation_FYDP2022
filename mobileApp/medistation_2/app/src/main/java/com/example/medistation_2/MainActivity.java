@@ -39,6 +39,12 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
+    protected void onResume(){
+        initializeMQTT();
+        super.onResume();
+    }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
