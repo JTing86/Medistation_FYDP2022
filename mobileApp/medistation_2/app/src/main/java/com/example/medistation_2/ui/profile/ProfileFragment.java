@@ -282,7 +282,7 @@ public class ProfileFragment extends Fragment {
                     break;
             }
             Date currentTime = Calendar.getInstance().getTime();
-            SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             String formattedDate = df.format(currentTime);
             int finalSeverity = severity;
 

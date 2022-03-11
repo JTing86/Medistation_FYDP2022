@@ -105,7 +105,9 @@ public class HomeFragment extends Fragment {
                 dispenseInfo.clear();
             }
         });
-        nextPillTime(view);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            nextPillTime(view);
+        }
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
@@ -137,7 +139,7 @@ public class HomeFragment extends Fragment {
                                 MQTT.MQTTSendData(client, "battery", "", requireContext().getString(R.string.batteryRequest));
                                 MQTT.MQTTSendData(client, "health", "", requireContext().getString(R.string.healthStatusRequest));
                                 MQTT.MQTTSendData(client,"","",requireContext().getString(R.string.wifiStatusRequestDispenser));
-                                MQTT.MQTTSendData(client,"","",requireContext().getString(R.string.wifiStatusRequestWristband));
+
                                 Log.d(TAG,"Sent MQTT Command");
                             }
                         }
@@ -183,12 +185,11 @@ public class HomeFragment extends Fragment {
                         int batteryLevel = Integer.parseInt(String.valueOf(JsonHelper.intDecoder("percentage", new String(message.getPayload()))));
                         TextView wristbandBatteryLevel = (TextView) requireActivity().findViewById(R.id.homeWristbandBatteryLevel);
                         wristbandBatteryLevel.setText(batteryLevel + "%");
-                    }
-                    else if (topic.equals("medistation2021/wifi-status/send/wristband")){
                         TextView wristbandWifiLevel = (TextView) requireActivity().findViewById(R.id.wristbandConnection);
                         wristbandWifiLevel.setTextColor(Color.GREEN);
                         wristbandWifiLevel.setText("Connected");
                     }
+
                     else if (topic.equals("medistation2021/wifi-status/send/dispenser")){
                         TextView dispenserWifiLevel = (TextView) requireActivity().findViewById(R.id.dispenserConnection);
                         dispenserWifiLevel.setTextColor(Color.GREEN);
@@ -210,10 +211,10 @@ public class HomeFragment extends Fragment {
         int temperature = JsonHelper.intDecoder("temp", new String(message.getPayload()));
         int heartRate = JsonHelper.intDecoder("bpm", new String(message.getPayload()));
         heartRateValue.setText(String.valueOf(heartRate));
-        if ((temperature - 37) > 0.5) {
+        if ((temperature - 30) > 0.5) {
             temperatureValue.setText(temperature + " (Higher Than Average)");
             temperatureValue.setTextColor(Color.RED);
-        } else if ((temperature - 37) < -0.5) {
+        } else if ((temperature - 30) < -0.5) {
             temperatureValue.setText(temperature + " (Lower Than Average)");
             temperatureValue.setTextColor(Color.BLUE);
         } else {
