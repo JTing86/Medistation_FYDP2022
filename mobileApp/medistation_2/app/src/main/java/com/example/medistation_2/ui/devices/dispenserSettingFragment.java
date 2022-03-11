@@ -81,7 +81,7 @@ public class dispenserSettingFragment extends Fragment {
         Spinner container4DropDownMenu = view.findViewById(R.id.dispenserContainer4DropDownMenu);
         Spinner container5DropDownMenu = view.findViewById(R.id.dispenserContainer5DropDownMenu);
 
-        String[] numberOfPills = new String[]{"Amount", "30", "20", "15", "10", "5", "Never"};
+        String[] numberOfPills = new String[]{"Amount", "8", "6", "4", "2", "Never"};
         List<String> numberOfPillsList = new ArrayList<>(Arrays.asList(numberOfPills));
 
         ArrayAdapter<String> symptomButtonMenuArrayAdapters = new ArrayAdapter<String>(requireActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, numberOfPillsList) {

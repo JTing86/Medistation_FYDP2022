@@ -44,7 +44,8 @@
     <string name="batteryThreshold">medistation2021/battery/threshold </string>
     <string name="batterySend">medistation2021/battery/send</string>
     <string name="wifiStatusSend">medistation2021/wifi-status/send</string>
-    <string name="wifiStatusRequest">medistation2021/wifi-status/request</string>
+    <string name="wifiStatusRequestDispenser">medistation2021/wifi-status/request/dispenser</string>
+    <string name="wifiStatusRequestWristband">medistation2021/wifi-status/request/wristband</string>
     <string name="healthStatusRequest">medistation2021/health-status/request</string>
     <string name="healthStatusSend">medistation2021/health-status/send</string>
     <string name="pillStatus">medistation2021/pill/status</string>
