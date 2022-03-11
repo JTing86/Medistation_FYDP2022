@@ -166,6 +166,7 @@ void Sensor_printRPY(void)
 
 int Demo_SleepQuality_Analyzer(float sensitivity)
 {
+    Sensor_printRPY();
     // Sensor_Update();
     sensitivity_factor = sensitivity;
 
@@ -197,8 +198,8 @@ int Demo_SleepQuality_Analyzer(float sensitivity)
             // }
 
 
-            Serial.print("-------------------------mode: --(1 for sleep)--");
-            Serial.println(mode);
+            // Serial.print("-------------------------mode: --(1 for sleep)--");
+            // Serial.println(mode);
             movement_factor = 0;
         }
         else
@@ -212,20 +213,16 @@ int Demo_SleepQuality_Analyzer(float sensitivity)
                 //second_count += 1; //increment data record by 1 minute
                 //error_range_factor = ALLOWED_ERR_MIN;
                 movement_factor += DEMO_Movement_Analyzer();// temp,needs to add heartrate sensor
-                //movement_factor +=0;
+
                 //float avg_init = abs(initGX)+abs(initGY)+abs(initGZ);
-                float avg_accum = abs(avg_gyroData.roll) + abs(avg_gyroData.pitch) + abs(avg_gyroData.yaw);
+                //float avg_accum = abs(avg_gyroData.roll) + abs(avg_gyroData.pitch) + abs(avg_gyroData.yaw);
                 //float error_factor = (abs(avg_init - avg_accum)) / abs(avg_init);
 
-                   Serial.print("---movement indicator: ----");
-                    Serial.print(movement_factor);
-                // Serial.print("---movement abs(avg_init): ----");
-                // Serial.print(abs(avg_init));
-                // Serial.print("---movement avg_accum: ----");
-                // Serial.println(avg_accum);
-                // //Sensor_printRPY();
-                Serial.print("---movement abs(avg_init - avg_accum): ----");
-                Serial.println(abs(avg_init - avg_accum));
+                //    Serial.print("---movement indicator: ----");
+                //     Serial.print(movement_factor);
+                //
+                // Serial.print("---movement abs(avg_init - avg_accum): ----");
+                // Serial.println(abs(avg_init - avg_accum));
 
 
                 // reset accumulated average
@@ -234,10 +231,7 @@ int Demo_SleepQuality_Analyzer(float sensitivity)
                 avg_gyroData.roll = 0;
                 avg_gyroData.pitch = 0;
                 avg_gyroData.yaw = 0;
-                // initGX = mpu6050.getGyroAngleX();
-                // initGY = mpu6050.getGyroAngleY();
-                // initGZ = mpu6050.getGyroAngleZ();
-                //
+
                 avg_init = avg_accum;
                 avg_accum = 0;
 
@@ -259,14 +253,6 @@ int Demo_SleepQuality_Analyzer(float sensitivity)
                     avg_gyroData.pitch = (avg_gyroData.pitch+gyroData.pitch)/sample_count;
                     avg_gyroData.yaw = (avg_gyroData.yaw+gyroData.yaw)/sample_count;
 
-                    // Serial.print("--");
-                    // Serial.print(sample_count);
-                    // Serial.print("---gyroData roll: ----");
-                    // Serial.print(gyroData.roll);
-                    // Serial.print("---gyroData roll avg: ----");
-                    //Serial.println(avg_gyroData.roll);
-                    // avg_acclData.X = (avg_acclData.X+acclData.X)/sample_count;
-                    // avg_acclData.Y = (avg_acclData.Y+acclData.Y)/sample_count;
 
                     previousMillis = currentMillis; //when the time has passed, reset initial time
 
@@ -292,7 +278,7 @@ int DEMO_Movement_Analyzer(void) //output how much the average varies from the i
     float diff = abs(avg_init - avg_accum);
 
 
-    if (diff < 2) // relatively stable
+    if (diff < 5) // relatively stable
     {
         return 0;
     }
