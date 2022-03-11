@@ -11,7 +11,7 @@
 #include <TimeLib.h>
 #include "REST.h"
 #include "sleepQuality.h"
-#include "MPU6050.h"
+#include <MPU6050_tockn.h>
 
 #define BATTERY_PIN 35
 
@@ -44,7 +44,7 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 
 MAX30105 sensor;
-MPU6050 mpu6050(Wire);
+
 
 DynamicJsonDocument doc(2048);
 
@@ -79,6 +79,7 @@ const String twilio_token = "QUMxMTk2OGMyOWEwMjIxMzZiOGMyYTM2NDVlZWRiZWMwMDpiMTM
 String user_phone;
 
 TwoWire I2C = TwoWire(0);
+//MPU6050 mpu6050(I2C);
 
 void setup() {
   // put your setup code here, to run once:
@@ -87,7 +88,9 @@ void setup() {
   pinMode(7,INPUT);
   pinMode(8,INPUT);
 
+  
   I2C.begin(I2C_SDA, I2C_SCL, I2C_SPEED_FAST);
+  //Sensor_Init(I2C);
 //
 //  while(!sensor.begin(I2C, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
 //  {
@@ -137,6 +140,8 @@ void setup() {
     button_counter[i] = 0;
   }
   SleepQuality_Init(I2C);
+//  mpu6050.beg in();
+//  mpu6050.calcGyroOffsets(true);
   Serial.println(measureBatt());
 }
 
@@ -575,14 +580,18 @@ void loop() {
 //    // getting here would mean they've charged it since
 //    batt_alert_sent = false;
 //  }
-
-  int sleepStatus = SleepQuality_Analyzer(0.5); //o for active, 1 for sleep
-
-  Serial.print(minute());
-  Serial.print(":");
-  Serial.print(second());
-  Serial.print("---");
-  Serial.println(sleepStatus);
+//  Sensor_Update();
+  int sleepStatus = Demo_SleepQuality_Analyzer(0.5); //o for active, 1 for sleep
+Sensor_printRPY();
+//  Serial.print(minute());
+//  Serial.print(":");
+//  Serial.print(second());
+//  Serial.print("---");
+//  Serial.println(sleepStatus);
+  
+//    Serial.print(mpu6050.getGyroAngleX());
+//    Serial.print("/");Serial.print(mpu6050.getGyroAngleY());
+//    Serial.print("/");Serial.println(mpu6050.getGyroAngleZ());
 
   unsigned long current_time = millis();
   for(uint8_t i = 0; i < NUM_BUTTONS; i++) {
