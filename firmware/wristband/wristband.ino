@@ -120,7 +120,7 @@ void setup() {
   // initialize health sensor
   while(!sensor.begin(I2C, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
   {
-    Serial.println("MAX30105 was not found. Please check wiring/power. ");
+    //Serial.println("MAX30105 was not found. Please check wiring/power. ");
     
   }
 
@@ -130,7 +130,7 @@ void setup() {
 
   sensor.enableDIETEMPRDY(); //Enable the temp ready interrupt. This is required.
 
-  Serial.println("start");
+  //Serial.println("start");
 
 //  pinMode(BATTERY_PIN, INPUT);
   analogReadResolution(11);
@@ -142,8 +142,8 @@ void setup() {
   Serial.println("connecting");
   while(WiFi.status() != WL_CONNECTED);
 
-  Serial.println("Connected, IP address: ");
-  Serial.println(WiFi.localIP());
+//  Serial.println("Connected, IP address: ");
+//  Serial.println(WiFi.localIP());
 
   client.setServer(broker, 1883);
   client.setCallback(callback);
@@ -174,7 +174,7 @@ void setup() {
   setTime(convertLong(rest.sendRequest("GET", time_url, time_now)));
   adjustTime(-TIME_ZONE_ADJUSTMENT);
 
-  Serial.println(measureBatt());
+//  Serial.println(measureBatt());
 
 //  pushSleepQuality(1, now() + TIME_ZONE_ADJUSTMENT, now() + 1000 + TIME_ZONE_ADJUSTMENT);
 
@@ -243,7 +243,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     // update battery low threshold
     deserializeJson(doc, (char*)payload);
     batt_threshold = (int)doc["threshold"];
-    Serial.println(batt_threshold);
+//    Serial.println(batt_threshold);
   }
   else if(strcmp(topic, "medistation2021/health-status/request") == 0) {
     // send BPM and and temp and push to DB
@@ -256,7 +256,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     doc["bpm"] = bpm;
     String payload;
     serializeJson(doc, payload);
-    Serial.println(payload);
+//    Serial.println(payload);
 
     if(!client.connected()) {
       reconnect();
@@ -274,7 +274,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
     for(uint8_t i = 0; i < NUM_BUTTONS; i++) {
       symptom_name[i] = String((const char*)doc["symptoms"][i]);
-      Serial.println(symptom_name[i]);
+//      Serial.println(symptom_name[i]);
     }
   }
   else if(strcmp(topic, "medistation2021/phone")) {
@@ -296,9 +296,9 @@ void reconnect() {
       client.subscribe("medistation2021/wristband/buttons");
       client.subscribe("medistation2021/phone");
     } else {
-      Serial.print("failed, rc=");
-      Serial.print(client.state());
-      Serial.println(" try again in 1 second");
+//      Serial.print("failed, rc=");
+//      Serial.print(client.state());
+//      Serial.println(" try again in 1 second");
       // Wait 5 seconds before retrying
       delay(1000);
     }
@@ -484,7 +484,7 @@ void bulkPushSymptom(String symptom, uint8_t size) {
 
     String payload;
     serializeJson(doc, payload);
-    Serial.println(payload);
+//    Serial.println(payload);
     rest.sendRequest("PATCH", database_url, "/symptom/" + symptom + "/" + key + ".json", payload);
   }
 //  for(uint8_t i = 0; i < size; i ++) {
@@ -520,7 +520,7 @@ void pushTemp(float temp, unsigned long timestamp) {
   doc[index] = temp;
   payload = "";
   serializeJson(doc, payload);
-  Serial.println(payload);
+//  Serial.println(payload);
   rest.sendRequest("PATCH", database_url, "/temp/value.json", payload);
 
   doc.clear();
@@ -539,12 +539,12 @@ void pushBPM(uint8_t samples[], unsigned long timestamp) {
     values.add(samples[i]);
   }
 
-  Serial.println(timestamp);
+//  Serial.println(timestamp);
   heart_rate["date"] = timestamp;
 
   String payload;
   serializeJson(doc, payload);
-  Serial.println(payload);
+//  Serial.println(payload);
   rest.sendRequest("PATCH", database_url, "/heartRate.json", payload);
   doc.clear();
 }
@@ -631,7 +631,7 @@ void loop() {
   client.loop();
 
   if(millis() - bpm_timer >= BPM_SAMPLE_PERIOD) {
-    Serial.println("hello");
+//    Serial.println("hello");
     // store the time of the first sample for the date tag in the DB
     if(bpm_index == 0) {
       sample_time[days_no_wifi] = now() + TIME_ZONE_ADJUSTMENT;
@@ -672,7 +672,7 @@ void loop() {
 
   // battery is low - send an alert
   if(!batt_alert_sent && measureBatt() <= batt_threshold) {
-    Serial.println("wassup");
+//    Serial.println("wassup");
     String header = "Authorization: Basic " + twilio_token + "\n" + "Content-Type: application/x-www-form-urlencoded";
     String msg = "Wristband battery is low. Charge now";
     String payload = "Body=" + msg + "&From=%2B19106657562&To=%2B1";
