@@ -53,6 +53,12 @@ public class MedicationFragment extends Fragment {
     public MqttAndroidClient client;
 
     @Override
+    public void onResume() {
+        initializeMQTT();
+        super.onResume();
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
@@ -62,27 +68,7 @@ public class MedicationFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-
-
-        String clientId = MqttClient.generateClientId();
-        client = new MqttAndroidClient(requireContext().getApplicationContext(), "tcp://broker.hivemq.com:1883", clientId);
-        try {
-            IMqttToken token = client.connect();
-            token.setActionCallback(new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.d(TAG, "MQTT successfully connected in dispenser setting fragment");
-                }
-
-                @Override
-                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.d(TAG, "MQTT client in dispenser setting fragment did not connect successfully");
-                }
-            });
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
-
+        initializeMQTT();
         dosageTableCreator(view, R.id.pill1DosageTable, "1");
         dosageTableCreator(view, R.id.pill2DosageTable, "2");
         dosageTableCreator(view, R.id.pill3DosageTable, "3");
@@ -106,6 +92,32 @@ public class MedicationFragment extends Fragment {
         initializeUserInfo(view);
     }
 
+    public void initializeMQTT() {
+        String clientId = MqttClient.generateClientId();
+        client = new MqttAndroidClient(requireContext().getApplicationContext(), "tcp://broker.hivemq.com:1883", clientId);
+        try {
+            IMqttToken token = client.connect();
+            token.setActionCallback(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.d(TAG, "MQTT successfully connected in dispenser setting fragment");
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.d(TAG, "MQTT client in dispenser setting fragment did not connect successfully");
+                }
+
+                public void setConnectionTimeout(int connectionTimeoutSec) {
+
+                }
+
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void initializeDropDownList(Spinner numberOfPillsDropDownList, Spinner hourDropDownList, Spinner minuteDropDownList) {
         numberOfPillsDropDownList.setGravity(Gravity.CENTER);
         hourDropDownList.setGravity(Gravity.CENTER);
@@ -117,7 +129,7 @@ public class MedicationFragment extends Fragment {
         String[] minute = new String[]{
                 "Min",
                 "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23",
-                "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43","44", "45", "46", "47", "48",
+                "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48",
                 "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"};
         List<String> dosageList = new ArrayList<>(Arrays.asList(dosage));
         List<String> hourList = new ArrayList<>(Arrays.asList(hour));

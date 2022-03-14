@@ -3,10 +3,13 @@ package com.example.medistation_2.ui.profile;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -24,6 +27,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
@@ -52,7 +56,11 @@ public class ProfileFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
-
+    @Override
+    public void onResume(){
+        initializeMQTT();
+        super.onResume();
+    }
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -103,18 +111,9 @@ public class ProfileFragment extends Fragment {
     public void setupDropDownMenu(View view) {
         //set up drop down list
         Spinner severityDropDownList = view.findViewById(R.id.profileSeverityDropDownList);
-        Spinner hourDropDownList = view.findViewById(R.id.profileHourDropList);
-        Spinner minuteDropDownList = view.findViewById(R.id.profileMinuteDropList);
+
         String[] severity = new String[]{"Severity", "Mild", "Moderate", "Severe"};
-        String[] hour = new String[]{"Hour", "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"};
-        String[] minute = new String[]{
-                "Min",
-                "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23",
-                "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "45", "46", "47", "48",
-                "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"};
         List<String> severityList = new ArrayList<>(Arrays.asList(severity));
-        List<String> hourList = new ArrayList<>(Arrays.asList(hour));
-        List<String> minuteList = new ArrayList<>(Arrays.asList(minute));
         //Create severity drop down menu
         ArrayAdapter<String> severityMenuArrayAdapter = new ArrayAdapter<String>(requireActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, severityList) {
             @Override
@@ -135,52 +134,40 @@ public class ProfileFragment extends Fragment {
                 return view;
             }
         };
-        //Create hour drop down menu
-        ArrayAdapter<String> hourMenuArrayAdapter = new ArrayAdapter<String>(requireActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, hourList) {
+        List<String> symptomList = new ArrayList<>();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference rootDbRef = database.getReference();
+        Query myTopPostsQuery = rootDbRef.child("symptom/");
+
+        myTopPostsQuery.addValueEventListener(new ValueEventListener() {
             @Override
-            public boolean isEnabled(int position) {
-                // Disable the first item from Spinner
-                // First item will be use for hint
-                return position != 0;
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    symptomList.add(postSnapshot.getKey());
+                }
             }
 
             @Override
-            public View getDropDownView(int position, View dropDownView, @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, dropDownView, parent);
-                TextView tv = (TextView) view;
-                if (position == 0)
-                    tv.setTextColor(Color.GRAY);
-                else
-                    tv.setTextColor(Color.BLACK);
-                return view;
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
             }
-        };
-        //Create minute drop down menu
-        ArrayAdapter<String> minuteMenuArrayAdapter = new ArrayAdapter<String>(getActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, minuteList) {
-            @Override
-            public boolean isEnabled(int position) {
-                // Disable the first item from Spinner
-                // First item will be use for hint
-                return position != 0;
-            }
+        });
 
-            @Override
-            public View getDropDownView(int position, View dropDownView, @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, dropDownView, parent);
-                TextView tv = (TextView) view;
-                if (position == 0)
-                    tv.setTextColor(Color.GRAY);
-                else
-                    tv.setTextColor(Color.BLACK);
-                return view;
-            }
-        };
+        AutoCompleteTextView symptomInput = view.findViewById(R.id.autoCompleteSymptomInput);
+        symptomInput.setThreshold(1);
+        symptomInput.setGravity(0);
+        new Handler().postDelayed(() -> {
+            Log.d(TAG,symptomList.toString());
+            ArrayAdapter<String> symptomInputAdapter = new ArrayAdapter<>(requireActivity().getBaseContext(), android.R.layout.simple_spinner_dropdown_item, symptomList);
+            symptomInput.setAdapter(symptomInputAdapter);
+
+        }, 1000); //Timer is in ms here.
+
         severityMenuArrayAdapter.setDropDownViewResource(R.layout.drop_down_menu_spinner);
         severityDropDownList.setAdapter(severityMenuArrayAdapter);
-        hourMenuArrayAdapter.setDropDownViewResource(R.layout.drop_down_menu_spinner);
-        hourDropDownList.setAdapter(hourMenuArrayAdapter);
-        minuteMenuArrayAdapter.setDropDownViewResource(R.layout.drop_down_menu_spinner);
-        minuteDropDownList.setAdapter(minuteMenuArrayAdapter);
+
     }
 
     public void populateUserData(@NonNull View view) throws InterruptedException {
@@ -281,44 +268,38 @@ public class ProfileFragment extends Fragment {
     public void saveSymptoms(View view) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference rootDbRef = database.getReference();
-        String symptomName = ((EditText) view.findViewById(R.id.profileSymptomsNameInput)).getText().toString().toLowerCase();
+        String symptomName = ((AutoCompleteTextView) view.findViewById(R.id.autoCompleteSymptomInput)).getText().toString();
+        Log.d(TAG,String.valueOf(symptomName.length()));
         String symptomSeverity = ((Spinner) requireActivity().findViewById(R.id.profileSeverityDropDownList)).getSelectedItem().toString();
-        String hour = ((Spinner) requireActivity().findViewById(R.id.profileHourDropList)).getSelectedItem().toString();
-        String minute = ((Spinner) requireActivity().findViewById(R.id.profileMinuteDropList)).getSelectedItem().toString();
-        if (!(symptomName.equals(" ") || hour.equals("Hour") || minute.equals("Min") || symptomSeverity.equals("Severity"))) {
-            int symptomHour = Integer.parseInt(hour);
-            int symptomMinute = Integer.parseInt(minute);
-            int severity = 0;
+        if (symptomName.length() != 0 &&  !(symptomSeverity.equals("Severity"))) {
+            int severity = 1;
             switch (symptomSeverity) {
                 case "Moderate":
-                    severity = 1;
+                    severity = 2;
                     break;
                 case "Severe":
-                    severity = 2;
+                    severity = 3;
                     break;
             }
             Date currentTime = Calendar.getInstance().getTime();
-            SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
-            String formattedDate = df.format(currentTime) + " " + symptomHour + ":" + symptomMinute + ":00.000";
-            Long time = dbHelper.toEpochTime(formattedDate)/1000;
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            String formattedDate = df.format(currentTime);
             int finalSeverity = severity;
 
             ValueEventListener valueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.child("symptom/"+symptomName).exists()) {
-                        rootDbRef.child("symptom/"+symptomName).get().addOnCompleteListener(task -> {
-                            long numOfOccurrence = Objects.requireNonNull(task.getResult()).getChildrenCount();
-                            Map<String, Object> occurrence = new HashMap<>();
-                            occurrence.put("date", time);
-                            occurrence.put("severity", finalSeverity);
-                            dbHelper.addToDB("symptom/"+symptomName+"/"+numOfOccurrence,occurrence);
+                    if (dataSnapshot.child("symptom/"+symptomName+"/"+formattedDate).exists()) {
+                        rootDbRef.child("symptom/"+symptomName+"/"+formattedDate).get().addOnCompleteListener(task -> {
+                            ArrayList <Long> severityList = (ArrayList<Long>) task.getResult().getValue();
+                            severityList.add((long)finalSeverity);
+                            dbHelper.addToDBLongArray("symptom/"+symptomName+"/"+formattedDate,severityList);
                         });
                     } else {
-                        Map<String, Object> occurrence = new HashMap<>();
-                        occurrence.put("date", time);
-                        occurrence.put("severity", finalSeverity);
-                        dbHelper.addToDB("symptom/"+symptomName+"/0",occurrence);
+                        ArrayList <Long> severityList = new ArrayList<>();
+                        severityList.add((long)finalSeverity);
+                        dbHelper.addToDBLongArray("symptom/"+symptomName+"/"+formattedDate,severityList);
+                        //dbHelper.addToDB("symptom/"+symptomName+"/0",occurrence);
                     }
                 }
 

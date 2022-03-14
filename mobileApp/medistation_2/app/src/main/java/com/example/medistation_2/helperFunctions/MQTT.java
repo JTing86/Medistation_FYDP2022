@@ -1,6 +1,7 @@
 package com.example.medistation_2.helperFunctions;
 
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -25,6 +26,7 @@ public class MQTT {
         } catch (MqttException e) {
             e.printStackTrace();
         }
+        Log.d(TAG,key);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

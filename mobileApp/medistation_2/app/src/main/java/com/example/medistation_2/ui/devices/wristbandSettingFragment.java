@@ -3,6 +3,7 @@ package com.example.medistation_2.ui.devices;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +35,11 @@ public class wristbandSettingFragment extends Fragment {
 
     private static final String TAG = wristbandSettingFragment.class.getSimpleName();
     private MqttAndroidClient client;
-
+    @Override
+    public void onResume(){
+        initializeMQTT();
+        super.onResume();
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,27 +55,29 @@ public class wristbandSettingFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         setupDropDownMenu(view);
-        String clientId = MqttClient.generateClientId();
-        client = new MqttAndroidClient(requireContext().getApplicationContext(), "tcp://broker.hivemq.com:1883", clientId);
-        try {
-            IMqttToken token = client.connect();
-            token.setActionCallback(new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                }
-
-                @Override
-                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                }
-            });
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
+        initializeMQTT();
 
         Button profileUserInfoSaveButton = view.findViewById(R.id.wristbandSymptomSaveButton);
         profileUserInfoSaveButton.setOnClickListener(v -> saveButtonPressed());
     }
+    public void initializeMQTT(){
+    String clientId = MqttClient.generateClientId();
+    client = new MqttAndroidClient(requireContext().getApplicationContext(), "tcp://broker.hivemq.com:1883", clientId);
+    try {
+        IMqttToken token = client.connect();
+        token.setActionCallback(new IMqttActionListener() {
+            @Override
+            public void onSuccess(IMqttToken asyncActionToken) {
+            }
 
+            @Override
+            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+            }
+        });
+    } catch (MqttException e) {
+        e.printStackTrace();
+    }
+}
     public void setupDropDownMenu(View view) {
         //set up drop down list
         Spinner batteryLevelNotification = view.findViewById(R.id.wristbandBatteryNotificationDropDown);
@@ -140,9 +147,11 @@ public class wristbandSettingFragment extends Fragment {
         //Wristband Battery Notification Level
         if (wristbandNotifBatLevel.equals("Never")) {
             dbHelper.addToDB("wristband/alertLevel",0);
+
             MQTT.MQTTSendData(client, "threshold", 0,requireContext().getString(R.string.batteryThreshold));
         } else if (!wristbandNotifBatLevel.equals("Battery Level")) {
             int batteryLevel = Integer.parseInt(wristbandNotifBatLevel.substring(0, wristbandNotifBatLevel.length() - 1));
+            Log.d(TAG,"Save Battery Level");
             dbHelper.addToDB("wristband/alertLevel",batteryLevel);
             MQTT.MQTTSendData(client, "threshold", batteryLevel, requireContext().getString(R.string.batteryThreshold));
         }
@@ -150,14 +159,18 @@ public class wristbandSettingFragment extends Fragment {
         ArrayList <String> wristbandButtons = new ArrayList<>();
         if (!button1.equals("Symptom")){
             wristbandButtons.add(button1);
+            dbHelper.addToDB("wristband/button/0",button1);
         }
         if (!button2.equals("Symptom")){
+            dbHelper.addToDB("wristband/button/1",button2);
             wristbandButtons.add(button2);
         }
         if (!button3.equals("Symptom")){
+            dbHelper.addToDB("wristband/button/2",button3);
             wristbandButtons.add(button3);
         }
-        dbHelper.addToDBStrArray("wristband/button",wristbandButtons);
-        MQTT.MQTTSendStrListData(client,"symptoms", wristbandButtons,"medistation2021/wristband/buttons");
+        if (!wristbandButtons.isEmpty()){
+            MQTT.MQTTSendStrListData(client,"symptoms", wristbandButtons,"medistation2021/wristband/buttons");
+        }
     }
 }
