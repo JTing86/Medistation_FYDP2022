@@ -28,6 +28,7 @@ const unsigned long TEMP_SAMPLE_PERIOD = 24*60*60*1000; // 1 sample per day
 const uint8_t NUM_BUTTONS = 3;
 const uint8_t MAX_SYMPTOM_LOGS = 10;
 const unsigned long TIME_ZONE_ADJUSTMENT = 5*60*60;
+const unsigned long BATT_CHECK_PERIOD = 60*1000;
 
 const uint8_t BUTTON_PIN[NUM_BUTTONS] = {25,26,27};
 
@@ -68,6 +69,7 @@ unsigned long sample_time[MAX_DAYS_NO_WIFI];
 
 uint8_t batt_threshold = 0;
 bool batt_alert_sent = false;
+unsigned long batt_check_time = 0;
 
 float temperature[MAX_DAYS_NO_WIFI];
 unsigned long sample_offset = 24*60*60/2; // ensures the temperature sample is always far from when the push happens so the sample is guranteed to be there
@@ -154,9 +156,10 @@ void setup() {
   user_phone = tryParseFirstNumber(rest.sendRequest("GET", database_url, "/phone.json"));
 
   // get the name of the symptoms recorded by the buttons
-  String resp = rest.sendRequest("GET", database_url, "/wristband/button.json");
+  String resp = rest.sendRequest("GET", database_url, "/wristband.json");
   deserializeJson(doc, resp);
-  JsonArray symptoms = doc.as<JsonArray>();
+  JsonArray symptoms = doc["button"];
+  batt_threshold = (int)doc["alertLevel"];
 
   // also initialize the buttons as inputs
   for(uint8_t i = 0; i < NUM_BUTTONS;i++) {
@@ -173,17 +176,6 @@ void setup() {
   
   setTime(convertLong(rest.sendRequest("GET", time_url, time_now)));
   adjustTime(-TIME_ZONE_ADJUSTMENT);
-
-//  Serial.println(measureBatt());
-
-//  pushSleepQuality(1, now() + TIME_ZONE_ADJUSTMENT, now() + 1000 + TIME_ZONE_ADJUSTMENT);
-
-//  bulkPushSymptom("f", 3);
-
-//  Serial.println(measureBatt());
-
-  reconnect();
-  client.publish("medistation2021/battery/send", "{\"percentage\":40}");
 
 }
 
@@ -277,10 +269,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
 //      Serial.println(symptom_name[i]);
     }
   }
-  else if(strcmp(topic, "medistation2021/phone")) {
+  else if(strcmp(topic, "medistation2021/phone") == 0) {
     deserializeJson(doc, (char*)payload);
     user_phone = String((const char*)doc["phone"][0]);
   }
+//  else if(strcmp(topic, "medistation2021/wifi-status/request/wristband") == 0) {
+//    client.publish("medistation2021/wifi-status/send/wristband", "");
+//  }
 
 }
 
@@ -295,6 +290,8 @@ void reconnect() {
       client.subscribe("medistation2021/health-status/request");
       client.subscribe("medistation2021/wristband/buttons");
       client.subscribe("medistation2021/phone");
+//      client.subscribe("medistation2021/wifi-status/request/wristband");
+      
     } else {
 //      Serial.print("failed, rc=");
 //      Serial.print(client.state());
@@ -307,10 +304,16 @@ void reconnect() {
 
 // measures battery level as a percentage
 float measureBatt() {
-  int batt_read = analogRead(BATTERY_PIN);
-  float voltage = (4.0/3.0)*3.3*((float)batt_read/2047.0); // 11 bit ADC
+  float avg = 0;
 
-  return (100.0/(4.2-3.3)*(voltage-3.3)); // equation of line. Transform from volatage to percentage
+  for(uint8_t i = 0; i < 3; i++) {
+    int batt_read = analogRead(BATTERY_PIN);
+    float voltage = (4.0/3.0)*3.3*((float)batt_read/2047.0); // 11 bit ADC 
+    avg += (100.0/(4.2-3.3)*(voltage-3.3))/3.0;
+  }
+
+
+  return avg; // equation of line. Transform from volatage to percentage
 }
 
 uint8_t getHeartRate() {
@@ -670,18 +673,22 @@ void loop() {
     sample_offset = 0;
   }
 
-  // battery is low - send an alert
-  if(!batt_alert_sent && measureBatt() <= batt_threshold) {
-//    Serial.println("wassup");
-    String header = "Authorization: Basic " + twilio_token + "\n" + "Content-Type: application/x-www-form-urlencoded";
-    String msg = "Wristband battery is low. Charge now";
-    String payload = "Body=" + msg + "&From=%2B19106657562&To=%2B1";
-    rest.sendRequest("POST", twilio_url, twilio_sms_path, payload + user_phone, 443, header);
-    batt_alert_sent = true;
-  }
-  else if (batt_alert_sent &&  measureBatt() > batt_threshold){
-    // getting here would mean they've charged it since
-    batt_alert_sent = false;
+  if(millis() - batt_check_time >= BATT_CHECK_PERIOD) {
+    int batt_lvl = (int)measureBatt();
+    // battery is low - send an alert
+    if(!batt_alert_sent && batt_lvl <= batt_threshold) {
+  //    Serial.println("wassup");
+      String header = "Authorization: Basic " + twilio_token + "\n" + "Content-Type: application/x-www-form-urlencoded";
+      String msg = "Wristband battery is low. Charge now";
+      String payload = "Body=" + msg + "&From=%2B19106657562&To=%2B1";
+      rest.sendRequest("POST", twilio_url, twilio_sms_path, payload + user_phone, 443, header);
+      batt_alert_sent = true;
+    }
+    else if (batt_alert_sent &&  batt_lvl > batt_threshold){
+      // getting here would mean they've charged it since
+      batt_alert_sent = false;
+    }
+    batt_check_time = millis();
   }
 
   unsigned long current_time = millis();
