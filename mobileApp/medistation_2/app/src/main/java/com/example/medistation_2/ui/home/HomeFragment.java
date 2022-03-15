@@ -211,10 +211,10 @@ public class HomeFragment extends Fragment {
         int temperature = JsonHelper.intDecoder("temp", new String(message.getPayload()));
         int heartRate = JsonHelper.intDecoder("bpm", new String(message.getPayload()));
         heartRateValue.setText(String.valueOf(heartRate));
-        if ((temperature - 30) > 0.5) {
+        if ((temperature - 35) > 0.5) {
             temperatureValue.setText(temperature + " (Higher Than Average)");
             temperatureValue.setTextColor(Color.RED);
-        } else if ((temperature - 30) < -0.5) {
+        } else if ((temperature - 35) < -0.5) {
             temperatureValue.setText(temperature + " (Lower Than Average)");
             temperatureValue.setTextColor(Color.BLUE);
         } else {
