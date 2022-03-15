@@ -86,6 +86,9 @@ public class AnalysisFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        //createData.heartRate(60);
+        //createData.temperatureData(60);
+        //createData.sleepQuality(60);
         DatePicker dateSelect = view.findViewById(R.id.graphStartDate);
         LocalDate today = LocalDate.now();
         dateSelect.updateDate(today.getYear(),today.getMonthValue()-2,today.getDayOfMonth());
@@ -238,16 +241,18 @@ public class AnalysisFragment extends Fragment {
                 ArrayList<Long> sleepDuration = new ArrayList<>();
                 double sleepQuality = 0.0;
                 long totalSleepDuration = 0;
-                for (int j = 0; j < Objects.requireNonNull(startTimes).size(); j++) {
-                    assert endTimes != null;
-                    sleepDuration.add(endTimes.get(j) - startTimes.get(j));
-                    totalSleepDuration = Math.toIntExact(endTimes.get(j) - startTimes.get(j) + totalSleepDuration);
+                if (startTimes.get(0) < currentUpperBound && startTimes.get(0) > currentLowerBound){
+                    for (int j = 0; j < Objects.requireNonNull(startTimes).size(); j++) {
+                        assert endTimes != null;
+                        sleepDuration.add(endTimes.get(j) - startTimes.get(j));
+                        totalSleepDuration = Math.toIntExact(endTimes.get(j) - startTimes.get(j) + totalSleepDuration);
+                    }
+                    for (int k = 0; k < sleepDuration.size(); k++) {
+                        sleepQuality = ((double) sleepDuration.get(k) / (double) totalSleepDuration) * (double) dailySleepQualityValueList.get(k) + sleepQuality;
+                    }
+                    sleepQualityValue.add(sleepQuality);
+                    dateList.add(startTimes.get(0));
                 }
-                for (int k = 0; k < sleepDuration.size(); k++) {
-                    sleepQuality = ((double) sleepDuration.get(k) / (double) totalSleepDuration) * (double) dailySleepQualityValueList.get(k) + sleepQuality;
-                }
-                sleepQualityValue.add(sleepQuality);
-                dateList.add(startTimes.get(0));
             }
             createGraph("Sleep Quality");
         });
@@ -272,6 +277,8 @@ public class AnalysisFragment extends Fragment {
         lineDataSet1.setDrawValues(false);
         LineData lineData = new LineData(lineDataSet1);
         lineChart.getDescription().setTextSize(12);
+        lineDataSet1.setColors(Color.parseColor("#005600"));
+        lineDataSet1.setCircleColors(Color.parseColor("#005600"));
         lineChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         lineChart.animateXY(10, 10);
         YAxis rightYAxis = lineChart.getAxisRight();
@@ -331,8 +338,8 @@ public class AnalysisFragment extends Fragment {
         if (day.length() == 1)
             day = "0" + day;
         String formattedDate = year + month + day + " 00:00:00.000";
-        currentUpperBound = dbHelper.toEpochTime(formattedDate) / 1000;
-        currentLowerBound = currentUpperBound - 30 * 86400L;
+        currentLowerBound = dbHelper.toEpochTime(formattedDate) / 1000;
+        currentUpperBound= currentLowerBound + 30 * 86400L;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
